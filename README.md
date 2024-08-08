@@ -1,4 +1,16 @@
-# FILMUNI Summer School 2024
+# Digital Archives 2024
+
+Syllabus for Filmuniversität Babelsberg Digital Archiving Summer School 2024.
+
+### Slides
+
+Slides can be deployed locally using Python from within the repository.
+
+```sh
+python3 -m http.server 8822
+```
+
+### Schedule
 
 **Monday 2024-09-23**
 
@@ -30,7 +42,7 @@
 |  | Coffee Break | | | 
 | 11:00 - 12:30 | RAWcooked, DCPs | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | | 
 |  | Lunch | | | 
-| 13:30 - 15:00 | Whisper, Tesseract, Llama | [@paulduchesne](https://github.com/paulduchesne) | | 
+| 13:30 - 15:00 | Whisper, Tesseract, Llama | [@paulduchesne](https://github.com/paulduchesne) | [slides](wednesday/wednesday_03.html)| 
 |  | Coffee Break | | |
 | 15:30 - 17:30 | spaCY, Wikidata | [@paulduchesne](https://github.com/paulduchesne) | | 
 
