@@ -17,12 +17,181 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1.    
-1.1 
+1. Python    
+2. IDEs
+3. Git
+4. GitHub
+
 ---
 class: contentpage
+### **1. Python: What is Python?**
+
+Python is a general purpose programming language from the 1980s, which is amongst one of the most popular in the world. It is used to create all sorts of things including data science, web applications and for machine learning.
 
 
+---
+class: contentpage
+### **1. Python: Why Python?**
+
+
+While the command-line can be handy for simple processes, we will want to switch to a programming language when we start to want to create more complex systems.
+
+
+
+---
+class: contentpage
+### **1. Python: How Python?**
+
+The act of writing a Python script and executing are distinct. A Python script can be written in any text editor, but you require the Python Interprator for it to do anything.
+
+
+
+
+---
+class: contentpage
+### **1. Python Basics: Print**
+
+The simplest Python action is to print something
+
+```python
+print('greeting')
+```
+
+
+---
+class: contentpage
+### **1. Python Basics: String**
+
+A "string" in Python is a line of text (emojis allowed!) which Python identfies by using quotations marks (double or single are fine).
+
+```python
+print('greeting')
+```
+
+Note that if we do not use quotation marks, Python does not know this is a line of text, and does not know what to do with it.
+
+
+```python
+print(greeting)
+```
+
+
+---
+class: contentpage
+### **1. Python Basics: Variables**
+
+This is because "text without quotations" is what is known as a variable, and it is a placeholder for some other value.
+
+```python
+greeting = 'hello'
+print(greeting)
+```
+
+This is very useful when we want to take a value and modify it.
+```python
+a_number = 1986
+print(a_number)
+a_number = a_number/10
+print(a_number)
+a_number = a_number+16
+print(a_number)
+a_number = a_number+a_number
+print(a_number)
+```
+
+
+
+
+
+---
+class: contentpage
+### **1. Python Basics: Types**
+
+In Python there is the concept of different data types, of which we have seen two: strings and numbers.
+
+These can be identified by using the type() method.
+
+```python
+print(type('hello'))
+```
+
+Variables also inhereit the type
+
+```python
+greeting = 'hello'
+print(type(greeting))
+```
+
+They will also behave differently
+
+```python
+greeting = 'hello'
+print(greeting+greeting)
+a_number = 1986
+print(a_number+a_number)
+```
+
+
+---
+class: contentpage
+### **1. Python Basics: Lists**
+
+In Python we can have an array or a list. These can contain any datatype.
+
+```python
+some_people = ['paul', 'david', 'bethany', 'shana']
+mixed_types = ['hello', 27, 3.1415]
+```
+
+
+
+
+---
+class: contentpage
+### **1. Python Basics: For-loops**
+
+A key concept is the "for loop", which lets us work through a list, and apply an action to each list elements
+
+```python
+for person in ['paul', 'david', 'bethany', 'shana']:
+    print(person)
+```
+Worth noting at this point, spaces in Python matter. We need to indent the `print(person)` element with two or four spaces.
+
+```python
+for person in ['paul', 'david', 'bethany', 'shana']:
+    print(person+' is cool.')
+```
+
+We can use this pattern to perform file operations, but first we will need to find a library to help us!
+
+
+
+
+
+---
+class: contentpage
+### **1. Python Basics: Libraries**
+
+Libraries are just chunks of Python code which other people wrote. They save us having to build everything from scratch.
+Many useful libraries come pre-included with Python by default, you can install others to do highly specific, or write your own!
+
+We are going to use a very useful library called Pathlib.
+
+```python
+import pathlib
+for filename in ['test.wav', 'test.jpg', 'test.txt']:
+    filename = pathlib.Path.cwd() / filename
+    print(filename, filename.exists())
+```
+
+This has been a very brief introduction to Python!
+
+
+
+---
+class: contentpage
+### **2. IDEs**
 
 
     </textarea>
