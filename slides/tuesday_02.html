@@ -18,20 +18,32 @@ class: contentpage
 ### **Agenda**
 
 1. Python    
-2. IDEs
+    1.1 Why Python?    
+    1.2 How Python?    
+    1.3 Basics: Print    
+    1.4 Basics: Strings     
+    1.5 Basics: Variables     
+    1.6 Basics: Types    
+    1.7 Basics: Lists    
+    1.8 Basics: For Loops    
+    1.9 Basics: Libraries   
+2. IDEs         
+    2.1 Anaconda    
+    2.2 Jupyter   
 3. Git
 4. GitHub
+5. Practical 🏋️
 
 ---
 class: contentpage
-### **1. Python: What is Python?**
+### **1. Python**
 
 Python is a general purpose programming language from the 1980s, which is amongst one of the most popular in the world. It is used to create all sorts of things including data science, web applications and for machine learning.
 
 
 ---
 class: contentpage
-### **1. Python: Why Python?**
+### **1.1 Why Python?**
 
 
 While the command-line can be handy for simple processes, we will want to switch to a programming language when we start to want to create more complex systems.
@@ -40,7 +52,7 @@ While the command-line can be handy for simple processes, we will want to switch
 
 ---
 class: contentpage
-### **1. Python: How Python?**
+### **1.2 How Python?**
 
 The act of writing a Python script and executing are distinct. A Python script can be written in any text editor, but you require the Python Interprator for it to do anything.
 
@@ -49,7 +61,7 @@ The act of writing a Python script and executing are distinct. A Python script c
 
 ---
 class: contentpage
-### **1. Python Basics: Print**
+### **1.3 Basics: Print**
 
 The simplest Python action is to print something
 
@@ -60,7 +72,7 @@ print('greeting')
 
 ---
 class: contentpage
-### **1. Python Basics: String**
+### **1.4 Basics: Strings**
 
 A "string" in Python is a line of text (emojis allowed!) which Python identfies by using quotations marks (double or single are fine).
 
@@ -78,7 +90,7 @@ print(greeting)
 
 ---
 class: contentpage
-### **1. Python Basics: Variables**
+### **1.5 Basics: Variables**
 
 This is because "text without quotations" is what is known as a variable, and it is a placeholder for some other value.
 
@@ -105,7 +117,7 @@ print(a_number)
 
 ---
 class: contentpage
-### **1. Python Basics: Types**
+### **1.6 Basics: Types**
 
 In Python there is the concept of different data types, of which we have seen two: strings and numbers.
 
@@ -134,7 +146,7 @@ print(a_number+a_number)
 
 ---
 class: contentpage
-### **1. Python Basics: Lists**
+### **1.7 Basics: Lists**
 
 In Python we can have an array or a list. These can contain any datatype.
 
@@ -148,7 +160,7 @@ mixed_types = ['hello', 27, 3.1415]
 
 ---
 class: contentpage
-### **1. Python Basics: For-loops**
+### **1.8 Basics: For Loops**
 
 A key concept is the "for loop", which lets us work through a list, and apply an action to each list elements
 
@@ -171,7 +183,7 @@ We can use this pattern to perform file operations, but first we will need to fi
 
 ---
 class: contentpage
-### **1. Python Basics: Libraries**
+### **1.9 Basics: Libraries**
 
 Libraries are just chunks of Python code which other people wrote. They save us having to build everything from scratch.
 Many useful libraries come pre-included with Python by default, you can install others to do highly specific, or write your own!
@@ -192,6 +204,87 @@ This has been a very brief introduction to Python!
 ---
 class: contentpage
 ### **2. IDEs**
+
+
+An IDE is an enviroment in which we write (and sometimes also run!) code. We **can** write a script using a basic text editor, but it is not much fun and we will make loads of mistakes. IDEs generally come with tools to help you code better.
+
+The most popular for Python are Visual Studio Code, PyCharm, Sublime Text... there are heaps and heaps of these.
+
+If you are looking for one to start with, I would recommend Viusual Studio Code. It is easy to install and has a good balance of tools and extensibility.
+
+If you are concerned about telemetry there is a fork called VS Codium, which has removed that component.
+
+
+---
+class: contentpage
+### **2.1 Anaconda**
+
+Anaconda is a dsitburiont of Python which comes with its own package management system for external libraires. It seems to be most popular with data science and machine learning projects where managing the requirements of many different libraries can become quite tricky. Iw ouldn't really recommend using it unless this becomes a problem for you.
+
+
+---
+class: contentpage
+### **2.2 Jupyter**
+
+When looking at coding in Python you might come across mention of Jupyter and Jupyter notebooks. A Jupyter notebook is a document which comprises optional blocks of text and code which can be run in any order.
+
+As Jupyter is open source there are plenty of platforms which have "borrowed" the same concept: Google Colaboratory, Netflix Nteract, Microsoft Fabric notebooks. Visual Studio Code can also run Jupyter notebooks.
+
+This can be quite useful for presenting reports where you want to show graphs and add additional context, and the integration of text, graphs and code is a reason why it is quite popular in science and academic contexts.
+
+Because our focus of this course is more on functional and operational systems we wont really be looking at Jupyter any furtehr, but keep it in mind if you want to do data analysis reports or just have a more interactive experience with python.
+
+
+---
+class: contentpage
+### **3. Git**
+
+What is Git? Git is one of these things which is completely ubiqutous in its domain, like Photoshop and Google.
+
+Git is a software management system written by Linus Torvalds, who was also responsible for Linux.
+
+It basically lets us keep track of our code, allow management of deifferent variants as they are developed and collaboration with multiple progranmemrs.
+
+Git itself is a command line application, but there are many options for graphical interfaces. It is also built in to most modern IDEs (including Visual Studio Code).
+
+
+
+---
+class: contentpage
+### **4. GitHub**
+
+GitHub is a website which allows developers to host their software projects via Git, with a lot of otehr useful features to help with keeping track of project work.
+
+It is owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform which has some superior features, but GitHub has much more traffic.
+
+
+---
+class: contentpage
+### **5. Practical**
+
+We are going to:
+
+- Log into GitHub.
+
+- Fork the `summer-school-2024` repo, which will give you your own copy.
+
+- Clone it to your computer to work on.
+
+- Write a script in your favourite IDE to check filesizes on our scan files.
+
+- Use Git to commit changes back to GitHub (CLI and IDE).
+
+- Look at GitHub issues, version control and branches.
+
+
+
+
+
+
+
+
+
+
 
 
     </textarea>
