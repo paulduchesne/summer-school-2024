@@ -31,10 +31,130 @@ class: contentpage
 8. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)
 
       
+
+
 ---
 class: contentpage
 
+### **1. Intro to Hashing**
 
+what is hashing, generating a fixed width predicatble digital fingerprint
+
+terminology: hashes vs checksums, hashes normally used for web security, checksums for file checking
+but used intercahnagely and 
+
+core concepts, one directional, examples passwords, metoo callouts
+
+single bit changes, hash changes, normally not proportional to amount of change (exception percuptual)
+eg "Paul Duchesne" == "paul duchesne"
+
+use for digital preservation, has my file changed
+
+different hashing algoritms, speed and length of result
+
+md5 ubiquiouts, slow, not crypto secure, what does that mean
+
+chance of colisions, birthday paradox, idnetional collision exploits
+
+xxhash much faster but increased chance of collisions, tolerable?
+
+
+
+
+---
+class: contentpage
+
+### **2. Streamhashing, whole file hashing, types of checksum algorithms**
+
+---
+class: contentpage
+
+### **3. Lossless framemd5 frame level checksums**
+
+---
+class: contentpage
+
+### **4. FFV1 checksums at slice level**
+
+---
+class: contentpage
+
+### **5. Python hashlib**
+
+We can generate hashes from the command line, but there are resons we will want to use in python, eg as part of a media processing script
+
+couple of ways to do hashing, subprocess, hashlib.
+
+Python has an inbuilt library called hashlib
+
+examples of hashing a string
+
+exampels of hashing a file
+
+python example of hashing many files in a directory
+
+---
+class: contentpage
+
+### **6. Perceptual hashing, visual similarity matching**
+
+perceuptuial hashing has a different purpose, and worth introducing as a concept
+while checksum hashing for file validation is ubiqisuot, hashing for content similarity is more unusal and only a few institutions are doing (eg?)
+
+do in Python?
+
+example similar strings return similar hashes
+
+example simialr images return similar hashes
+
+where would this be useful for an archive, similarity detection
+
+say someone gives you digital material, it is useful to be able to check if it is already in your collection, but any slight change precludes you from checking
+
+perceptual hashes allow to find where the is content overlap, even if the file itself is slightly different
+
+---
+class: contentpage
+
+### **7. Bagit for Python**
+
+BagIt is a solution designed to give you common structures and tools to work with these concepts and is typically used for collections of files.
+developed by library of congress
+
+You could write your own python scripts to create checksums and validate checksums, but bagit is just a conveniance method. to do a lot of great stuff 
+
+bagit can run from the command line, 
+
+otherwise loc bagit library - ASIDE, how to install a external library
+up until now we have been looing at libraries which come bundled with python
+but bagit is different, this is a python library written by library of congress.
+pip install, pip freeze
+
+amia grabbags for multiple files supporting
+
+Practical: BagIt for film scan
+
+
+---
+class: contentpage
+
+### **8. TAR wrapping with CLI 'tar' or Python 'tarfile'**
+
+Great so we have our 'bag', what do we do with it?
+
+generally speaking most archives will then wrap the bag - important point, bagit is not a filetype, it is a system.
+most archives use TAR, which is a very very old (1979) and widely supported means of wrapping files.
+similar to zip
+
+as you have probably many times, we can eaither create tars from the command line on a unix-machine (linux/mac) or using python (os agnostic)
+
+python has an inbuilt tarfile library
+
+Practical: TAR wrap bagit
+
+Practical: untar
+
+Practical: validate fixity - swap frames, check process.
 
 
     </textarea>
