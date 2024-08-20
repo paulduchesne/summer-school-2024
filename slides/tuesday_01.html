@@ -10,19 +10,206 @@
     <textarea id="source">
 
 class: center, middle, titlepage
-### TUE01: *Intro to CLI, FFmpeg.*
+### TUE01: *Intro to Open Source, Command Line and FFmpeg*
+
+---
+class: center, middle, titlepage
+### TUE01: *Open Source*
+---
+class: contentpage
+### **Agenda 1**
+
+Introduction to Open Source  
+> 1.1 The four freedoms  
+> 1.2 Source code  
+> 1.3 Evaluating projects  
+> 1.4 Support models  
 
 ---
 class: contentpage
-### **Agenda**
+### **1. Introduction to Open Source**
 
-1.    
-1.1 
+Open source software is often thought of as free to use, but to be classified as Open a project must meet four criteria for its users.
 ---
 class: contentpage
+### **1.1 The Four Freedoms**
+
+- __Freedom to run the programme how you like for any purpose__  
+
+- __Freedom to study how the programme works, and make changes for your own use__  
+
+- __Freedom to redistribute copies of the original programme to whoever you like__  
+
+- __Freedom to redistribute copies of your modified version to whoever you like__  
+  
+An open source project should provide you with information about the type of licence that governs the use of it.  
+Advice about open source licences can be found at the [Open Source Initiative](https://opensource.org/licenses)
+---
+class: contentpage
+### **1.2 Source code**
+
+You also need to access the source code. The licence will permit you to make your own copy of the software, to edit and redistribute. Mostly you’ll find source code in Git repositories, like you see here for the FFmpeg libraries.  
+  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/ffmpeg_source_code.png" width="1000">]
+
+---
+class: contentpage
+### **1.3 Evaluating projects**  
+
+1. Can you avoid adding it? Can you use existing dependencies or software already installed?  
+   *Every new piece of software comes with dependencies and potential security issue.Answer: No, this piece of software is unique in how it losslessly compresses and preserves image sequences.*
+
+2. Are you evaluating the correct version and not a fork of a project?  
+   *There should be an official download site with the latest verion with links to their repositories. Check the website name is exactly correct and the project website link is correct.*  
+
+3. If searching for a project, or following a recommendation, do you have the latest version of the software?  
+   *Projects can move, as development teams or hosting shifts. Check the late release date and popularity of the repository. Recent releases and active users points to official released code.*
+
+4. Is the project maintained? Has there been significant recent activity and version releases? Are they supporting user issues?
+   *Take a look a the issues raised by users and whether they have been successfully resolved, and see how recent these conversations occurred.*
+
+Further guidelines are available from the [Open Source Security Foundation](https://best.openssf.org/Concise-Guide-for-Evaluating-Open-Source-Software.html) 
+---
+class: contentpage
+### **1.4 Support models**  
+
+**Funded models**  
+
+- Bounty driven development  
+  _Independent developers receive bounty payments for feature development or bug fixes_  
+
+- User support contracts  
+  _Paid for support contracts help secure regular income for project developers_  
+
+- Consulting or expertise  
+  _Experienced developers charge for consultation work_  
+
+- Mixed licensing  
+  _Software offers free to use options, but others may require payment_  
+
+- Grants and donations  
+  _Payment for development of specific tools, grant funding or gifts_  
+
+---
+class: contentpage
+### **1.4 Support models**  
+
+**User support models**  
+   
+- Writing or editing documentation  
+  _Save time for developers to work on code and not documentation_  
+
+- Language translations  
+  _Make the code more accessible for international users_  
+
+- Supporting other users  
+  _Peer to peer support saves developers time with basic enquiries_  
+
+- Bug finding and testing software  
+  _More user testing helps make the project more robust_  
+
+- Promoting and fundraising  
+  _Blogging about your use of software, helping raise money for developers_  
+
+---
+class: center, middle, titlepage
+### TUE01: *Intro to the Command Line and BASH*
+---
+class: contentpage
+### **Agenda 2**
+
+Command Line Interface (CLI)   
+> 2.1 Unix Terminal and tools  
+> 2.2 Windows Command Prompt  
+> 2.3 Unix tools on Windows  
+> 2.4 Useful commands  
+
+Born Again SHell (BASH)  
+> 2.5 Special characters and comparisons   
+> 2.6 Loops and conditional statements  
+> 2.7 Shebang and script formation  
+> 2.8 Running and testing code
+
+---
+class: contentpage
+### **2. Command Line and BASH**
+
+The Command Line Interface (or CLI) is a text only window set into a Graphical User Interface (or GUI).
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/2021-02-27_-_ffmpeg_version.gif" width="800">]
+---
+class: contentpage
+### **2. Command Line and BASH**
+ 
+- A *command* is an instruction telling the computer how to act, such as show what version of software I'm using  
+```BASH
+ffmpeg -version
+```
+- A CLI has a command interpreter (or shell) running within it converting our typed command lines into a language the computer can understand  
+  
+- As you type in a *command* with *arguments* the shell interpreter reads and executes (or runs) them
+```BASH
+echo $SHELL
+```
+- The CLI displays the *command* you type, the process it launches as it runs, and the result of the command
+```BASH
+/bin/bash
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+```
+- There are many command line interpreters, or shells. For Linux users open source Bash (Born Again SHell) remains the most common shell. MacOS now ships with Z shell, but can also run Bash. Windows users often have cmd.exe (Command Prompt) or PowerShell, but can run Bash with Windows Subsystem for Linux.
+---
+class: contentpage
+### **2. Command Line and BASH**
+
+**Why would you want to use the command line?**
+
+- To install and run many open source software projects that have no GUI  
+
+- To work remotely with servers over networks or in data centres  
+
+- When using old hardware or software that no longer has GUI support  
+
+- To build automated processes 👀  
+
+---
+class: contentpage
+### **2.1 Unix Terminal and tools**
+UNIX operating systems use a CLI called __Terminal__. To launch the Terminal in MacOS press the command and spacebar keys together then type __Terminal__ into the search bar and a CLI windows will immediately launch.  
+
+`Command + Spacebar`  
+
+To launch the a Terminal CLI window in a Linux operation system press the control, alt and t keys together at once.  
+
+`Control + Alt + t`  
+
+```BASH
+chsh -s /bin/bash
+```
+To change your shell to Bash use the `chsh` command with the `-s` shell flag, followed by the argument `/bin/bash/`.  
+
+To check what version of Bash you are running you can use this command:  
+
+```BASH
+bash --version
+```
+MacOS does not always ship with an up to date version of Bash so it's worth checking, and upgrading to benefit from the latest tools. You can upgrade Bash using package managers such as HomeBrew for Unix devices.
 
 
+---
+class: center, middle, titlepage
+### TUE01: *Intro to FFmpeg, FFprobe and FFplay*
+---
+class: contentpage
+### **Agenda 3**
 
+Introduction to FFmpeg  
+> 3.1 The basic command and defaults  
+> 3.2 Useful Audio Visual flags  
+> 3.3 Guides and help pages  
+> 3.4 The FFmpeg libraries  
+> 3.5 FFprobe  
+> 3.6 FFplay  
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
