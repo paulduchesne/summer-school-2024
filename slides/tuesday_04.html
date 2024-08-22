@@ -21,7 +21,7 @@ class: contentpage
 
 
       
-1. Intro to Hashing (Paul)
+1. Intro to Hashing/Checksums (Paul)
 2. Streamhashing, whole file hashing, types of checksum algorithms. (Jo)
 3. Lossless framemd5 frame level checksums. (Jo)
 4. FFV1 checksums at slice level. (Jo)
@@ -36,12 +36,40 @@ class: contentpage
 ---
 class: contentpage
 
-### **1. Intro to Hashing**
+### **1. Intro to Hashing/Checksums**
 
-what is hashing, generating a fixed width predicatble digital fingerprint
+What are hashes/checksums? The generally look something like this: b3f719581e88f269c558b18d3cdc2f72
 
-terminology: hashes vs checksums, hashes normally used for web security, checksums for file checking
-but used intercahnagely and 
+"Fixed-width predictable digital fingerprints" - in digital archiving, a common way to reproduicbly assess if data has remained unchanged overtime.
+
+Terminology "hashes" vs "checksums": hashes normally used for web security, checksums for file checking, but they are conceptually the same and the terms are generally used interchangeably.
+
+For web security they are used to store passwords:
+
+"my_cool_password" -> MD5 -> a873aee995ffc1fe2634e63560d3aabb
+
+I can store the resulting hash in my system and don't know the users actual password, they can authenticate whenever they like, and if the system is hacked the attacker *still* won't know the user's password (assuming the hashing algoritjm it "cryptographically secure")
+
+Checksums will be different as soon as the source data is different, although normally not proportinal to the amount of change ("perceptual hashing" being the exception)
+
+"Paul Duchesne" -> MD5 -> 0396b497d1949e210d09692607734e97
+"paul duchesne" -> MD5 -> 020a2e9d9693e62d76bc00f14a99a6a7
+
+Use for digital preservation, where there is a strong concern around "has something changed in my file", although worth noting a key difference between the web security appliocation of hashes and the archivist: archivists geenrally assume that any changes will be accidental, whereas in the securirty space there is a presumption of bad actors.
+
+Take for example a checksum collision, when two files produce the same hash: it is astornimilaclly unlikely that in a digital archive two different files could create the same hash, but in a security space there will be people who are very actively trying to create files with the same ahsh (to substitute documents, or logion to restricted systems).
+
+total number of possible md5s is 340,282,366,920,938,463,463,374,607,431,768,211,456
+
+however if you were to generate 18,446,744,073,709,551,616 hashes you would have a 50% chance of a collision due to 'the birthday paradox'
+
+
+
+
+
+
+
+
 
 core concepts, one directional, examples passwords, metoo callouts
 
