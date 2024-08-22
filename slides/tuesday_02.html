@@ -26,7 +26,8 @@ class: contentpage
     1.6 Basics: Types    
     1.7 Basics: Lists    
     1.8 Basics: For Loops    
-    1.9 Basics: Libraries   
+    1.9 Basics: Libraries  
+    1.10 Basics: Subprocess    
 2. IDEs         
     2.1 Anaconda    
     2.2 Jupyter   
@@ -182,7 +183,29 @@ for a_number in [17, 27, 37, 47]:
 We can use this pattern to perform file operations, but first we will need to find a library to help us work with files!
 
 
+---
+class: contentpage
+### **1.8b Basics: If statements**
 
+If statements let us route operations dependning on assessment
+
+```python
+a_number = 37
+if a_number > 30:
+  print('a big number')
+else:
+  print('a small number')
+```
+
+We can use with for loops
+
+```python
+for a_number in [17, 27, 37, 47]:
+    if a_number > 30:
+      print(a_number + 4)
+    else:
+      print('a small number')
+```
 
 
 ---
@@ -202,6 +225,27 @@ for filename in ['test.wav', 'test.jpg', 'test.txt']:
     print(type(pathlib_filename))
     print(pathlib_filename, pathlib_filename.exists())
 ```
+
+---
+class: contentpage
+### **1.10 Basics: Subprocess**
+
+
+TODO Subprocess is cool because we can call command line applications from within python.
+this can be useful if you want to orchestrate tools sequentially.
+
+
+
+```python
+
+```
+
+
+upside is that we can create commadns that work inside or outside of python, 
+
+downside is that this can make our scripts os dependant.
+
+
 
 
 ---
