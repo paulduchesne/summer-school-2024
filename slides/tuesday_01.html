@@ -10,8 +10,392 @@
     <textarea id="source">
 
 class: center, middle, titlepage
-### TUE01: *Intro to CLI, FFmpeg.*
+### TUE01: *Intro to Open Source, Command Line and FFmpeg*
 
+---
+class: center, middle, titlepage
+### TUE01: *Open Source*
+---
+class: contentpage
+### **Agenda 1**
+
+Introduction to Open Source  
+> 1.1 The four freedoms  
+> 1.2 Source code  
+> 1.3 Evaluating projects  
+> 1.4 Support models  
+
+---
+class: contentpage
+### **1. Introduction to Open Source**
+
+Open source software is often thought of as free to use, but to be classified as Open a project must meet four criteria for its users.
+---
+class: contentpage
+### **1.1 The Four Freedoms**
+
+- __Freedom to run the programme how you like for any purpose__  
+
+- __Freedom to study how the programme works, and make changes for your own use__  
+
+- __Freedom to redistribute copies of the original programme to whoever you like__  
+
+- __Freedom to redistribute copies of your modified version to whoever you like__  
+  
+An open source project should provide you with information about the type of licence that governs the use of it.  
+Advice about open source licences can be found at the [Open Source Initiative](https://opensource.org/licenses)
+---
+class: contentpage
+### **1.2 Source code**
+
+You also need to access the source code. The licence will permit you to make your own copy of the software, to edit and redistribute. Mostly you’ll find source code in Git repositories, like you see here for the FFmpeg libraries.  
+  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/ffmpeg_source_code.png" width="1000">]
+
+---
+class: contentpage
+### **1.3 Evaluating projects**  
+
+1. Can you avoid adding it? Can you use existing dependencies or software already installed?  
+   *Every new piece of software comes with dependencies and potential security issue.Answer: No, this piece of software is unique in how it losslessly compresses and preserves image sequences.*
+
+2. Are you evaluating the correct version and not a fork of a project?  
+   *There should be an official download site with the latest verion with links to their repositories. Check the website name is exactly correct and the project website link is correct.*  
+
+3. If searching for a project, or following a recommendation, do you have the latest version of the software?  
+   *Projects can move, as development teams or hosting shifts. Check the late release date and popularity of the repository. Recent releases and active users points to official released code.*
+
+4. Is the project maintained? Has there been significant recent activity and version releases? Are they supporting user issues?
+   *Take a look a the issues raised by users and whether they have been successfully resolved, and see how recent these conversations occurred.*
+
+Further guidelines are available from the [Open Source Security Foundation](https://best.openssf.org/Concise-Guide-for-Evaluating-Open-Source-Software.html) 
+---
+class: contentpage
+### **1.4 Support models**  
+
+**Funded models**  
+
+- Bounty driven development  
+  _Independent developers receive bounty payments for feature development or bug fixes_  
+
+- User support contracts  
+  _Paid for support contracts help secure regular income for project developers_  
+
+- Consulting or expertise  
+  _Experienced developers charge for consultation work_  
+
+- Mixed licensing  
+  _Software offers free to use options, but others may require payment_  
+
+- Grants and donations  
+  _Payment for development of specific tools, grant funding or gifts_  
+
+
+---
+class: contentpage
+### **1.4 Support models**  
+
+**User support models**  
+   
+- Writing or editing documentation  
+  _Save time for developers to work on code and not documentation_  
+
+- Language translations  
+  _Make the code more accessible for international users_  
+
+- Supporting other users  
+  _Peer to peer support saves developers time with basic enquiries_  
+
+- Bug finding and testing software  
+  _More user testing helps make the project more robust_  
+
+- Promoting and fundraising  
+  _Blogging about your use of software, helping raise money for developers_  
+
+---
+class: center, middle, titlepage
+### TUE01: *Intro to the Command Line and Bash*
+---
+class: contentpage
+### **Agenda 2**
+
+Command Line Interface (CLI)   
+> 2.1 Unix Terminal  
+> 2.2 Windows Terminal, Command Prompt or PowerShell  
+> 2.3 Unix tools on Windows  
+> 2.4 Useful tools and commands  
+
+Born Again SHell (Bash)  
+> 2.5 Special characters and comparisons   
+> 2.6 Loops and conditional statements  
+> 2.7 Shebang and script formation  
+> 2.8 Running and testing code
+
+---
+class: contentpage
+### **2. Command Line Interface (CLI)**
+
+The Command Line Interface is a text only window set into a Graphical User Interface (or GUI).
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/2021-02-27_-_ffmpeg_version.gif" width="800">]
+---
+class: contentpage
+### **2. Command Line Interface (CLI)**
+ 
+A command is an instruction telling the computer how to act, like asking which FFmpeg version is installed  
+```BASH
+ffmpeg -version
+```
+
+A CLI has a command interpreter (or shell) running within it converting our typed command lines into a language the computer can understand  
+  
+As you type in a command (echo) with arguments ($SHELL) the shell interpreter reads and executes them  
+```BASH
+echo $SHELL
+```
+
+The CLI displays the command you type as well as the result of the command shown below
+```BASH
+/bin/bash
+```
+This example is asking the computer to print out which version of shell is being used by the CLI - eg Bash  
+---
+class: contentpage
+### **2. Command Line Interface (CLI)**
+
+**Why would you want to use the command line?**
+
+- To install open source software   
+
+- To use open source software projects that have limited or no graphical user interface  
+
+- To run CPU intensive processes in the background while still running day to day software  
+
+- To work remotely with servers or virtual machies over networks or in data centres  
+
+- To build automated processes and operate more efficiently 👀  
+
+---
+class: contentpage
+### **2.1 Linux and MacOS Terminal (Unix)**
+
+Macintosh and Linux have the same operating system (OS) - Unix. There are many different Linux OS and all are open source, whereas MacOS is proprietary software developed by Apple.
+
+`Command + Spacebar`  
+UNIX operating systems all use a CLI called Terminal. To launch the Terminal in MacOS press the command and spacebar keys together then type Terminal into the search bar and a CLI windows will immediately launch.  
+
+`Control + Alt + t`  
+To launch a Terminal CLI window in Linux OS press control, alt and the letter t at the same time.  
+
+```Bash
+chsh -s /bin/bash
+```
+If you've checked what shell you're using and you want to change to Bash use the `chsh` command with the `-s` shell flag, followed by the argument `/bin/bash/`.  
+
+To check what version of Bash you are running you can use this command (the latest stable version is 5.2.32):  
+
+```Bash
+bash --version
+```
+
+---
+class: contentpage
+### **2.2 Windows Terminal, Command Prompt or PowerShell**
+
+```Powershell
+cmd (Command Prompt)   Powershell   Windows Terminal
+```  
+To launch a CLI in Windows Console click `Start`, and in the search type the name of the CLI you want to use and hit enter. The CLI will launch.
+
+**Command Prompt (cmd or cmd.exe)**  
+ The default CLI for older Windows Systems but includes Windows 9x and Windows NT. Generally Command Prompt only has a small variety of tools available to it.
+
+**Powershell**  
+Powershell is an automated command-line shell and also has all the features & functionalities of CMD. It has many more tools available and more advanced abilities for automation.  
+
+**Windows Terminal**  
+Windows 10 launched the Windows Terminal in 2019, which provides a choice of interpreters including:  
+- `cmd.exe`  
+- `Powershell`  
+- `Windows Subsystem for Linux (WSL)`  
+
+[Comparison of Command Shells](https://en.wikipedia.org/wiki/Comparison_of_command_shells) provides excellent comparisons of all the shells in use.  
+---
+class: contentpage
+### **2.3 Unix tools on Windows**
+
+Window Subsystem for Linux (WSL) v1 is supported in Windows 10, 11 and Windows Server 2016, 2019 and 2022. It does not allow access to all Unix tools, only those 'emulated' by the environment.  
+
+WSL v2 allows installation of a full Linux distribution, eg Ubuntu, and so has all the same tools you'd find with a Linux OS. It is available in Windows 10 via the [Windows Insider Programme](https://learn.microsoft.com/en-us/shows/one-dev-minute/learn-how-to-install-wsl-2).  
+
+If you are working on a Windows machine that doesn't have access to WSL then you can install and run two projects that provide CLI tools with similar functionality:
+
+- [Cygwin](https://www.cygwin.com/) has a large collection of GNU and open source software tools that provide Unix like tools for Windows. It's compatible with x86_64 versions of Windows, from Windows 8.1 onward.
+
+- [GNU On Windows (GOW)](https://github.com/bmatzelle/gow/wiki) is billed as a lightweight alternative to Cygwin, it contains over 100 'extremely useful open source UNIX applications' compiled as native win32 binaries. The package is just 18 MB in size, so useful if you have limited spaece.
+
+---
+class: contentpage
+### **2.4 Useful commands and tools (Unix and Windows)**
+```Bash
+control + c
+```  
+Press the control button with the letter c to cancel any command that is currently executing  
+```Bash
+tab
+```
+Start typing a path of file anem and use the tab button to autocomplete (supported in some shells including Bash)  
+```Bash
+pwd (Unix) chdir (Windows)
+```  
+Prints the name of the parent working directory to console  
+```Bash
+ls (Unix) dir (Windows)
+```
+List the contents of the current directory you are in
+```Bash
+cd (Unix/Windows)
+```
+Change directory by entering the name of a directory or using two dots to navigate up a directory  
+---
+class: contentpage
+### **2.4 Useful commands and tools (Unix and Windows)**
+
+```Bash
+mkdir (Unix/Windows)
+```
+Create a new directory situated within the current parent directory 
+```Bash
+touch new_file.txt (Unix) type nul > new_file.txt (Windows)
+```  
+Create a `new_file.txt` situated with the current parent directory
+```Bash
+mv new_file.txt old_file.txt (Unix) move new_file.txt \path\new_file.txt (Windows)
+```
+Move a file or rename it by moving to a different name within the same path
+```Bash
+cp new_file.txt /path/new_file.txt (Unix) copy new_file.txt \path\new_file.txt (Windows)
+```
+Copy a file from one location to another relative or absolute path. You may be able to drag and drop a new folder location from your desktop to the CLI  
+```Bash
+clear (Unix) cls (Windows)
+```  
+Clear the screen of previous command executions  
+---
+class: contentpage
+### **2.4 Useful commands and tools (Unix)**
+
+```Bash
+cat new_file.txt
+```  
+Cat prints the contents of new_file.txt to the console  
+```Bash
+grep 'Search' new_file.txt
+```
+Grep searches a given input file printing to the console any lines that match the supplied pattern, eg 'Search'  
+```Bash
+head -10 new_file.txt
+```
+List the first ten lines only of the supplied file  
+```Bash
+tail -f script.log
+```
+Works like head, but using the `-f` flag prints each new line out as it is written to the log  
+```Bash
+rsync -avh /path_one/file.txt path_two/file.txt
+```  
+rsync is a powerful program that copies files to/from a remote host, or locally. It uses remote-update protocol that just updates differences between two sets of files with an efficient checksum-search algorithm.
+
+---
+class: contentpage
+### **2. Born Again SHell (Bash)**
+
+Intro to shell scripting
+---
+class: contentpage
+### **2.5 Special characters and comparisons**
+```Bash
+# Comments here
+```
+A comment can be added into a shell script anywhere, as long as it's prefixed with a hash symbol which tells the interpreter not to read the line beyond this symbol
+```Bash
+|
+```
+The pipe passes the output (standard output) of a previous command to the input of the next one  
+```Bash
+;
+```
+Allows you to concatenate two or more commands into one line  
+```Bash
+"string"
+```
+The double quotes ("String") preserves most of the special characters within from the interpreter.
+```bash
+'String' 
+```
+The single quotes ('String') preserves all special characters from the interpreter  
+---
+class: contentpage
+### **2.5 Special characters and comparisons**
+```Bash
+*
+```
+The wild card (asterisk). This character serves as a wild card for filename expansion when using commands such as 'find' or 'glob'. On its own it matches all filenames in a given directory.  
+```bash
+$
+```
+Used to prefix variables (a temporary storage of data like words, numbers) to indicate to the shell script the value that the variable holds  
+```Bash
+{}
+```
+Indicates a placeholder for text when used in a search command such as find.  
+```bash
+[] or [[]]
+``` 
+Tests are expressed between these square brackets. The double bracket is more flexible than the single bracket test. Single square brackets are also used for an array element (a large group of variables) 
+---
+class: contentpage
+### **2.5 Special characters and comparisons**
+```Bash
+>  &>  >>  &>>
+```
+Redirections are used to redirect the output of a script into a file. Single `>` will overwrite existing information in a file, but `>>` will append. `&>>` will redirect both the standard our and standard error, useful for logging script runs  
+```Bash
+&
+```
+Runs a job in the background when the command is followed by the ampersand symbol  
+```bash
+-   --
+```
+The single dash is an option prefix, and the double dash is used to prefix a long option 
+```bash
+
+``` 
+---
+class: contentpage
+### **2.6 Loops and conditional statements**
+
+---
+class: contentpage
+### **2.7 Shebang and script formation**
+---
+class: contentpage
+### **2.8 Running and testing code**
+
+---
+class: center, middle, titlepage
+### TUE01: *Intro to FFmpeg, FFprobe and FFplay*
+---
+class: contentpage
+### **Agenda 3**
+
+Introduction to FFmpeg  
+> 3.1 The basic command and defaults  
+> 3.2 Useful Audio Visual flags  
+> 3.3 Guides and help pages  
+> 3.4 The FFmpeg libraries  
+> 3.5 FFprobe  
+> 3.6 FFplay  
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
