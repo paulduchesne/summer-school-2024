@@ -21,7 +21,7 @@ class: contentpage
 
 
       
-1. Intro to Hashing (Paul)
+1. Intro to Hashing/Checksums (Paul)
 2. Streamhashing, whole file hashing, types of checksum algorithms. (Jo)
 3. Lossless framemd5 frame level checksums. (Jo)
 4. FFV1 checksums at slice level. (Jo)
@@ -31,9 +31,283 @@ class: contentpage
 8. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)
 
       
+
+
 ---
 class: contentpage
 
+### **1. Intro to Hashing/Checksums**
+
+Fixed width digital fingerprints
+
+Can be used for text, or binary data (files)
+
+"Paul Duchesne" -> ashdkas (md5)
+"\bsdu778978" -> asdhaskj (md5)
+
+Will return the same results every time, provided input is the same
+
+"Paul Duchesne" -> asdasd (md5)
+"Paul Duchesne" -> asdasd (md5)
+"Paul Duchesne" -> asdasd (md5)
+
+with most types of checksum any slight change will trigger a completey different hash
+
+"Paul Duchesne" -> asdasd (md5)
+"Paul Duchesne!" -> ewefef (md5)
+
+Not reversible, source cannot be generated from the hash, so used for password storage.
+
+"secret_password" -> asdewfwe (md5)
+
+Note on terminilogy, genrally "hashes" are used in the context of digital security and authentication and "checksums" for checking file fixity, but both use the same concept so are generally used interchangably.
+
+Digital archiving is that the former is mostly concerned with accidental breakage (file truncation) while net security is dealing with intentional malicious behaviour (hackers). This means archives generally are using what would be considered "out of date" hashing algoritms.
+
+Md5 which we have seen so far is pretty ubiqiouts for creating file hashes, it has been around since 1991 and is consdiered "good enough"
+
+what do we mean by this - our main consideration is "collisions", where two different sources generate the same hash. What are the odds!
+
+There are 340,282,366,920,938,463,463,374,607,431,768,211,456 possible MD5 hashes, sounds pretty good! But once we factor in "The Birdthay Paradox", the chance of collision is 50% for 18,446,744,073,709,551,616
+
+Birthday paradx tangent! https://pudding.cool/2018/04/birthday-paradox/
+
+Md5 is "good enough" for archives in that it is hard to think of a single archive holding that many files, but not good enough where fast modern computers could egnerate this many hashes if trying to hack your bank account.
+
+MD5 and SHA256 as kind of ended up being the de facto standard hashing algrothm for digital preservation tools, but they are quite slow if you need to process many many files.
+
+Modern hashing functions like xxhash promise around x60 faster processing speed.
+
+On macOS we can generate a hash by just typing "md5", on windows we can use 'certutil' ADD EXAMPLE
+
+
+
+
+
+
+---
+class: contentpage
+
+### **2. Streamhashing, whole file hashing, types of checksum algorithms**
+
+---
+class: contentpage
+
+### **3. Lossless framemd5 frame level checksums**
+
+---
+class: contentpage
+
+### **4. FFV1 checksums at slice level**
+
+---
+class: contentpage
+
+### **5. Python hashlib**
+
+As we saw before, we can generate hashes from the command line, but there are reasons we might want to use Python: as part of a more complex media processing script, or if we want to hassh a large directory of files and find where there are matches in a database.
+
+We could use subprocess, but Python also comes with an inbuilt library called `hashlib`.
+
+Example of hashing a string
+
+```python
+import hashlib
+source = "secret_password"
+result = hashlib.md5(source.encode()).hexdigest()
+print(result)
+```
+
+Example of hashing a file.
+
+```python
+import hashlib
+import pathlib
+
+filepath = pathlib.Path.cwd() / 'checksums.md'
+
+with open(filepath, 'rb') as file:  
+    file_content = file.read()  
+    result = hashlib.md5(file_content).hexdigest()  
+    print(result)
+```
+
+Exmample of hashing multiple files (TODO use film scan frames)
+
+```python
+import hashlib
+import pathlib
+
+for filepath in ['test.txt', 'test2.txt']:
+
+    with open(pathlib.Path.cwd() / filepath, 'rb') as file:  
+        file_content = file.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+        print(filepath, result)
+```
+
+Example of processing a whole directory (TODO use film scans)
+
+```python
+import hashlib
+import pathlib
+
+for filepath in pathlib.Path.cwd().iterdir():
+
+    with open(filepath, 'rb') as file:  
+        file_content = file.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+        print(filepath, result)
+```
+
+
+
+
+---
+class: contentpage
+
+### **6. Bagit for Python**
+
+BagIt is an open source, multiplatform solution developed by Library of Congress to give you common structures and tools to work with these concepts, and is typically used for collections of files.
+
+You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a conveniance method for fundamental digital archiving processes. 
+
+If you want to create a bag as a once off we can just use the python script provided by LOC:
+
+```sh
+bagit.py /directory/to/bag
+```
+
+If we want to do something more complex we will want to write Python code which uses their Python code, which can be used as a library.
+
+
+---
+class: tangentpage
+
+### **Tangent 1: installing external libraries.**
+
+Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!) so we have to install it ourselves.
+
+The easiest way to do this is via pip.
+
+```python
+import bagit
+```
+
+```sh
+pip freeze
+```
+
+```sh
+pip install bagit
+```
+
+```sh
+pip freeze
+```
+
+```python
+import bagit
+```
+
+Just be aware that we are now running other peoples code on our machines, there no 100% that they have not programmed it to do something we do not want them to do.
+From a security perspective worth considering installing libraries which either have a lot of "stars" on GitHub, or are from people or organisations we trust (like Library of Congress).
+
+
+---
+class: tangentpage
+
+### **Tangent 2: managing requirements.**
+
+Now that we have started installing our own packages we have drifted away from the default experience of a fresh Python install.
+
+We might have a project which require twenty external libaries, and we want other people to know about these and to be able to install them themselves.
+
+We can track these in a `requirements.txt` file.
+
+```
+example
+```
+
+This way we can install all of the required packages in one go, and specific versions.
+
+```
+pip install -r requirements.txt
+```
+
+
+---
+class: tangentpage
+
+### **Tangent 3: virtual enviroments.**
+
+Installing those libraries is in pursuit of creating the same enviroment, so that code which runs should behave the same.
+
+But we can have multiple projects which require different versions of the same library, for example Project 1 need library 2.5 but Project 2 needs library 3.4.
+
+Virtual enviroments let us manage the python libraries per project, which is pretty cool.
+
+
+```sh
+virtualenv venv -p 3.10
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+---
+class: contentpage
+
+### **6. Bagit for Python**
+
+Practical: BagIt for film scans
+
+Bagit security features
+
+
+---
+class: contentpage
+
+### **7. TAR wrapping with CLI 'tar' or Python 'tarfile'**
+
+Great, so we have our "bag", now what do we do with it?
+
+Generally speaking most archives would then "wrap the bag". 
+Many archives use TAR, which is a very old option (1979) and widely supported means of wrapping files for storage or transport.
+
+
+as you have probably many times, we can eaither create tars from the command line on a unix-machine (linux/mac) or using python (os agnostic)
+
+Python has an inbuilt `tarfile` library!
+
+Practical: TAR wrap bagit
+
+Practical: untar
+
+
+
+
+
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, visual similarity matching**
+
+perceuptuial hashing has a different purpose, and worth introducing as a concept
+while checksum hashing for file validation is ubiqisuot, hashing for content similarity is more unusal and only a few institutions are doing (eg?)
+
+do in Python?
+
+example similar strings return similar hashes
+
+example simialr images return similar hashes
+
+where would this be useful for an archive, similarity detection
+
+say someone gives you digital material, it is useful to be able to check if it is already in your collection, but any slight change precludes you from checking
+
+perceptual hashes allow to find where the is content overlap, even if the file itself is slightly different
 
 
 
