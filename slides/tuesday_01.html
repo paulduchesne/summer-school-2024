@@ -549,10 +549,10 @@ class: contentpage
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
 
 Introduction to FFmpeg  
-> 3.1 The libraries  
-> 3.2 The basic command  
+> 3.1 The FFmpeg libraries  
+> 3.2 The basic FFmpeg command  
 > 3.3 Useful audiovisual flags  
-> 3.4 Defaults    
+> 3.4 Encoding defaults    
 > 3.5 FFprobe and FFplay  
 > 3.6 GUIs, Guides and help pages    
 
@@ -577,7 +577,7 @@ class: contentpage
 ---
 
 class: contentpage
-### **3.1 The libraries**
+### **3.1 The FFmpeg libraries**
 
 - **libavutil**  
 A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
@@ -601,7 +601,7 @@ A library performing highly optimised image scaling and colour space / pixel for
 A library preforming optimised audio resampling, rematrixing and sample format conversions  
 ---
 class: contentpage
-### **3.2 The basic command**
+### **3.2 The basic FFmpeg command**
 
 This basic FFmpeg encoding command begins with calling the installed software `ffmpeg`. Following this you use the `-i` input flag followed by the path to your file.  Finally supply the path and filename of your new encoded file. If you have a file called `input.mov` this would convert it into an `mp4` version  
 ```bash
@@ -620,7 +620,7 @@ ffmpeg -i input.mkv -c:a copy output.mov
 The input.mkv video will be re-encoded to ProRes in the first command, and the audio will be unchanged in the second command. But what happens to their other streams?  
 ---
 class: contentpage
-### **3.3 Defaults**
+### **3.3 Encoding defaults**
 
 It's important to know that if you do not select codec parameters carefully that FFmpeg will fall back to its default codec settings which are determined by the extension of the output file, so our previous examples will have audio changed to aac, and video to H.264!  
 
@@ -672,37 +672,94 @@ If you want to try an FFmpeg command in a for or while loop, you will want to ad
 ```bash
 ffmpeg -nostdin -i input.mov...
 ```
-
 ---
 class: contentpage
-### **3.5 FFprobe & FFplay**
+### **3.4 Useful audiovisual flags**
+
+To run some experiments lets make a 10 second audiovisual file using FFmpeg lavfi filters as your inputs  
+```basg
+ffmpeg -f lavfi -i testsrc=size=1920x1080 -f lavfi -i "sine=frequency=1000:sample_rate=48000" -t 10 input.mov
+```
+You can trim video down to specific time code start and stops, and encode the output  
+```bash
+ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
+```
+You can export one thumbnails every frame between 1 and 2 seconds and save them as `png` files  
+```bash
+ffmpeg -i input.mov -vf select=`between(t,1,5)` -vsync 0 output_images%d.png 
+```
+Mute audio in a video file, between two time codes  
+```bash
+ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
+```
+Convert an image sequence, such as your DPX sequence into a lossy ProRes 4:4:4 MOV file with framerate 25 fps 
+```bash
+cd <dpx_folder>
+ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 -pix_fmt yuv444p10le -r 25 your_dpx_file.mov
+```
+---
+class: contentpage
+### **3.5 FFprobe**
 
 To extract metadata from a video file you can use FFprobe to retrieve it. This basic command will return your file's available technical metadata. The first gives you all the FFmpeg programme information but the second represses this information  
 ```bash
-ffprobe -i input.mov
+ffprobe input.mov
 ffprobe -hide_banner input.mov
 ```
-You can generate a much more specific command that allows you to just look at the file's video bitrate specifically   
+You can generate a much more specific command that allows you to just look at the file's video bitrate for example   
 ```bash
 ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 input.mov
 ```
-
+You can access lots of different data from your streams. To view all the metadata for a specific video stream (v:0 the first stream) you can use the -show_streams, -show_format flag, etc.    
+```bash
+-show_streams
+-show_format
+-show_packets
+-show_frames
+ffprobe -v error -select_streams v:0 -show_streams input.mov
+```
+---
+class: contentpage
+### **3.5 FFplay**
 
 When an FFmpeg command allows you to save a video, FFplay allows you to stream it to a GUI windows and view the output. This uses the FFmpeg lavfi filter which can generate visual and audio contents to create test files  
 ```bash
 ffmpeg -f lavfi -i testsrc=size=1024x576 -t 10 output.mov
 ffplay -f lavfi -i testsrc=size=1024x576
 ```
+You can play any file created by FFmpeg in FFplay, even when other players won't be able to. This is thanks FFplay using the same libraries used by FFmpeg to encode the file  
+```bash
+ffplay input.mov
+ffplay input.jpg
+ffplay input.wav
+```
+It is possible to use FFplay to preview video with overlaid filters that reveal certain information, like whether any of the pixels of the video are outside of broadcast safety levels  
+```bash
+ffplay -f lavfi "movie='input.mov', signalstats=out=brng:color=cyan[out]"
+```
+
+Some of these examples are from the amazing audiovisual preservation resource [FFmprovisor](https://amiaopensource.github.io/ffmprovisr/) from The Association of Moving Image Archivists. 
 ---
 class: contentpage
 ### **3.6 GUIs, Guides and help pages**
 
-[Reading FFmpeg logs](https://www.youtube.com/watch?v=15ZUnR3Nx1k) by Ashley Blewer at No Time To Wait! 4 
-
-To find out more about FFmpeg look no further than their own manual (q to exit), help pages and guides  
+To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
 ```bash
 man ffmpeg
+ffmpeg -h (long / full)
+ffmpeg -version
+ffmpeg -codecs
+ffmpeg -formats
+ffmpeg -muxers
+ffmpeg -demuxers
+ffmpeg -devices
+ffmpeg -encoders
+ffmpeg -decoders
+ffmpeg -filters
 ```
+
+
+[Reading FFmpeg logs](https://www.youtube.com/watch?v=15ZUnR3Nx1k) by Ashley Blewer at No Time To Wait! 4 
 ---
 
 
