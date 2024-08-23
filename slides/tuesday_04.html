@@ -36,52 +36,149 @@ class: contentpage
 ---
 class: contentpage
 
-### **1. Intro to Hashing/Checksums**
+### **1. Intro to Checksums**
 
-Fixed width digital fingerprints
+Checksums are "fixed width" (ie always the same length) digital fingerprints.
 
-Can be used for text, or binary data (files)
+They can be generated for text or files!
 
-"Paul Duchesne" -> ashdkas (md5)
-"\bsdu778978" -> asdhaskj (md5)
+MD5 for the string "Paul Duchesne"!
 
-Will return the same results every time, provided input is the same
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne" -> asdasd (md5)
+MD5 for a jpg image file!
 
-with most types of checksum any slight change will trigger a completey different hash
+```sh
+md5sum test.jpg
+4a4d8a9873aa2194c658803c4c67744e
+```
 
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne!" -> ewefef (md5)
+TODO equivalent commands on different OSs
+TODO also replace all the examples with macOS syntax
 
-Not reversible, source cannot be generated from the hash, so used for password storage.
+---
+class: contentpage
 
-"secret_password" -> asdewfwe (md5)
+### **1. Intro to Checksums**
 
-Note on terminilogy, genrally "hashes" are used in the context of digital security and authentication and "checksums" for checking file fixity, but both use the same concept so are generally used interchangably.
+An important concept of checksums is that they are predictable, with the same input they will produce the same output every time.
 
-Digital archiving is that the former is mostly concerned with accidental breakage (file truncation) while net security is dealing with intentional malicious behaviour (hackers). This means archives generally are using what would be considered "out of date" hashing algoritms.
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-Md5 which we have seen so far is pretty ubiqiouts for creating file hashes, it has been around since 1991 and is consdiered "good enough"
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-what do we mean by this - our main consideration is "collisions", where two different sources generate the same hash. What are the odds!
-
-There are 340,282,366,920,938,463,463,374,607,431,768,211,456 possible MD5 hashes, sounds pretty good! But once we factor in "The Birdthay Paradox", the chance of collision is 50% for 18,446,744,073,709,551,616
-
-Birthday paradx tangent! https://pudding.cool/2018/04/birthday-paradox/
-
-Md5 is "good enough" for archives in that it is hard to think of a single archive holding that many files, but not good enough where fast modern computers could egnerate this many hashes if trying to hack your bank account.
-
-MD5 and SHA256 as kind of ended up being the de facto standard hashing algrothm for digital preservation tools, but they are quite slow if you need to process many many files.
-
-Modern hashing functions like xxhash promise around x60 faster processing speed.
-
-On macOS we can generate a hash by just typing "md5", on windows we can use 'certutil' ADD EXAMPLE
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
 
+---
+class: contentpage
 
+### **1. Intro to Checksums**
+
+However, any slight change in the input will produce a different checksum, generally completely different.
+
+
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
+
+```sh
+echo -n "paulduchesne" | md5sum
+9a464f6d1e4bf783d7c5c48143c92d87
+```
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
+
+```sh
+echo -n "paulduchesne" | md5sum
+9a464f6d1e4bf783d7c5c48143c92d87
+```
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+Checksums are not reversible, you cannot recreate the source from the checksum, but you can verify if the source is unchanged.
+
+These charactersitics mean that this concept is used extensively in net and digital sceurity.
+
+Example process: a user to a system creates a password, the system stores the checksum.
+
+```sh
+echo -n "my_cool_password" | md5sum
+a873aee995ffc1fe2634e63560d3aabb
+```
+
+When the user wants to log in again they will re-enter their password which should generate the same checksum, they can log in!
+
+If a hacker steals the checksums (the only element the website has retained) they do not automatically know what the source password was, so they can't login.
+
+If the checksum algorithm (so far we have been using MD5) is not complex enough, the hacker may start trying to find a password which matches the checksum (eg a list of common passwords) or even "brute force" (eg "a", "aa", "aaa", "aaaa" etc etc etc)
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+
+Note on terminilogy, genrally "hashes" are used in the context of digital security and authentication and "checksums" for checking file fixity, but both use the same concept and are generally used interchangably.
+
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+One key difference between the use for security and digital archiving is that digital archiving is mostly concerned with accidental breakage (file truncation) while net security is dealing with intentional malicious behaviour (hackers). This means archives generally are using what would be considered "out of date" hashing algoritms.
+
+MD5 which we have seen so far is pretty ubiqiouts in the digital preservation community for creating file hashes, it has been around since 1991 and is consdiered "good enough"
+
+What we mean by "good enough" - our main concern here is "collisions", where two different sources generate the same hash. What are the odds!
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+
+
+There are 340,282,366,920,938,463,463,374,607,431,768,211,456 possible MD5 hashes, sounds pretty good! But once we factor in "The Birdthay Paradox", the chance of a single collision is 50% for 18,446,744,073,709,551,616
+
+Birthday paradx tangent: https://pudding.cool/2018/04/birthday-paradox/
+
+Md5 is "good enough" for archives in that it is currentlt hard to think of a single archive holding that many files for it to be a concern.
+
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+One downside of MD5 however is that it can be quite slow to hash files, which can add up if you are running checksums across an entire system.
+
+Modern hashing functions like xxhash claim to be around 50 times faster.
+
+https://github.com/Cyan4973/xxHash
 
 
 
@@ -105,18 +202,23 @@ class: contentpage
 
 ### **5. Python hashlib**
 
-As we saw before, we can generate hashes from the command line, but there are reasons we might want to use Python: as part of a more complex media processing script, or if we want to hassh a large directory of files and find where there are matches in a database.
+As we saw before, we can generate hashes from the command line, but there are reasons we might want to do this in Python. For example, as part of a more complex media processing script, or if we want to hash a large directory of files and find where there are matches in a database.
 
-We could use subprocess, but Python also comes with an inbuilt library called `hashlib`.
+We could use subprocess, but Python already comes with a handy inbuilt library called `hashlib`.
 
 Example of hashing a string
 
 ```python
 import hashlib
-source = "secret_password"
+source = "Paul Duchesne"
 result = hashlib.md5(source.encode()).hexdigest()
 print(result)
 ```
+
+---
+class: contentpage
+
+### **5. Python hashlib**
 
 Example of hashing a file.
 
@@ -124,15 +226,54 @@ Example of hashing a file.
 import hashlib
 import pathlib
 
-filepath = pathlib.Path.cwd() / 'checksums.md'
+filepath = pathlib.Path.cwd() / 'test.jpg'
 
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
     result = hashlib.md5(file_content).hexdigest()  
-    print(result)
+    print(filepath, result)
 ```
 
+---
+class: contentpage
+
+### **5. Python hashlib**
+
+Example of hashing two files and checking if they match.
+
+Note we have condencsed our code slightly, but it is still doing exactly the same thing.
+
+TODO adapt to use film scan frames
+
+```python
+import hashlib
+import pathlib
+
+filepath1 = pathlib.Path.cwd() / 'test.jpg'
+with open(pathlib.Path.cwd() / 'test.jpg', 'rb') as file:    
+    result1 = hashlib.md5(file.read()).hexdigest()  
+    print(filepath, result1)
+
+
+filepath2 = pathlib.Path.cwd() / 'test.py'
+with open(filepath2, 'rb') as file:    
+    result2 = hashlib.md5(file.read()).hexdigest()  
+
+
+
+    print(filepath, result2)
+
+print(result1 == result2)
+```
+okay but say we want to hash an entire directory, we don't want to have to create idnividual statement for each file.
+
+---
+class: contentpage
+
+### **5. Python hashlib**
+
 Exmample of hashing multiple files (TODO use film scan frames)
+with a for loop, 
 
 ```python
 import hashlib
@@ -145,6 +286,14 @@ for filepath in ['test.txt', 'test2.txt']:
         result = hashlib.md5(file_content).hexdigest()  
         print(filepath, result)
 ```
+
+Okay better, but we don't want to have to write out all the file names!
+
+
+---
+class: contentpage
+
+### **5. Python hashlib**
 
 Example of processing a whole directory (TODO use film scans)
 
@@ -168,17 +317,17 @@ class: contentpage
 
 ### **6. Bagit for Python**
 
-BagIt is an open source, multiplatform solution developed by Library of Congress to give you common structures and tools to work with these concepts, and is typically used for collections of files.
+BagIt is an open source, multiplatform solution developed by Library of Congress to provide structures and tools typically to verify that collections of files remain unchanged.
 
 You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a conveniance method for fundamental digital archiving processes. 
 
-If you want to create a bag as a once off we can just use the python script provided by LOC:
+If you want to create a "bag" as a one-off we can just use the Python script provided by LOC:
 
 ```sh
 bagit.py /directory/to/bag
 ```
 
-If we want to do something more complex we will want to write Python code which uses their Python code, which can be used as a library.
+If we want to do something more complex we will want to write Python code which uses their Python code ourselves, which can be imported as a library.
 
 
 ---
@@ -186,29 +335,37 @@ class: tangentpage
 
 ### **Tangent 1: installing external libraries.**
 
-Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!) so we have to install it ourselves.
+Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!), so we have to install it ourselves.
 
 The easiest way to do this is via pip.
+
+
 
 ```python
 import bagit
 ```
 
-```sh
-pip freeze
-```
+If we don't have the 'bagit' library installed we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
+
+We can check out libraries using `pip freeze` to verify that this is true!
+
+Installing
 
 ```sh
 pip install bagit
 ```
 
-```sh
-pip freeze
-```
+TODO also not that we can specify a version
 
-```python
-import bagit
-```
+import bagit should work.
+
+
+
+---
+class: tangentpage
+
+### **Tangent 1: installing external libraries.**
+
 
 Just be aware that we are now running other peoples code on our machines, there no 100% that they have not programmed it to do something we do not want them to do.
 From a security perspective worth considering installing libraries which either have a lot of "stars" on GitHub, or are from people or organisations we trust (like Library of Congress).
