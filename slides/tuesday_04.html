@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -34,49 +29,149 @@ class: contentpage
 
 ---
 class: contentpage
-### **1. Intro to Hashing/Checksums**
+### **1. Intro to Checksums**
 
-Fixed width digital fingerprints
+Checksums are "fixed width" (ie always the same length) digital fingerprints.
 
-Can be used for text, or binary data (files)
+They can be generated from text or files!
 
-"Paul Duchesne" -> ashdkas (md5)
-"\bsdu778978" -> asdhaskj (md5)
+MD5 for the string "Paul Duchesne"!
 
-Will return the same results every time, provided input is the same
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne" -> asdasd (md5)
+MD5 for a jpg image file!
 
-with most types of checksum any slight change will trigger a completey different hash
+```sh
+md5sum test.jpg
+4a4d8a9873aa2194c658803c4c67744e
+```
 
-"Paul Duchesne" -> asdasd (md5)
-"Paul Duchesne!" -> ewefef (md5)
+TODO equivalent commands on different OSs    
+TODO also replace all the examples with macOS syntax
 
-Not reversible, source cannot be generated from the hash, so used for password storage.
+---
+class: contentpage
 
-"secret_password" -> asdewfwe (md5)
+### **1. Intro to Checksums**
 
-Note on terminilogy, genrally "hashes" are used in the context of digital security and authentication and "checksums" for checking file fixity, but both use the same concept so are generally used interchangably.
+An important concept of checksums is that they are predictable, with the same input they will produce the same output every time.
 
-Digital archiving is that the former is mostly concerned with accidental breakage (file truncation) while net security is dealing with intentional malicious behaviour (hackers). This means archives generally are using what would be considered "out of date" hashing algoritms.
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-Md5 which we have seen so far is pretty ubiqiouts for creating file hashes, it has been around since 1991 and is consdiered "good enough"
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-what do we mean by this - our main consideration is "collisions", where two different sources generate the same hash. What are the odds!
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-There are 340,282,366,920,938,463,463,374,607,431,768,211,456 possible MD5 hashes, sounds pretty good! But once we factor in "The Birdthay Paradox", the chance of collision is 50% for 18,446,744,073,709,551,616
 
-Birthday paradx tangent! https://pudding.cool/2018/04/birthday-paradox/
+---
+class: contentpage
 
-Md5 is "good enough" for archives in that it is hard to think of a single archive holding that many files, but not good enough where fast modern computers could egnerate this many hashes if trying to hack your bank account.
+### **1. Intro to Checksums**
 
-MD5 and SHA256 as kind of ended up being the de facto standard hashing algrothm for digital preservation tools, but they are quite slow if you need to process many many files.
+However, any slight change in the input will, using the most popular checksumming types found in digital archiving, produce a completely different output.
 
-Modern hashing functions like xxhash promise around x60 faster processing speed.
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
 
-On macOS we can generate a hash by just typing "md5", on windows we can use 'certutil' ADD EXAMPLE
+```sh
+echo -n "paulduchesne" | md5sum
+9a464f6d1e4bf783d7c5c48143c92d87
+```
+```sh
+echo -n "Paul Duchesne" | md5sum
+0396b497d1949e210d09692607734e97
+```
+
+```sh
+echo -n "paulduchesne" | md5sum
+9a464f6d1e4bf783d7c5c48143c92d87
+```
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+Checksums are not reversible, you cannot recreate the source from the checksum, but you can verify if the source is unchanged.
+
+These characteristics mean this concept is used extensively in net and digital security.
+
+Example process: a user to a system (eg a website, database) creates a password, the system only stores the checksum.
+
+```sh
+echo -n "my_cool_password" | md5sum
+a873aee995ffc1fe2634e63560d3aabb
+```
+
+When the user wants to log in again, they will re-enter their password which should generate the same checksum... result: they can log in!
+
+If a hacker steals the checksums (the only element the system has retained) they do not automatically know what the source password was, so they can't login.
+
+If the checksum algorithm (so far we have been using MD5) is not complex enough, the hacker may start trying to find a password which matches the checksum (eg a list of common passwords) or even "brute force" (eg "a", "aa", "aaa", "aaaa" etc etc etc) until they get a password which matches the checksum.
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+
+Note on terminology, generally "hashes" are used in the context of digital security/authentication and "checksums" for checking file fixity, but both use the same concept and are generally used interchangeably.
+
+"File fixity" meaning that the file is fixed, unchanged, which is obviously a key concern for digital archives.
+
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+One key difference between the use of these technologies for security and for digital archiving is that digital archiving is mostly concerned with accidental breakage (file truncation) while net security is dealing with intentional malicious behaviour (hackers). This means archives generally are using what would be considered "out of date" hashing algorithms.
+
+MD5, which we have seen so far, is pretty ubiquitous in the digital preservation community. It has been around since 1991 and is considered "good enough"
+
+
+
+What we mean by "good enough" - our main concern here are "collisions", where two different sources generate the same hash. What are the odds!
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+
+
+There are `340,282,366,920,938,463,463,374,607,431,768,211,456` possible MD5 hashes, sounds pretty good! 
+
+But once we factor in "The Birthday Paradox", the chance of a single collision is 50% every `18,446,744,073,709,551,616` hashes.
+
+Birthday Paradox tangent: https://pudding.cool/2018/04/birthday-paradox/
+
+MD5 is "good enough" for archives, in that it there are currently no AV archives holding this many files (not even close).
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
+A downside of using MD5 is that it can be quite slow to hash files, which can add up if you are generating checksums across an entire system.
 
 
 ---
@@ -164,7 +259,6 @@ ffmpeg -i file.ext -map 0:a:0 -f sha256 -
 FFmpeg has the `streamhash` muxer that will export a checksum for each stream, example below. The map flag tells FFmpeg to generate checksums for every stream    
 ```sh
 ffmpeg -i file.ext -map 0 -c copy -f streamhash -hash md5 -
-
 0,a,MD5=acec0c1c506a2c4d6973e7d48a88e31d=N/A speed=N/A    
 1,a,MD5=e97dea762ad0cebef700ef1ab969cdc0
 2,v,MD5=e6413a0e4067a9817c2e35dd8870629a
@@ -233,18 +327,25 @@ class: contentpage
 
 ### **3. Python hashlib**
 
-As we saw before, we can generate hashes from the command line, but there are reasons we might want to use Python: as part of a more complex media processing script, or if we want to hassh a large directory of files and find where there are matches in a database.
+As we saw before, we can generate hashes directly from the command line, but there are reasons we might want to do this in Python. For example, as part of a more complex media processing script, or if we want to hash a large directory of files and find where there are matches in a database.
 
-We could use subprocess, but Python also comes with an inbuilt library called `hashlib`.
+We could use subprocess, but Python already comes with a handy inbuilt library called `hashlib`.
 
 Example of hashing a string
 
 ```python
 import hashlib
-source = "secret_password"
+source = "Paul Duchesne"
 result = hashlib.md5(source.encode()).hexdigest()
 print(result)
 ```
+
+TODO make note that "encode" is transforming from text to binary.
+
+---
+class: contentpage
+
+### **5. Python hashlib**
 
 Example of hashing a file.
 
@@ -252,15 +353,49 @@ Example of hashing a file.
 import hashlib
 import pathlib
 
-filepath = pathlib.Path.cwd() / 'checksums.md'
+filepath = pathlib.Path.cwd() / 'test.jpg'
 
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
     result = hashlib.md5(file_content).hexdigest()  
-    print(result)
+    print(filepath, result)
 ```
 
-Exmample of hashing multiple files (TODO use film scan frames)
+---
+class: contentpage
+
+### **5. Python hashlib**
+
+Example of hashing two files, and checking if they match.
+
+Note, we have condensed our code slightly, but it is doing exactly the same thing.
+
+TODO adapt to use film scan frames
+
+```python
+import hashlib
+import pathlib
+
+filepath1 = pathlib.Path.cwd() / 'test.jpg'
+with open(pathlib.Path.cwd() / 'test.jpg', 'rb') as file:    
+    result1 = hashlib.md5(file.read()).hexdigest()  
+    print(filepath1, result1)
+
+filepath2 = pathlib.Path.cwd() / 'test.py'
+with open(filepath2, 'rb') as file:    
+    result2 = hashlib.md5(file.read()).hexdigest()  
+    print(filepath2, result2)
+
+print(result1 == result2)
+```
+Okay, but say we want to hash the files in an entire directory! We don't want to have to create individual statement for each file.
+
+---
+class: contentpage
+
+### **5. Python hashlib**
+
+Exmample of hashing multiple files (TODO use film scan frames) in a "for loop", 
 
 ```python
 import hashlib
@@ -269,10 +404,17 @@ import pathlib
 for filepath in ['test.txt', 'test2.txt']:
 
     with open(pathlib.Path.cwd() / filepath, 'rb') as file:  
-        file_content = file.read()  
-        result = hashlib.md5(file_content).hexdigest()  
+        result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
 ```
+
+Okay, better, but we don't want to have to write out all the file names!
+
+
+---
+class: contentpage
+
+### **5. Python hashlib**
 
 Example of processing a whole directory (TODO use film scans)
 
@@ -283,12 +425,9 @@ import pathlib
 for filepath in pathlib.Path.cwd().iterdir():
 
     with open(filepath, 'rb') as file:  
-        file_content = file.read()  
-        result = hashlib.md5(file_content).hexdigest()  
+        result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
 ```
-
-
 
 
 ---
@@ -296,17 +435,17 @@ class: contentpage
 
 ### **4. Bagit for Python**
 
-BagIt is an open source, multiplatform solution developed by Library of Congress to give you common structures and tools to work with these concepts, and is typically used for collections of files.
+BagIt is an opensource project developed by Library of Congress to provide structures and tools, typically used to verify that collections of files have remained unchanged.
 
 You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a conveniance method for fundamental digital archiving processes. 
 
-If you want to create a bag as a once off we can just use the python script provided by LOC:
+If you want to create a "bag" as a one-off we can just use the Python script provided by LOC:
 
 ```sh
 bagit.py /directory/to/bag
 ```
 
-If we want to do something more complex we will want to write Python code which uses their Python code, which can be used as a library.
+If we want to do something more complex we will want to write Python code which uses their Python code ourselves, which can be imported as a library.
 
 
 ---
@@ -314,50 +453,58 @@ class: tangentpage
 
 ### **Tangent 1: installing external libraries.**
 
-Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!) so we have to install it ourselves.
+Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!), so we have to install it ourselves.
 
-The easiest way to do this is via pip.
 
 ```python
 import bagit
 ```
 
-```sh
-pip freeze
-```
+As we don't have the 'bagit' library installed we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
+
+We can check out libraries using `pip freeze` to verify that this is true!
+
+The easiest way to install is with pip, which is the recommended Python library manager.
 
 ```sh
 pip install bagit
 ```
 
+Note that we can also install a specific version if we so choose. This can be useful if there are changes to the library and we want to be confident everyone is running the same thing.
+
 ```sh
-pip freeze
+pip install bagit==1.8.1
 ```
 
-```python
-import bagit
-```
+`import bagit` should now work.
 
-Just be aware that we are now running other peoples code on our machines, there no 100% that they have not programmed it to do something we do not want them to do.
-From a security perspective worth considering installing libraries which either have a lot of "stars" on GitHub, or are from people or organisations we trust (like Library of Congress).
 
+
+---
+class: tangentpage
+
+### **Tangent 1: installing external libraries.**
+
+Just be aware that we are now running other people's code on our machines, there is no 100% guarantee that they have not programmed the library to behave in undesirable ways.
+
+From a security perspective, worth considering installing libraries which either have a lot of "stars" on GitHub, or are from people or organisations we trust (like Library of Congress).
 
 ---
 class: tangentpage
 
 ### **Tangent 2: managing requirements.**
 
-Now that we have started installing our own packages we have drifted away from the default experience of a fresh Python install.
+Now that we have started installing our own libraries we have drifted away from the default experience of a fresh Python install.
 
-We might have a project which require twenty external libaries, and we want other people to know about these and to be able to install them themselves.
+We might have a project which requires twenty external libaries, and we want other people to know about these and to be able to install them all themselves easily.
 
-We can track these in a `requirements.txt` file.
+The normal way to do this is to keep track of these lirbaries in a `requirements.txt` file in our project.
 
 ```
-example
+bagit==1.8.1
 ```
 
-This way we can install all of the required packages in one go, and specific versions.
+This way we can install all of the required packages in one go, and with specific versions.
 
 ```
 pip install -r requirements.txt
@@ -369,9 +516,9 @@ class: tangentpage
 
 ### **Tangent 3: virtual enviroments.**
 
-Installing those libraries is in pursuit of creating the same enviroment, so that code which runs should behave the same.
+Installing those libraries is in pursuit of creating the same enviroment, so that code which runs should behave the same consistently.
 
-But we can have multiple projects which require different versions of the same library, for example Project 1 need library 2.5 but Project 2 needs library 3.4.
+But we can have multiple projects which require different versions of the same library, for example Project 1 needs `library 2.5` but Project 2 needs `library 3.4`.
 
 Virtual enviroments let us manage the python libraries per project, which is pretty cool.
 
@@ -388,6 +535,8 @@ class: contentpage
 
 ### **6. Bagit for Python**
 
+Walkthrough of bagit for Python.
+
 Practical: BagIt for film scans
 
 Bagit security features
@@ -398,15 +547,20 @@ class: contentpage
 
 ### **5. TAR wrapping with CLI 'tar' or Python 'tarfile'**
 
-Great, so we have our "bag", now what do we do with it?
+Great, so we now have our "bag", but what do we do with it?
 
-Generally speaking most archives would then "wrap the bag". 
-Many archives use TAR, which is a very old option (1979) and widely supported means of wrapping files for storage or transport.
+Generally speaking most archives will then "wrap the bag". 
+TAR is a very old option (back to 1979) and widely supported means of wrapping files for storage or transport.
 
 
-as you have probably many times, we can eaither create tars from the command line on a unix-machine (linux/mac) or using python (os agnostic)
+As you have now heard many times, we can eaither create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
 
 Python has an inbuilt `tarfile` library!
+
+
+
+
+
 
 Practical: TAR wrap bagit
 

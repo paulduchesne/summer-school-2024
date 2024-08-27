@@ -84,11 +84,13 @@ class: contentpage
 
 File metadata (metadata literally meaning "data about data") are all the attributes of a file which are not the file themselves.
 
-These can be things like the filename, the creation and modification timestamp. 
+These can be things like the filename, the creation and modification timestamps. 
 
-For audiovisual archiving this can be significantly more involved as certain formats (e.g. DPX) allow the capture of a full range of information about the file which we may wish to view, validate, or edit.
+For audiovisual archiving this can get significantly more involved as certain formats (e.g. DPX) allow the capture of a full range of information about the file which we may wish to view, validate, or edit.
 
 Practical: Open tiny RGB DPX in a hex editor.
+
+TODO what even is a file?
 
 TODO, what is the difference between text and binary data
 a text file can be opened on any computer and is stored in a manner which is decodable - ASCII editor
@@ -100,7 +102,7 @@ binary data is a file which requires a specific application to open
 class: contentpage
 ### **3. embARC**
 
-embARC is from the Library of Congress/FADGI and is the result of concentrated work around embedded metadata in DPX files.
+embARC is from the Library of Congress/FADGI and is the result of concentrated work around working with embedded metadata in DPX files.
 
 https://www.digitizationguidelines.gov/guidelines/digitize-DPXembedding.html
 
@@ -123,6 +125,7 @@ or exported as JSON, which is an explicitly machine readable format for data sto
 ```sh
 ffprobe json example
 ```
+
 
 
 ---
