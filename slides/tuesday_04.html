@@ -19,23 +19,21 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-
-      
 1. Intro to Hashing/Checksums (Paul)
-2. Streamhashing, whole file hashing, types of checksum algorithms. (Jo)
-3. Lossless framemd5 frame level checksums. (Jo)
-4. FFV1 checksums at slice level. (Jo)
-5. Python hashlib. (Paul)
-6. Perceptual hashing, visual similarity matching. (Paul)
-7. Bagit for Python. (Paul)
-8. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)
-
-      
-
+2. CLI checksum creation  
+2.1 Whole file hashing  
+2.2 FFmpeg file hashing  
+2.3 FFmpeg stream hashing   
+2.4 FFmpeg framehash  
+2.5 FFmpeg FrameMD5   
+2.6 FFV1 slice checksums  
+3. Python hashlib. (Paul)  
+4. Perceptual hashing, visual similarity matching. (Paul)  
+5. Bagit for Python. (Paul)  
+6. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)  
 
 ---
 class: contentpage
-
 ### **1. Intro to Hashing/Checksums**
 
 Fixed width digital fingerprints
@@ -81,29 +79,159 @@ Modern hashing functions like xxhash promise around x60 faster processing speed.
 On macOS we can generate a hash by just typing "md5", on windows we can use 'certutil' ADD EXAMPLE
 
 
+---
+class: contentpage
+### **2. CLI checksum creation**
 
+You can create many cyrtographic and non-cryptograpic checksum hashes using the CLI.  
 
+Non-cryptographic hashes generally are faster to compute and are more likely used for error checking and integrity verification. These include:  
+- CRC-32, Adler-32, xxHash  
 
+Cryptographic hashes can take longer to compute and are generally used for security like digital signatures and password storage. Generally they have high collision resistance, though not in the case of MD5s. These include:  
+- MD5 (though now considered weak), SHA-256 and BLAKE2  
+
+For digital preservation you find checksums are used for:  
+- File integrity verification  
+- Deduplication of assets  
+- Fixity checking over time  
+
+---
+class: contentpage
+### **2.1 Whole file hashing**
+
+Linux and Unix toolkits come with some checksum creation tools as standard:  
+
+- SHA: sha1sum, sha224sum, sha256sum, sha384sum, sha512sum  (Linux)
+- BLAKE2: b2sum  (Linux)  
+- SHA: shasum  (MacOS / Linux)
+- CRC-32: cksum  (MacOS / Linux)
+- MD5: md5 (MacOS / Linux)
+- MULTIPLE: certutil (Windows Command Prompt)
+- MULTIPLE: Get-FileHash (Windows Powershell)
+
+```sh
+sha256 file.ext
+b2sum file.ext
+shasum -a 256 file.ext
+cksum -o 3 file.ext
+md5 file.ext
+certutil -hashfile file.ext MD5 / SHA1 / SHA256
+Get-FileHash -Path file.ext -Algorithm MD5 / SHA1 / SHA256
+```  
+
+Alternatives that can be installed include:  
+- Support multipe checksum types: openssl, rhash, 7-Zip
+- xxHash: xxh32sum, xxh64sum, xxh128sum
+---
+class: contentpage
+### **2.2 FFmpeg file hashing**
+
+You can also use FFmpeg to generate a single file checksum. However, they are not whole file as they don't include any data except stream data. This will make the results different to the whole file checksums.  
+
+This command will create a SHA256 file checksum for the image and audio streams, and output it to a separate file called `out.sha256`, example follows:  
+```sh
+ffmpeg -i file.mov -f hash out.sha256
+SHA256=ce61d513ad70393e2ec0efc297b536cb4a90000898ea60e3fef98580e5b723f3
+```
+
+FFmpeg supports many checksum algorithms, but it defaults to SHA256 if no algorithm is supplied.  
+Supported algorithms:  
+- MD5, murmur3, RIPEMD128, RIPEMD160, RIPEMD320, SHA160, SHA224, SHA256
+- SHA512/224, SHA512/256, SHA384, SHA512, CRC32 and adler32
+
+Practise: Make checksums using FFmpeg hash algorithms using the `-hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
+```sh
+ffmpeg -i file.mov -f hash -hash MD5 -
+ffmpeg -i file.mov -f hash -hash CRC32 out.crc32
+```
+---
+class: contentpage
+### **2.3 FFmpeg stream hashing**
+
+Many archives retain checksums for a file at stream level, so instead of a single whole file checksum they generate one for each AV stream. FFmpeg does not support checksum creation for whole file, only the streams collectively or individually.    
+
+FFmpeg can generate a single stream checksum by using `stream copy` to read, not decode the stream  
+```sh
+ffmpeg -i file.ext -map 0:v -c copy -f crc32 -
+```
+
+This command will decode the first audio stream to generate an checksum and print to the CLI  
+```sh
+ffmpeg -i file.ext -map 0:a:0 -f sha256 -
+```
+
+FFmpeg has the `streamhash` muxer that will export a checksum for each stream, example below. The map flag tells FFmpeg to generate checksums for every stream    
+```sh
+ffmpeg -i file.ext -map 0 -c copy -f streamhash -hash md5 -
+
+0,a,MD5=acec0c1c506a2c4d6973e7d48a88e31d=N/A speed=N/A    
+1,a,MD5=e97dea762ad0cebef700ef1ab969cdc0
+2,v,MD5=e6413a0e4067a9817c2e35dd8870629a
+3,d,MD5=a5c7909533674e7b81a0e10b0a9eff4c
+```
+---
+class: contentpage
+### **2.4 FFmpeg framehash**
+
+Framehash from FFmpeg will print a list of all stream checksums to the CLI, or to a file  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 18.34.47.png" width="800">]
+
+Framehash computes a cryptographic hash (default SHA256) for each audio and video packet. Audio is converted to signed 16-bit raw audio, and video is converted to raw video before the hash is computed. Other hash algoritms are supported, and is used for packet-by-packet equality checks  
+```sh
+ffmpeg -i file.ext -map 0 -f framehash -
+```
+As with FFmpeg stream hashing, if you add `-c copy` to the command it causes the framehash to generate checksums of the data as it's stored, and does not decode it.  
+---
+class: contentpage
+### **2.5 FFmpeg framemd5**
+
+FrameMD5 from FFmpeg provides frame level equality checks for your video and audio streams. To be used for immediate file assessment following lossless transcoding, and not recommended for long-term storage.  
+
+If you're making a lossless transcode then you would create a FrameMD5 of the source file, and another of the transcode. This command will create a FrameMD5 manifest for the first video stream and the first two audio streams of each file:  
+```sh
+ffmpeg -i file.mov -f framemd5 mov.framemd5
+ffmpeg -i file.mkv -f framemd5 mkv.framemd5
+```
+You can compare them to ensure they are identical, using diff (Unix) or fc (Windows).  
+
+```sh
+diff mov.framemd5 mkv.framemd5
+fc mov.framemd5 mkv.framemd5
+```
+If there is a difference between the two documents then the CLI will print out those differences  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 20.36.16.png" width="1000">]
+
+---
+class: contentpage
+### **2.5 FFmpeg framemd5**
+
+Software `Meld` allow comparison of FrameMD5s, highlighting where differences occur between the documents  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.42.10.png" width="1030">]
+
+FFmpeg also provide a FrameCRC tool which is similar to FrameMD5 
+---
+class: contentpage
+### **2.6 FFV1 slice checksums**
+
+The FFV1 codec has embedded CRC32 checksums for every slice within each frame on the timeline. The max slice count is visible in the file metadata, generally video slices are 16 or 24 slices, but RAWcooked slices start at 64 slices per frame  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.25.41.png" width="450">]
+To perform a fixity check of the file you just need to decode the video with FFmpeg again, and to display any FFV1 CRC mismatches in the terminal window use a command like the example below
+
+```sh
+ffmpeg -report -i file.mkv -f null -
+```
+Failures in the FFV1 codec will show as SliceCRC mismatches along with time stamps for accurate pinpointing of the problem  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.35.58.png" width="1000">]
 
 ---
 class: contentpage
 
-### **2. Streamhashing, whole file hashing, types of checksum algorithms**
-
----
-class: contentpage
-
-### **3. Lossless framemd5 frame level checksums**
-
----
-class: contentpage
-
-### **4. FFV1 checksums at slice level**
-
----
-class: contentpage
-
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 As we saw before, we can generate hashes from the command line, but there are reasons we might want to use Python: as part of a more complex media processing script, or if we want to hassh a large directory of files and find where there are matches in a database.
 
@@ -166,7 +294,7 @@ for filepath in pathlib.Path.cwd().iterdir():
 ---
 class: contentpage
 
-### **6. Bagit for Python**
+### **4. Bagit for Python**
 
 BagIt is an open source, multiplatform solution developed by Library of Congress to give you common structures and tools to work with these concepts, and is typically used for collections of files.
 
@@ -268,7 +396,7 @@ Bagit security features
 ---
 class: contentpage
 
-### **7. TAR wrapping with CLI 'tar' or Python 'tarfile'**
+### **5. TAR wrapping with CLI 'tar' or Python 'tarfile'**
 
 Great, so we have our "bag", now what do we do with it?
 
@@ -292,7 +420,7 @@ Practical: untar
 ---
 class: contentpage
 
-### **8. Perceptual hashing, visual similarity matching**
+### **6. Perceptual hashing, visual similarity matching**
 
 perceuptuial hashing has a different purpose, and worth introducing as a concept
 while checksum hashing for file validation is ubiqisuot, hashing for content similarity is more unusal and only a few institutions are doing (eg?)
