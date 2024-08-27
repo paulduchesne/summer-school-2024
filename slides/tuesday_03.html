@@ -18,7 +18,8 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. RAWcook files (Jo)
+1. Intro to RAWcooked  
+   Rawcook the files  
       
 2. Intro to Metadata (Paul)
 
@@ -26,22 +27,57 @@ class: contentpage
 
 4. FFprobe (Paul)
 
-5. MediaInfo (Jo)
+5. MediaInfo  
 
-6. MediaConch (Jo)
+6. MediaConch  
+
+7. MediaTrace  
       
-
-    
-      
-
 
 ---
 class: contentpage
-### **1. RAWcook files**
+### **1. Intro to RAWcooked**
 
+RAWcooked software from MediaArea is a CLI only encoding tool that converts image sequences from DPX, TIFF, EXR and AVI and PCM audio into the FFV1 video codec and FLAC audio codec, in a Matroska wrapper. It also decodes FFV1 Matroska files back to their existing form, a bit-by-bit perfect copy of the original image sequence. Generally this lossless compression to FFV1 reduces the overall file size by between one and two thirds.  
 
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.43.22.png" width="480">]
 
+The [RAWcooked manual](https://mediaarea.net/RAWcooked/man) from Media Area
 
+---
+class: contentpage
+### **1. Intro to RAWcooked**
+
+RAWcooked development is intertwined with FFmpeg and the video codec FFV1  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.15.17.png" width="700">]
+
+---
+class: contentpage
+### **1. RAWcook the files**
+
+The `--all` command can be used to encode image sequences and audio files to FFV1 Matroska files, and also to decode FFV1 Matroskas back to their original image sequence.  It was created by MediaArea with sponsorship from the New York Public Library who requested a really simple preservation command that ensured best practises were maintained easily  
+
+The command contains several others, all essential for long-term preservation  
+
+```bash
+| Command            | Description                                                            |  
+|--------------------|------------------------------------------------------------------------|  
+| --encode/decode    | The correct option is selected automatically                           |  
+| --info             | Prints information about the files                                     |  
+| --conch            | Conformance checks the format supplied                                 |  
+| --hash             | Computes hashes for each DPX or audiovisual file                       |  
+| --coherency        | Checks coherency of all files in the sequence                          |  
+| --check-padding    | Looks for non-zero padding in DPX, issue warning  if found             |  
+| --check            | Runs post-encode checks that file decodes safely                       |  
+| --accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images   |   
+```
+
+Practical: RAWcooked encode the DPX sequence  
+
+```sh
+rawcooked --all --no-accept-gaps /path_to_seqence/dpx_sequence/ >> encoding_data.log
+```
 ---
 class: contentpage
 ### **2. Intro to Metadata**
@@ -96,11 +132,217 @@ ffprobe json example
 class: contentpage
 ### **5. MediaInfo**
 
+MediaInfo from MediaArea has an online version of the software available for no fuss metadata extraction. It's also available as CLI software or in a GUI.  
+  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 15.08.00.png" width="600">]
+
+---
+class: contentpage
+### **5. MediaInfo**
+
+The metadata is structured in a form that's easy to read and can be exported in several different formats including HTML, XML, JSON, EBUCore an PBCore (more viewing options in the GUI).  
+
+The metadata is structured into groups and output in this order:  
+- General - Container, format, profile, overall duration and bit rate, writing libary and application    
+- Video / Image - Format, codec, aspect, frame rate, colour information, chroma subsampling, scan information  
+- Audio - Format, codec, sample rate, channels, bit depth and rate, language  
+- Other - Format, codec, language of subtitle / Time code format, duration, frame rate / Chapter count and list & Menu data for streamed services  
+
+Mediainfo supports most audiovisual formatse. Because this software open source and have active development this software may alter over time as sponsors request support for additional features.  
+
+The basic command returns a list of grouped metadata in key value pairs:  
+```sh
+mediainfo file.mov
+```
+---
+class: contentpage
+### **5. MediaInfo**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot.png" width="1000">]
+---
+class: contentpage
+### **5. MediaInfo**
+
+There's no manual for MediaInfo but the Help can give you a lot of information about flags and arguments  
+```sh
+mediainfo --Help
+```
+
+To return a full set of metadata for a file use the `-f` of `--Full` flag and capture to log file  
+```sh
+mediainfo -f file.ext
+mediainfo -f file.ext --LogFile='/mnt/path_to_folder/file.log'
+```
+
+The `Output` flag formats the full metadata and can be pipe to other tools for pretty printing if needed  
+```sh
+mediainfo file.ext --Output=HTML
+mediainfo file.ext --Output=PBCore / --Output=PBCore2
+medininfo file.ext --Output=EBUCore
+mediainfo file.ext --Output=XML | xmllint --format -
+mediainfo file.ext --Output=JSON | python3 -m json.tool
+mediainfo file.ext --Output=EBUCore_JSON | python3 -m json.tool
+```
+
+Practice: Try the different output options  
+---
+class: contentpage
+### **5. MediaInfo**
+
+The `--Info_Parameters` flag allows you view the complete list of field names available in MediaInfo along with descriptions  
+```sh
+mediainfo --Info_Parameters
+```
+
+With these parameters you can create specific commands to target data in the file very directly, like requesting the `Duration` from the `General` section of the metadata. We use this command a lot in our code, as this is the best way to identify if a file is truncated or not    
+```sh
+mediainfo --Output=‘General;%Duration%’ file.ext
+```
+The `Output` command has it's own help that provides alternative commands for capturing specific metadata  
+```sh
+mediainfo --Help-Output
+```
+
+Practice: Try this command with different commands to retrieve other fields listed in `--Info_Parameters`
+
+---
+class: contentpage
+### **6. MediaConch**
+MediaConch is an open-source software project consisting of a toolset that aims to develop the standardisation and validation of preservation-level audiovisual files used within archives and communities  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2023-09-28 at 19.42.20.png" width="600">]
 
 ---
 class: contentpage
 ### **6. MediaConch**
 
+A MediaConch policy is an XML document, this is the BFI's RAWcooked FFV1 Matroska policy:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 17.23.42.png" width="900">]
+
+---
+class: contentpage
+### **6. MediaConch**
+
+To run a policy against a file you first need to download the policy into a .XML file then run this command  
+```sh
+mediaconch -p policy.xml rawcooked_ffv1.mkv
+```
+If you policy passes you will have the word `pass!` printed to your CLI, followed by the path to the file you assessed. If your policy fails it will return `fail!`.  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 17.46.30.png" width="500">]
+
+Practice: Download the public [BFI FFV1 Matroska policy](https://mediaarea.net/MediaConchOnline/publicPolicies) above using the `Export` button. Save it as `policy.xml` and run it against your RAWcooked FFV1 Matroska
+---
+class: contentpage
+### **6. MediaConch**
+
+The GUI and MediaConch online issue policy report which cleanly demonstrates the points at which the policy failed, and they support batch validation and review  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/MediaConch_MKV_validate.png" width="700">]
+
+---
+class: contentpage
+### **6. MediaConch**
+
+To create your own DPX policy you can use MediaConch `--CreatePolicy` flag which is really useful for starting the process of building policies.  
+```sh
+mediaconch --CreatePolicy dpx_file.dpx
+```
+
+The policy it creates will contain a mixture of general DPX rules, and rules specific to this file like it's creation time. To check more of your DPX images you wouldn't want file specific metadata relating to creation time or paths, but the general data.
+
+Practice:  Create a DPX policy using one of your DPX and the command above. Copy the text into a new file called dpx_policy.xml, remove any file specific rules and then run it against one or two different DPX files using:
+```sh
+mediaconch -p dpx_policy.xml different_dpx_file.dpx
+```
+---
+class: contentpage
+### **6. MediaConch**
+
+MediaArea are committed to the long-term use of the FFV1 and Matroska formats. MediaConch not only validates these formats, but can correct bit flip in the FFV1 codec, and fix segment size issues in Matroska files.  
+
+**Bit flip** refers to a memory error (soft error) where a random bit can flip from 0 to 1, or vice versa. It's not too common, but it can happen to any file stored over time.
+
+**Matroska segment size errors** can occassionally show a '0' instead of the actual size of the segment in bytes.  
+
+There's an excellent guide on the MediaArea website for [MediaConch Fixity](https://mediaarea.net/MediaConch/Documentation/Fixity) where sample files with these errors can be downloaded and fixes applied using this MediaConch command:  
+```sh
+mediaconch file.mkv --TryToFix --Force
+```
+
+Practice:  Download the two FFV1 Matroska samples from the website and run this command with the downloaded filepath. Review the downloaded file in FFplay, and then the '.fixed' file to see the difference. The before and after can also be view in MediaTrace or a Hex editor to see the changes to the binary data of the file.  
+
+---
+class: contentpage
+### **7. MediaTrace**
+
+Both MediaConch and MediaInfo can generate a deeply detailed report called MediaTrace. This is a technical report that demonstrates the binary architecture of an audiovisual file, set out in blocks.
+
+```xmllint
+<block offset="282239364" name="Track" size="1712">
+  <block offset="282239364" name="Header" size="8">
+      <data offset="282239364" name="Size">1712</data>
+  </block>
+  <block offset="282239372" name="Track Header" info="3" info2="10000 ms" size="92">
+      <block offset="282239372" name="Header" size="8">
+          <data offset="282239372" name="Size">92</data>
+          <data offset="282239376" name="Name">tkhd</data>
+      </block>
+      <data offset="282239380" name="Version">0</data>
+      <data offset="282239381" name="Flags">3</data>
+      <data offset="282239384" name="Creation time" info="">0</data>
+      <data offset="282239388" name="Modification time" info="">0</data>
+      <data offset="282239392" name="Track ID">3</data>
+      <data offset="282239400" name="Duration" info="10000 ms">10000</data>
+      <data offset="282239412" name="Layer">0</data>
+      <data offset="282239414" name="Alternate group">0</data>
+      <data offset="282239416" name="Volume" info="0.000">0</data>
+      <data offset="282239456" name="Track width">720.000</data>
+      <data offset="282239460" name="Track height">576.000</data>
+  </block>
+```
+
+---
+class:contentpage
+### **7. MediaTrace**
+
+To create a MediaTrace output in MediaInfo and MediaConch CLI:    
+```sh
+mediainfo -f --Details=1 —Output=XML file.ext
+mediaconch -tt -fx file.ext
+```
+You can also create a MediaTrace report in MediaConch GUI by selecting `Trace` and `XML`. 
+
+To make very detailed MediaConch policies you can use the blocks of a MediaTrace output to specifically target metadata in the binary data, useful if you don't have the field available to search in MediaConch software.  
+
+Here is an example of a rule written in a MediaConch XML policy that uses MediaTrace to inform the field identification:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/mms_example.png" width="1040">]
+
+---
+class:contentpage
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/map_from_trace.png" width="380">]
+---
+class:contentpage
+### **7. MediaTrace**
+
+To create a MediaTrace output in MediaInfo and MediaConch CLI:    
+```sh
+mediainfo -f --Details=1 —Output=XML file.ext
+mediaconch -tt -fx file.ext
+```
+You can also create a MediaTrace report in MediaConch GUI by selecting `Trace` and `XML`. 
+
+To make very detailed MediaConch policies you can use the blocks of a MediaTrace output to specifically target metadata in the binary data, useful if you don't have the field available to search in MediaConch software.  
+
+Here is an example of a rule written in a MediaConch XML policy that uses MediaTrace to inform the field identification:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/mms_example.png" width="1040">]
+---
+class: center, middle, titlepage
+### TUE03: *Validating files.*
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
