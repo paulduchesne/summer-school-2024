@@ -92,9 +92,12 @@ Cryptographic hashes can take longer to compute and are generally used for secur
 - MD5 (though now considered weak), SHA-256 and BLAKE2  
 
 For digital preservation you find checksums are used for:  
-- File integrity verification  
+- File integrity verification during transit  
+- Detection of data corruption when stored on tape, cloud, drives or disks
+- Detecting malicious attempts to alter content of a file  
 - Deduplication of assets  
 - Fixity checking over time  
+- Verifying lossless transcodings are identical  
 
 ---
 class: contentpage
