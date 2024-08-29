@@ -184,7 +184,7 @@ mediainfo file.ext --Output=JSON | python3 -m json.tool
 mediainfo file.ext --Output=EBUCore_JSON | python3 -m json.tool
 ```
 
-Practice: Try the different output options  
+<font color="orange">Practise:</font> Try the different output options  
 ---
 class: contentpage
 ### **5. MediaInfo**
@@ -203,7 +203,7 @@ The `Output` command has it's own help that provides alternative commands for ca
 mediainfo --Help-Output
 ```
 
-Practice: Try this command with different commands to retrieve other fields listed in `--Info_Parameters`
+<font color="orange">Practise:</font> Try this command with different commands to retrieve other fields listed in `--Info_Parameters`
 
 ---
 class: contentpage
@@ -232,7 +232,7 @@ If you policy passes you will have the word `pass!` printed to your CLI, followe
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 17.46.30.png" width="500">]
 
-Practice: Download the public [BFI FFV1 Matroska policy](https://mediaarea.net/MediaConchOnline/publicPolicies) above using the `Export` button. Save it as `policy.xml` and run it against your RAWcooked FFV1 Matroska
+<font color="orange">Practise:</font> Download the public [BFI FFV1 Matroska policy](https://mediaarea.net/MediaConchOnline/publicPolicies) above using the `Export` button. Save it as `policy.xml` and run it against your RAWcooked FFV1 Matroska
 ---
 class: contentpage
 ### **6. MediaConch**
@@ -252,7 +252,7 @@ mediaconch --CreatePolicy dpx_file.dpx
 
 The policy it creates will contain a mixture of general DPX rules, and rules specific to this file like it's creation time. To check more of your DPX images you wouldn't want file specific metadata relating to creation time or paths, but the general data.
 
-Practice:  Create a DPX policy using one of your DPX and the command above. Copy the text into a new file called dpx_policy.xml, remove any file specific rules and then run it against one or two different DPX files using:
+<font color="orange">Practise:</font>  Create a DPX policy using one of your DPX and the command above. Copy the text into a new file called dpx_policy.xml, remove any file specific rules and then run it against one or two different DPX files using:
 ```sh
 mediaconch -p dpx_policy.xml different_dpx_file.dpx
 ```
@@ -271,7 +271,7 @@ There's an excellent guide on the MediaArea website for [MediaConch Fixity](http
 mediaconch file.mkv --TryToFix --Force
 ```
 
-Practice:  Download the two FFV1 Matroska samples from the website and run this command with the downloaded filepath. Review the downloaded file in FFplay, and then the '.fixed' file to see the difference. The before and after can also be view in MediaTrace or a Hex editor to see the changes to the binary data of the file.  
+<font color="orange">Practise:</font>  Download the two FFV1 Matroska samples from the website and run this command with the downloaded filepath. Review the downloaded file in FFplay, and then the '.fixed' file to see the difference. The before and after can also be view in MediaTrace or a Hex editor to see the changes to the binary data of the file.  
 
 ---
 class: contentpage

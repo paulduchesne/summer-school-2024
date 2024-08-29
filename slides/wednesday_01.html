@@ -15,10 +15,13 @@ class: contentpage
 ### **Agenda**
 
 FFmpeg video encoding  
-> 1.1 The four freedoms  
-> 1.2 Source code  
-> 1.3 Evaluating projects  
-> 1.4 Support models  
+> 1.1 Lossy vs Lossless compression  
+> 1.2 Chroma subsampling  
+> 1.3 Bit-depth  
+> 1.4 Colourspace and models    
+> 1.5 Lossless encoding examples  
+> 1.6 Lossy enxoding examples  
+> 1.7 Other FFmpeg commands
 
 FFmpeg filters  
 > 2.1  
@@ -30,11 +33,242 @@ QC Tools
 class: contentpage
 ### **1. FFmpeg video encoding**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
+It’s not physical media, but codecs also become obsolete. We're incredibly lucky to have an open-source tool FFmpeg to call on. The engineers behind it work hard to reverse engineer virtually every video codec that exists… 
+
+There are many obsolete formats it can handle including:   
+- Cinepak - a lossy video codecs released in 1991 and incorporated into Apple’s QuickTime video suite in 1992.  
+- RealVideo was first released in 1997 and was crucial in introducing the concept of internet-based audio and video to consumers.  
+- QuickTime 4 was released in 1999. Apple collaborated with a firm called Sorenson who specialised in video codecs and together launched a format that became hugely popular for streaming film trailers.  
+- Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs, .flv f4v were often paired with Sorenson and VP4 video codecs.  
+
+All these now obsolete codecs can be encoded and decoded with FFmpeg!
+
+???
+Changed tech in our small archive, moved away from Microsoft to Mac. Archive stored YUY2 codec were unusable, requested for viewing copies.
+Though the codec is not obsolete, but the hardware change over in our archive meant it became obsolete to use (no Mac codec binary I could find).
+I could convert Microsoft YUY2 codec files to YUV colourspace with the V210 uncompressed codec.  
+To know FFmpeg (a cross platform tool) is making efforts to reverse engineer every codec is such a fabulous gift to us.
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="1000">]
 
 ---
 class: contentpage
-### **1. FFmpeg video encoding**
+### **1.1 Lossy vs Lossless compression**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 20.59.37.png" width="1000">]
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Some codecs are clearly Lossy or Lossless, but there are a few that can be both. These include:
+- TIFF image, JPEG2000 image, WebP image, H.264 video, AVI video
+
+To set your GOP settings when working with codecs like H.264 that will have default lossy compression you can set GOP=1, so that every frame is an intraframe:  
+```sh
+ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 1 -c:a copy h264_1.mov
+```
+This is useful to save file size with some compression or repeated pixels in the frame, but you won't lose information between I frames which can impact some video editing software that will only cut on I or P frames.  
+
+<font color="orange">Practise:</font> Make two conversions of a lossless video with GOP=1 and GOP=12 setting. Then use this command to view the group of picture (GOP) settings in FFprobe:  
+```sh
+ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
+```
+For converting lossless codecs to another lossless codec you will always use `-g 1`, and the default in FFmpeg is 12.  These encoding commands don't consider any chroma subsampling defaults within FFmpeg.  
+---
+class: contentpage
+### **1.2 Chroma subsampling**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/chroma_subsampling.png" width="1000">]
+
+Chroma subsampling is an alternative way to encode your colour media. The process is lossy and only compresses chroma (colour) data, not the luminence (brightness). You'll be familiar with some of these ratios:  
+> 4:4:4 is chrominance sampled at the same rate as luminance (no compression)  
+> 4:2:2 is chrominance sampled at half the rate of luminance (the compression ~ 1/3 smaller than 4:4:4)  
+> 4:2:0 and 4:1:1 is chrominance sampled at half the rate (the compression ~ half the size of 4:4:4) 
+
+You’ve probably seen some chroma subsampling values described as four part ratios, 4:2:2:4, where this is the case the final number 4 refers to the sampling of the alpha channel.  
+
+---
+class: contentpage
+### **1.3 Bit depth**
+
+This is my lovely cat Eisenstein on the left in 8 bit greyscale. The image on the right is at 4-bit. The left 8-bit curve is smoother than the 4-bit curve where less bits are available to describe the tones of the analogue wave.  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/4_8_bit_eisey.png" width="1000">]
+
+For an RGB file this would be 8-bits for red, 8-bit for green and 8-bit for blue components.  
+And for YUV, 8-bit for Y luminance, and 8-bit each for U and V chrominance.  
+
+- 4-bit: 16 bits per sample (or 16 tonal variations)  
+- 8-bit: 256 bits per sample (256 variations)  
+- 10-bit: 1024 bits per sample (1024 variations)  
+- 12-bit: 4096 bits per sample (4096 variations)  
+- 16-bit: 65536 bits per sample (65536 variations)  
+---
+class: contentpage
+### **1.4 Colourspace and models**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.31.png" width="960">]
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.12.png" width="960">]
+
+---
+class: contentpage
+### **1.3 Colourspace and models**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
+
+---
+class: contentpage
+### **1.4 Colourspace & models**
+Convert colorspace and embed colorspace metadata
+
+Colourspace, bit-depth and chroma subsampling are selected in FFmpeg using the Pixel Format:    
+- pix_fmt is used to select the colourspace, chroma subsampling and bit depth for an encoding  
+- video filter format can also apply chroma subsampling options  
+
+The most common pix_fmts for video include:  
+- 8-bit 4:2:0  -  yuv420p  
+- 8-bit 4:2:2  -  yuv422p  
+- 8-bit 4:4:4  -  yuv444p  
+- 10-bit 4:2:0  - yuv420p10le  
+- 10-bit 4:2:2  - yuv422p10le  
+- 10-bit 4:4:4  - yuv444p10le  
+
+```sh
+ffmpeg -i input.mkv -c:v v210 -pix_fmt yuv422p10le output.mov
+ffmpeg -i input.mov -c:v libx264 -vf format=yuv420p output.mp4
+```
+<font color="orange">Practise:</font> View available pixel formats (pix_fmt) in FFmpeg and try re-encoding your file to a different pix_fmt.  
+```sh
+ffmpeg -pix_fmts
+ffmpeg -i input.mov -c:v libx264 -pix_fmt yuv420p output.mp4
+```
+---
+class: contentpage
+### **1.4 Colourspace and models**
+
+You can also embed colorspace metadata to your encodings using These FFmpeg commands:  
+- color_primaries selecting the colour model to be tagged with.  
+  FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020 (REC.2020)  
+- color_trc marks the video with transfer characteristics (gamma).  
+  FFmpeg values include: smpte170m (REC.601 NTSC), gamma28 (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_10 / _12 (REC.2020 10-bit/12-bit)  
+- colorspace marks the video for having the given colourspace.  
+  FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_cl / _ncl (REC.2020 constant/non-constant luminance) 
+ 
+You can use the video filter colormatrix to change one colourspace to another, for example bt709 to bt2020 only:  
+```sh
+ffmpeg -i input.mov -vf colormatrix=bt709:bt2020 output.mov
+```
+
+<font color="orange">Practise:</font> Try to change a colour space to another using the video filter colormatrix, or appending/amending existing colour metadata in some of your test files.    
+```sh
+ffmpeg -i input.mov -color_primaries bt2020 -color_trc bt2020_10 -colorspace bt2020_cl output.mov
+```
+
+---
+class: contentpage
+### **1.5 Lossless video encoding examples**
+
+Encoding FFV1 Matroska to V210 MOV losslessly  
+```sh
+ffmpeg
+-i input.mkv
+-map 0
+--movflags write_colr
+-c:v v210
+-pix_fmt yuv422p10le 
+-color_primaries bt709
+-color_trc bt709
+-colorspace bt709
+-color_range mpeg 
+-metadata:s:v:0 "encoder=Uncompressed 10-bit 4:2:2"
+-c:a copy
+-vf setfield=tff,setdar=16/9
+-f mov output.mov
+```
+
+This is our BFI command that encodes FFV1 Matroska files to V210 Mov files with metadata that matches an Apple Quicktime V210 MOV. It has MOV specific requests like movflags, encoder metadata and the -f mov flag.  
+
+You can add these two commands after your output.mov to create a FrameMD5 of the transcode simultaneously.  
+```sh
+-f framemd5 -an output.framemd5
+```
+---
+class: contentpage
+### **1.5 Lossless video encoding examples**
+
+Encoding V210 MOV to FFV1 Matroska losslessly 
+```sh
+ffmpeg
+-i input.mov
+-map 0 -dn
+-c:v ffv1
+-level 3
+-g 1
+-slicecrc 1
+-slices 24
+-pix_fmt yuv422p10le 
+-color_primaries bt709
+-color_trc bt709
+-colorspace bt709
+-color_range 1 
+-c:a copy
+-vf setfield=tff,setdar=4/3
+output.mkv
+```
+The -map command this time has a -dn which tells FFmpeg not map any data streams to the Matroska. The FFV1 codec has a number of options to create your best lossless encoding, including level 3 (the latest version release), gop 1, slicecrc active, slices 24 per frame.  
+
+---
+class: contentpage
+### **1.5 Lossless video encoding examples**
+
+DPX sequence in a folder to JPEG2000 wrapped in an MXF:  
+```sh
+ffmpeg -y -framerate 24 -i \PATH\test\0%05d.dpx -c:v libopenjpeg -pix_fmt gbrp10le 123.mxf
+
+```
+---
+class: contentpage
+### **1.6 Lossy video encoding examples**
+---
+class: contentpage
+### **1.7 Other FFmpeg commands**
+
+To run some experiments lets make a 10 second audiovisual file using FFmpeg lavfi filters as your inputs  
+```sh
+ffmpeg -f lavfi -i testsrc=size=1920x1080 -f lavfi -i "sine=frequency=1000:sample_rate=48000"
+-t 10 input.mov
+```
+You can trim video down to specific time code start and stops, and encode the output  
+```sh
+ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
+```
+You can export one thumbnails every frame between 1 and 2 seconds and save them as `png` files  
+```sh
+ffmpeg -i input.mov -vf select=`between(t,1,5)` -vsync 0 output_images%d.png 
+```
+Mute audio in a video file, between two time codes  
+```sh
+ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
+```
+---
+class: contentpage
+### **1.7 Other FFmpeg commands**
+
+Convert an image sequence, such as your DPX sequence into a lossy ProRes 4:4:4 MOV file with framerate 25 fps 
+```sh
+cd <dpx_folder>
+ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 
+-pix_fmt yuv444p10le -r 25 your_dpx_file.mov
+```
+
+
+---
+class: contentpage
+### **2. FFmpeg video filters**
 
 
     </textarea>

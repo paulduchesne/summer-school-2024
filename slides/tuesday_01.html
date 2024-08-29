@@ -546,8 +546,6 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda 3**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
-
 Introduction to FFmpeg  
 > 3.1 The FFmpeg libraries  
 > 3.2 The basic FFmpeg command  
@@ -559,20 +557,14 @@ Introduction to FFmpeg
 ---
 class: contentpage
 ### **Introduction to FFmpeg**
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.13.26.png" width="650">]
 
 - FFmpeg encodes, decodes, muxes and demuxes audiovisual file formats at speed  
-
 - It has an extensive list of supported codecs and file formats  
-
 - It's open source software and makes projects like VLC, YouTube and iTunes possible  
-
 - Hundreds of filters that visualise and analyse complex audiovisual data  
-
 - FFmpeg comes with a metadata analysis and extraction tool FFprobe  
-
 - Playback of all FFmpeg formats and codecs and live streams is possible with FFplay  
-
 - It can be used via the CLI, with third party GUIs or via their own API  
 ---
 
@@ -674,41 +666,12 @@ ffmpeg -nostdin -i input.mov...
 ```
 ---
 class: contentpage
-### **3.4 Useful audiovisual flags**
-
-To run some experiments lets make a 10 second audiovisual file using FFmpeg lavfi filters as your inputs  
-```basg
-ffmpeg -f lavfi -i testsrc=size=1920x1080 -f lavfi -i "sine=frequency=1000:sample_rate=48000" -t 10 input.mov
-```
-You can trim video down to specific time code start and stops, and encode the output  
-```bash
-ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
-```
-You can export one thumbnails every frame between 1 and 2 seconds and save them as `png` files  
-```bash
-ffmpeg -i input.mov -vf select=`between(t,1,5)` -vsync 0 output_images%d.png 
-```
-Mute audio in a video file, between two time codes  
-```bash
-ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
-```
-Convert an image sequence, such as your DPX sequence into a lossy ProRes 4:4:4 MOV file with framerate 25 fps 
-```bash
-cd <dpx_folder>
-ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 -pix_fmt yuv444p10le -r 25 your_dpx_file.mov
-```
----
-class: contentpage
 ### **3.5 FFprobe**
 
 To extract metadata from a video file you can use FFprobe to retrieve it. This basic command will return your file's available technical metadata. The first gives you all the FFmpeg programme information but the second represses this information  
 ```bash
 ffprobe input.mov
 ffprobe -hide_banner input.mov
-```
-You can generate a much more specific command that allows you to just look at the file's video bitrate for example   
-```bash
-ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 input.mov
 ```
 You can access lots of different data from your streams. To view all the metadata for a specific video stream (v:0 the first stream) you can use the -show_streams, -show_format flag, etc.    
 ```bash
@@ -718,6 +681,11 @@ You can access lots of different data from your streams. To view all the metadat
 -show_frames
 ffprobe -v error -select_streams v:0 -show_streams input.mov
 ```
+You can generate a much more specific command that allows you to just look at the file's video bitrate for example   
+```bash
+ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 input.mov
+```
+
 ---
 class: contentpage
 ### **3.5 FFplay**
@@ -741,7 +709,7 @@ ffplay -f lavfi "movie='input.mov', signalstats=out=brng:color=cyan[out]"
 class: contentpage
 ### **3.6 Guides and help pages**
 
-To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
+<font color="orange">Practise:</font> To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
 ```bash
 man ffmpeg
 ffmpeg -h (long / full)
