@@ -97,6 +97,8 @@ The file size will still using H.264 I frame compression using GOP=1, but you wo
 ```sh
 ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
 ```
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/gops.png" width="260">]
+
 ???
 FFrobe probe command:
 verbatim level error, show enties for frame (pict type) 
@@ -221,7 +223,7 @@ ffmpeg -i input.mov -c:v libx264 -preset veryslow -qp 0 output.mkv
 Quantization Parameter controsl amout of compression for every macroblock in a frame, range from 0-51 in H264. Best just used for lossless.
 ---
 class: contentpage
-### **1.3 Bit depth**
+### **1.3 Bit depth (Quantization)**
 
 This is my lovely cat Eisenstein on the left in 8 bit greyscale. The image on the right is at 4-bit. The left 8-bit curve is smoother than the 4-bit curve where less bits are available to describe the tones of the analogue wave.  
 
@@ -235,7 +237,7 @@ And for YUV, 8-bit for Y luminance, and 8-bit each for U and V chrominance.
 - 12-bit: 4096 bits per sample (4096 variations)  
 - 16-bit: 65536 bits per sample (65536 variations)  
 ???
-4-bit has only 16 bits per samples, so 16 gradation changes
+4-bit has only 16 bits per samples, so 16 gradation changes. This is known as Quantisation
 ---
 class: contentpage
 ### **1.4 Chroma subsampling and colourspaces**
@@ -331,19 +333,6 @@ output.mkv
 ```
 The -map command this time has a -dn which tells FFmpeg not map any data streams to the Matroska. The FFV1 codec has a number of options to create your best lossless encoding, including level 3 (the latest version release), gop 1, slicecrc active, slices 24 per frame. View [FFV1 Cheat Sheet from FFmpeg](https://trac.ffmpeg.org/wiki/Encode/FFV1) for more guidance.  
 
-A simple example encoding command to convert lossless video to FFV1 and maintain file as-is:  
-```sh
-ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 
- -c:a copy output.mkv
-```
-Or for two pass encoding you would use (as-is video and no audio):  
-```sh
-ffmpeg -i input.mov -map 0 -an -c:v ffv1 -level 3 -g 1 -slicecrc 1 -slices 24 -pass 1  
-passlogfile ffv1_input.log -f nut dev/null
-
-ffmpeg -i input.mov -map 0 -an -c:v ffv1 -level 3 -g 1 -slicecrc 1 -slices 24 -pass 2  
-passlogfile ffv1_input.log output.mkv
- ```
 ---
 class: contentpage
 ### **1.5 Lossless video encoding examples**
@@ -353,7 +342,7 @@ Encoding FFV1 Matroska to V210 MOV losslessly
 ffmpeg
 -i input.mkv
 -map 0
---movflags write_colr
+-movflags write_colr
 -c:v v210
 -pix_fmt yuv422p10le 
 -color_primaries bt709
