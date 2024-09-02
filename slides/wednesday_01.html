@@ -16,12 +16,12 @@ class: contentpage
 
 FFmpeg video encoding  
 > 1.1 Lossy vs Lossless compression  
-> 1.2 Chroma subsampling  
+> 1.2 Bitrate  
 > 1.3 Bit-depth  
-> 1.4 Colourspace and models    
+> 1.4 Chroma subsampling and colourspaces     
 > 1.5 Lossless encoding examples  
-> 1.6 Lossy enxoding examples  
-> 1.7 Other FFmpeg commands
+> 1.6 Lossy encoding examples  
+> 1.7 Other interesting FFmpeg commands
 
 FFmpeg filters  
 > 2.1  
@@ -33,63 +33,132 @@ QC Tools
 class: contentpage
 ### **1. FFmpeg video encoding**
 
-It’s not physical media, but codecs also become obsolete. We're incredibly lucky to have an open-source tool FFmpeg to call on. The engineers behind it work hard to reverse engineer virtually every video codec that exists… 
+Why do we need to encode?
 
-There are many obsolete formats it can handle including:   
+- To save storage space
+- To optimise video quality
+- To make adaptable access files
+- To maintain accessibility to obsolete codecs over time
+
+The FFmpeg team reverse engineer virtually every video and audio codec that exists. We're incredibly lucky to have an open-source tool like FFmpeg to help with codec obsolescence and encoding/decoding. Obsolete formats saved by FFmpeg:   
+- Cinepak  
+- RealVideo    
+- QuickTime 4    
+- Flash Video  
+
+FFmpeg allows for granular encoding choices that include encoding libraries, chroma subsampling, colourspace, bit-depth and bitrate.  
+```sh
+ffmpeg -f lavfi -i testsrc=size=720x576 -c:v v210 -f lavfi
+-i "sine=frequency=1000:sample_rate=48000" -c:a pcm_s16le -t 10 test_file.mov
+```
+
+???
+We need to use lossless and lossy compression codecs for creation of preservation masters and access copies. 
 - Cinepak - a lossy video codecs released in 1991 and incorporated into Apple’s QuickTime video suite in 1992.  
 - RealVideo was first released in 1997 and was crucial in introducing the concept of internet-based audio and video to consumers.  
 - QuickTime 4 was released in 1999. Apple collaborated with a firm called Sorenson who specialised in video codecs and together launched a format that became hugely popular for streaming film trailers.  
-- Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs, .flv f4v were often paired with Sorenson and VP4 video codecs.  
-
-All these now obsolete codecs can be encoded and decoded with FFmpeg!
-
-???
-Changed tech in our small archive, moved away from Microsoft to Mac. Archive stored YUY2 codec were unusable, requested for viewing copies.
-Though the codec is not obsolete, but the hardware change over in our archive meant it became obsolete to use (no Mac codec binary I could find).
-I could convert Microsoft YUY2 codec files to YUV colourspace with the V210 uncompressed codec.  
-To know FFmpeg (a cross platform tool) is making efforts to reverse engineer every codec is such a fabulous gift to us.
----
-class: contentpage
-### **1.1 Lossy vs Lossless compression**
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="1000">]
+- Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs flv and f4v were often paired with Sorenson and VP4 video codecs.  
 
 ---
 class: contentpage
 ### **1.1 Lossy vs Lossless compression**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 20.59.37.png" width="1000">]
----
-class: contentpage
-### **1.1 Lossy vs Lossless compression**
+SPARE:
 
-Some codecs are clearly Lossy or Lossless, but there are a few that can be both. These include:
-- TIFF image, JPEG2000 image, WebP image, H.264 video, AVI video
-
-To set your GOP settings when working with codecs like H.264 that will have default lossy compression you can set GOP=1, so that every frame is an intraframe:  
-```sh
-ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 1 -c:a copy h264_1.mov
 ```
-This is useful to save file size with some compression or repeated pixels in the frame, but you won't lose information between I frames which can impact some video editing software that will only cut on I or P frames.  
+ Process           | Lossless codecs                   | Lossy codec                           
+ ----------------- | --------------------------------- | -----------------------------------     
+ Algorithm         | Reduces file size but not quality | Reduces size by discarding data       
+ Reversibility     | Compression can be reversed       | Cannot be reversed                    
+ Compression ratio | Lower compression ratios          | Higher compression ratios             
+ Quality           | Maintains original video quality  | Reduces video quality, configurable   
+ Use cases         | Archives / where quality required | Access copies for web / other media   
+ Examples          | FFV1, DPX, H.264, TIFF, FLAC      | H.264, MPEG, DV, JPEG, AAC, MP3       
+```
 
-<font color="orange">Practise:</font> Make two conversions of a lossless video with GOP=1 and GOP=12 setting. Then use this command to view the group of picture (GOP) settings in FFprobe:  
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Codecs that use lossy compression reduce the size of a file by discarding some of the redundant information from the original video stream. This process cannot be reversed and the original data is cannot be retrieved.  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="900">]
+
+```sh
+ffmpeg -i uncompressed.mov -map 0 -c:v libx264 -crf 18 -c:a aac lossy.mp4
+```
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Lossless compression reduces the size of a video file without losing any information or quality. These algorithms preserve the original data in the video stream, and decompression returns a bit perfect copy of the original.
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 20.59.37.png" width="900">]
+```sh
+ffmpeg -i uncompressed.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -c:a copy lossless.mkv
+```
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Group of Picture (GOP) length 1 determines that every file is a key frame and that no image data is discarded 
+```sh
+ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 1 -c:a copy h264_gop1.mp4
+ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 12 -c:a copy h264_gop12.mp4
+```
+
+GOP=1 will reduce the file size with H.264 I frame compression, but you won't create any B/P frames. The default GOP in FFmpeg is 12.  
+
+<font color="orange">Practise:</font> Make two conversions of a lossless video with GOP=1 and GOP=12 setting. Then use this command to view the GOP settings in FFprobe:  
 ```sh
 ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
 ```
-For converting lossless codecs to another lossless codec you will always use `-g 1`, and the default in FFmpeg is 12.  These encoding commands don't consider any chroma subsampling defaults within FFmpeg.  
 ---
 class: contentpage
-### **1.2 Chroma subsampling**
+### **1.2 Bitrates**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/chroma_subsampling.png" width="1000">]
+Bit rates control the quality of the video compression, which in turn alters the size of your file dramatically. You may have heard of Constant Bit Rate (CBR) and Variable Bit Rate (VBR). VBR generally gives better overall quality when file size and bit rate are not constrained.  
 
-Chroma subsampling is an alternative way to encode your colour media. The process is lossy and only compresses chroma (colour) data, not the luminence (brightness). You'll be familiar with some of these ratios:  
-> 4:4:4 is chrominance sampled at the same rate as luminance (no compression)  
-> 4:2:2 is chrominance sampled at half the rate of luminance (the compression ~ 1/3 smaller than 4:4:4)  
-> 4:2:0 and 4:1:1 is chrominance sampled at half the rate (the compression ~ half the size of 4:4:4) 
+Constant Rate Factor give you a consistent quality through your encoding for one pass. You can set it for all your transcodes and let the encoder make the adjustments needed between files:
+```sh
+ffmpeg -i input.mov -c:v libx264 -crf 23 output.mp4
+```
+The CRF scale for H264 is 0-51. 0 is best, 23 is default and 51 worst. The `sane` range is considered to be 17-28 for visually lossless encoding. The CRF method is consider best for archival formats, as you can guarantee the quality you want though not the file size. Not recommend for streaming.
+ 
+There are presets and tuning options for this encoder to help fine tune your encoding results:
+- `-preset` ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
+- `-tune` film, animation, grain, stillimage, fastdecode, zerolatency
 
-You’ve probably seen some chroma subsampling values described as four part ratios, 4:2:2:4, where this is the case the final number 4 refers to the sampling of the alpha channel.  
+Slower presets allow for better compressions, and film which lowers deblocking for high quality movie content:  
+```sh
+ffmpeg -i input.mov -c:v libx264 -present slow -tune film -crf 23 output.mp4
+```
+???
+More details can be found on the [FFmpeg wiki for H.264 encoding](https://trac.ffmpeg.org/wiki/Encode/H.264)
+Bitrates control the quality of the video compression, which in turn alters the size of your file dramatically. Constant Bit Rate (CBR) uses the same amount of bits across all frames when needed and Variable Bit Rate (VBR) allows the encoder to use more bits for difficult scenes (complex texture or high motion), saving bits for the easy parts of the files to compress.
 
+Rate control varies between codecs in FFmpeg,  but we can look at example such as H.264 to understand it more - selected by the libx264 library
+---
+class: contentpage
+### **1.2 Bitrates**
+
+If you want to target a specific file size for your bitrate encodings you can use Two-Pass you can specify it using -b:v for video bitrate:  
+```sh
+ffmpeg -y -i input.mov -c:v libx264 -b:v 2600k -pass 1 -an -f null /dev/null && \
+ffmpeg -i input.mov -c:v libx264 -b:v 2600k -pass 2 -c:a aac -b:a 128k output.mp4
+```
+It's a two pass process and you need to export the first pass to a local file using `-f null /dev/null`. A file named `ffmpeg2pass-0.log.mbtree` will appear in your `pwd`. The second pass will read this file and calculate the required bitrate for the MP4 creation. 
+
+Lossless bitrates:
+
+It's possible to use `-crf 0` for lossless H.264 High 4:4:4 Predictive encoding. For other H.264 lossless encoding use '-qp 0', FFmpeg's Quantization Parameter:
+```sh
+ffmpeg -i input.mov -c:v libx264 -preset veryslow -qp 0 output.mkv
+```
+
+<font color="orange">Practise:</font> Try creating a lossless H.264 file from a lossless source. Make and compare Framemd5 files for the two using the `-an` flag to just compare video streams. See what the size differences are.
+???
+Quantization Parameter controsl amout of compression for every macroblock in a frame, range from 0-51 in H264. Best just used for lossless.
 ---
 class: contentpage
 ### **1.3 Bit depth**
@@ -100,52 +169,62 @@ This is my lovely cat Eisenstein on the left in 8 bit greyscale. The image on th
 
 For an RGB file this would be 8-bits for red, 8-bit for green and 8-bit for blue components.  
 And for YUV, 8-bit for Y luminance, and 8-bit each for U and V chrominance.  
-
-- 4-bit: 16 bits per sample (or 16 tonal variations)  
+ 
 - 8-bit: 256 bits per sample (256 variations)  
 - 10-bit: 1024 bits per sample (1024 variations)  
 - 12-bit: 4096 bits per sample (4096 variations)  
 - 16-bit: 65536 bits per sample (65536 variations)  
+???
+4-bit has only 16 bits per samples, so 16 gradation changes
 ---
 class: contentpage
-### **1.4 Colourspace and models**
+### **1.4 Chroma subsampling and colourspaces**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.31.png" width="960">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/chroma_subsampling.png" width="1000">]
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.12.png" width="960">]
+Chroma subsampling is an alternative way to encode your colour media. The process is lossy and only compresses chroma (colour) data, not the luminence (brightness). You'll be familiar with some of these ratios:  
+> 4:4:4 is chrominance sampled at the same rate as luminance (no compression)  
+> 4:2:2 is chrominance sampled at half the rate of luminance (the compression ~ 1/3 smaller than 4:4:4)  
+> 4:2:0 and 4:1:1 is chrominance sampled at half the rate (the compression ~ half the size of 4:4:4) 
 
+You’ve probably seen some chroma subsampling values described as four part ratios, 4:2:2:4, where this is the case the final number 4 refers to the sampling of the alpha channel.  
 ---
 class: contentpage
-### **1.3 Colourspace and models**
+### **1.4 Chroma subsampling and colourspaces**
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.31.png" width="900">]
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.12.png" width="900">]
+ > > Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barn-yuv.png)
+---
+class: contentpage
+### **1.3 Chroma subsampling and colourspaces**
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
 
 ---
 class: contentpage
-### **1.4 Colourspace & models**
-Convert colorspace and embed colorspace metadata
+### **1.4 Chroma subsampling and colourspaces**
 
 Colourspace, bit-depth and chroma subsampling are selected in FFmpeg using the Pixel Format:    
-- pix_fmt is used to select the colourspace, chroma subsampling and bit depth for an encoding  
-- video filter format can also apply chroma subsampling options  
+- `-pix_fmt yuv422p10le`: YUV colourspace, 4:2:2 chroma subsampling, 10 bit-depth, little endian  
+- `-vf format=yuv420p`: The video filter `format` can also apply Pixel Format options  
 
 The most common pix_fmts for video include:  
 - 8-bit 4:2:0  -  yuv420p  
-- 8-bit 4:2:2  -  yuv422p  
-- 8-bit 4:4:4  -  yuv444p  
-- 10-bit 4:2:0  - yuv420p10le  
+- 8-bit 4:2:2  -  yuv422p   
 - 10-bit 4:2:2  - yuv422p10le  
 - 10-bit 4:4:4  - yuv444p10le  
 
+You can view all available with the `-pix_fmts` advanced help option: 
 ```sh
+ffmpeg -pix_fmts
 ffmpeg -i input.mkv -c:v v210 -pix_fmt yuv422p10le output.mov
 ffmpeg -i input.mov -c:v libx264 -vf format=yuv420p output.mp4
 ```
-<font color="orange">Practise:</font> View available pixel formats (pix_fmt) in FFmpeg and try re-encoding your file to a different pix_fmt.  
-```sh
-ffmpeg -pix_fmts
-ffmpeg -i input.mov -c:v libx264 -pix_fmt yuv420p output.mp4
-```
+<font color="orange">Practise:</font> View available Pixel Formats in FFmpeg and try re-encoding your file to a different pix_fmt.  
+
+???
+NOTE: Pixel formats change between FFmpeg version releases based on development of the libraries. This is the cause of Framemd5 file differences between FFmpeg version releases, as the pix_fmt settings for the codec are used to decompress to raw video for framemd5 creation. Framemd5s are not long-term fixity.
 ---
 class: contentpage
 ### **1.4 Colourspace and models**
