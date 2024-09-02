@@ -18,8 +18,7 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Intro to RAWcooked  
-   Rawcook the files  
+1. RAWcook the files  
       
 2. Intro to Metadata (Paul)
 
@@ -32,6 +31,8 @@ class: contentpage
 6. MediaConch  
 
 7. MediaTrace  
+
+8. FFV1 codec checksums  
       
 
 ---
@@ -46,31 +47,23 @@ The [RAWcooked manual](https://mediaarea.net/RAWcooked/man) from Media Area
 
 ---
 class: contentpage
-### **1. Intro to RAWcooked**
-
-RAWcooked development is intertwined with FFmpeg and the video codec FFV1  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.15.17.png" width="700">]
-
----
-class: contentpage
 ### **1. RAWcook the files**
 
 The `--all` command can be used to encode image sequences and audio files to FFV1 Matroska files, and also to decode FFV1 Matroskas back to their original image sequence.  It was created by MediaArea with sponsorship from the New York Public Library who requested a really simple preservation command that ensured best practises were maintained easily  
 
 The command contains several others, all essential for long-term preservation  
 
-```bash
-| Command            | Description                                                            |  
-|--------------------|------------------------------------------------------------------------|  
-| --encode/decode    | The correct option is selected automatically                           |  
-| --info             | Prints information about the files                                     |  
-| --conch            | Conformance checks the format supplied                                 |  
-| --hash             | Computes hashes for each DPX or audiovisual file                       |  
-| --coherency        | Checks coherency of all files in the sequence                          |  
-| --check-padding    | Looks for non-zero padding in DPX, issue warning  if found             |  
-| --check            | Runs post-encode checks that file decodes safely                       |  
-| --accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images   |   
+```
+Command            | Description                                                              
+-------------------|---------------------------------------------------------------------  
+--encode/decode    | The correct option is selected automatically                             
+--info             | Prints information about the files                                       
+--conch            | Conformance checks the format supplied                                   
+--hash             | Computes hashes for each DPX or audiovisual file                         
+--coherency        | Checks coherency of all files in the sequence                            
+--check-padding    | Looks for non-zero padding in DPX, issue warning  if found               
+--check            | Runs post-encode checks that file decodes safely                         
+--accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images      
 ```
 
 Practical: RAWcooked encode the DPX sequence  
@@ -272,7 +265,8 @@ mediaconch file.mkv --TryToFix --Force
 ```
 
 <font color="orange">Practise:</font>  Download the two FFV1 Matroska samples from the website and run this command with the downloaded filepath. Review the downloaded file in FFplay, and then the '.fixed' file to see the difference. The before and after can also be view in MediaTrace or a Hex editor to see the changes to the binary data of the file.  
-
+???
+Keep the bit flip example for later!
 ---
 class: contentpage
 ### **7. MediaTrace**
@@ -340,6 +334,7 @@ To make very detailed MediaConch policies you can use the blocks of a MediaTrace
 Here is an example of a rule written in a MediaConch XML policy that uses MediaTrace to inform the field identification:  
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/mms_example.png" width="1040">]
+
 ---
 class: center, middle, titlepage
 ### TUE03: *Validating files.*

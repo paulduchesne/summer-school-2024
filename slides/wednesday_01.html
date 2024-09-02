@@ -16,7 +16,7 @@ class: contentpage
 
 FFmpeg video encoding  
 > 1.1 Lossy vs Lossless compression  
-> 1.2 Bitrate  
+> 1.2 Bit rate  
 > 1.3 Bit-depth  
 > 1.4 Chroma subsampling and colourspaces     
 > 1.5 Lossless encoding examples  
@@ -46,7 +46,7 @@ The FFmpeg team reverse engineer virtually every video and audio codec that exis
 - QuickTime 4    
 - Flash Video  
 
-FFmpeg allows for granular encoding choices that include encoding libraries, chroma subsampling, colourspace, bit-depth and bitrate.  
+FFmpeg allows for granular encoding choices that include encoding libraries, chroma subsampling, colourspace, bit-depth and bit rate.  
 ```sh
 ffmpeg -f lavfi -i testsrc=size=720x576 -c:v v210 -f lavfi
 -i "sine=frequency=1000:sample_rate=48000" -c:a pcm_s16le -t 10 test_file.mov
@@ -63,67 +63,129 @@ We need to use lossless and lossy compression codecs for creation of preservatio
 class: contentpage
 ### **1.1 Lossy vs Lossless compression**
 
-SPARE:
-
-```
- Process           | Lossless codecs                   | Lossy codec                           
- ----------------- | --------------------------------- | -----------------------------------     
- Algorithm         | Reduces file size but not quality | Reduces size by discarding data       
- Reversibility     | Compression can be reversed       | Cannot be reversed                    
- Compression ratio | Lower compression ratios          | Higher compression ratios             
- Quality           | Maintains original video quality  | Reduces video quality, configurable   
- Use cases         | Archives / where quality required | Access copies for web / other media   
- Examples          | FFV1, DPX, H.264, TIFF, FLAC      | H.264, MPEG, DV, JPEG, AAC, MP3       
-```
-
----
-class: contentpage
-### **1.1 Lossy vs Lossless compression**
-
-Codecs that use lossy compression reduce the size of a file by discarding some of the redundant information from the original video stream. This process cannot be reversed and the original data is cannot be retrieved.  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="900">]
-
-```sh
-ffmpeg -i uncompressed.mov -map 0 -c:v libx264 -crf 18 -c:a aac lossy.mp4
-```
----
-class: contentpage
-### **1.1 Lossy vs Lossless compression**
-
 Lossless compression reduces the size of a video file without losing any information or quality. These algorithms preserve the original data in the video stream, and decompression returns a bit perfect copy of the original.
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 20.59.37.png" width="900">]
 ```sh
-ffmpeg -i uncompressed.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -c:a copy lossless.mkv
+ffmpeg -i input.mov -c:v libx264 -preset veryslow -g 1 -qp 0 lossless_output.mov
 ```
 ---
 class: contentpage
 ### **1.1 Lossy vs Lossless compression**
 
-Group of Picture (GOP) length 1 determines that every file is a key frame and that no image data is discarded 
+Codecs that use lossy compression reduce the size of a file by discarding some of the redundant information from the original video stream. This process cannot be reversed and the original data cannot be retrieved.  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="900">]
+
+```sh
+ffmpeg -i input.mov -c:v libx264 -g 12 -crf 23 lossy_output.mp4
+```
+
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Group of Picture (GOP) length 1 can be used to determine that every file is a key frame and that no image data is discarded  
 ```sh
 ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 1 -c:a copy h264_gop1.mp4
 ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 12 -c:a copy h264_gop12.mp4
 ```
 
-GOP=1 will reduce the file size with H.264 I frame compression, but you won't create any B/P frames. The default GOP in FFmpeg is 12.  
+The file size will still using H.264 I frame compression using GOP=1, but you won't create any B/P frames so the size won't be as small as lossy compression. The default GOP in FFmpeg is 12.  
 
 <font color="orange">Practise:</font> Make two conversions of a lossless video with GOP=1 and GOP=12 setting. Then use this command to view the GOP settings in FFprobe:  
 ```sh
 ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
 ```
+???
+FFrobe probe command:
+verbatim level error, show enties for frame (pict type) 
 ---
 class: contentpage
-### **1.2 Bitrates**
+### **1.1 Lossy vs Lossless compression**
+
+A number of video codecs can export lossless and lossy video, including:
+```
+ Codecs     | Comparison                           
+ ---------- | -------------------------------------------------------------------------------------     
+ H.264 AVC  | Most widely used codec of group with good lossless and lossy options.     
+ H.265 HEVC | 25-50% bit rate savings compared to H.264 with no visual quality loss. Requires x265                  
+ VP9        | 20-50% bit rate savings compared to H.264 with no visual quality loss. WebM streaming
+ AV1        | ~50% higher efficiency than H.264. Support HDR and WCG. Demanding encoding algorithm   
+```
+If you build FFmpeg from source you may need to specify the encoding libraries using these flags:
+```
+H.264 libx264   --enable-libx264
+H.265 libx265   --enable-gpl --enable-libx265
+AV1 libaom-av1  --enable-libaom
+VP9 libvpx-vp9  --enable-libvpx
+VP9 10-bit      --enable-vp9-highbitdepth
+```
+H.265 also requires that you have [x265](https://www.videolan.org/developers/x265.html) installed on your system. This application is from VideoLAN, makers of VLC.  
+To check if your FFmpeg installation includes support for these codecs you can check with this command:  
+```sh
+ffmpeg -h encoder=libx264
+```
+The FFmpeg Wiki pages has [compilation guides](https://trac.ffmpeg.org/wiki/CompilationGuide), and individual pages for using [AV1](https://trac.ffmpeg.org/wiki/Encode/AV1), [H264](https://trac.ffmpeg.org/wiki/Encode/H.264), [H265]() and [VP9](https://trac.ffmpeg.org/wiki/Encode/VP9) codecs.
+???
+Algorithm         | Reduces file size but not quality | Reduces size by discarding data       
+Reversibility     | Compression can be reversed       | Cannot be reversed                    
+Compression ratio | Lower compression ratios          | Higher compression ratios             
+Quality           | Maintains original video quality  | Reduces video quality, configurable   
+Use cases         | Archives / where quality required | Access copies for web / other media  
+AV1 supports new video technologies like High Dynamic Range and Wide Color Gamut. The encoding algorithms can be more intensive in codecs like AV1 and really need new hardware like GPU and SoCs.
+SoCs = Systm on a Chip, single piece of silicon that intgetrates computers CPU with the Graphics Processing Unit (GPU), mempry and other components.
+We're going to use H.264 for our examples as these new codecs require additonal libraries installing at build to support them.
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Audio compression codecs are used like video to encode audio streams within a file.  
+```sh
+ffmpeg -i input.wav -c:a aac -b:a 128k output.mka
+``` 
+In lossless video encoding examples for preservation you may see:  
+```sh
+-c:a copy
+```
+This is to ensure that the lossless audio codec is unchanged between two lossless transcodes and though there are lossless audio codecs the size of the audio space saved is negligable compared to video. 
+```
+Container    | Accepted audio codecs (also FFmpeg supported)
+-------------|-------------------------------------------------------------------------
+MKV/MKA      | Opus, Vorbis, MP2, MP3, LC-AAC, HE-AAC, WMAv1, WMAv2, AC3, E-AC3, TrueHD
+MP4/M4A      | Opus, MP2, MP3, LC-AAC, HE-AAC, AC3, E-AC3, TrueHD
+FLV/F4V      | MP3, LC-AAC, HE-AAC
+3GP/3G2      | LC-AAC, HE-AAC
+MPG          | MP2, MP3
+PS/TS Stream | MP2, MP3, LC-AAC, HE-AAC, AC3, TrueHD
+M2TS         | AC3, E-AC3, TrueHD
+VOB          | MP2, AC3
+RMVB         | Vorbis, HE-AAC
+WebM & OGG   | Vorbis, Opus
+```
+???
+It's best not to encode lossy to lossy if you can avoid it but either encode from a lossless source or use the copy command if supported by the output container.  
+---
+class: contentpage
+### **1.1 Lossy vs Lossless compression**
+
+Don't forget all the supported codecs can be found in `ffmpeg -codecs` help. There are some surprises in the list!  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-02 at 16.57.12.png" width="880">]
+
+???
+I'm a particular fan of 'brute force and ignorance' codec, AKA BFI. At the bottom.
+---
+class: contentpage
+### **1.2 Bit rates**
 
 Bit rates control the quality of the video compression, which in turn alters the size of your file dramatically. You may have heard of Constant Bit Rate (CBR) and Variable Bit Rate (VBR). VBR generally gives better overall quality when file size and bit rate are not constrained.  
 
-Constant Rate Factor give you a consistent quality through your encoding for one pass. You can set it for all your transcodes and let the encoder make the adjustments needed between files:
+FFmpeg Constant Rate Factor (CRF) gives you a consistent quality through your encoding for one pass. You can set it for all your transcodes and let the encoder make the adjustments needed between files:
 ```sh
 ffmpeg -i input.mov -c:v libx264 -crf 23 output.mp4
 ```
-The CRF scale for H264 is 0-51. 0 is best, 23 is default and 51 worst. The `sane` range is considered to be 17-28 for visually lossless encoding. The CRF method is consider best for archival formats, as you can guarantee the quality you want though not the file size. Not recommend for streaming.
+The CRF scale for H264 is 0-51. 0 is best, 23 is default and 51 worst. The `sane` range is considered to be 17-28 for visually lossless encoding. The CRF method is considered best for archival formats, as you can guarantee the quality you want though not the file size. Not recommend for streaming.
  
 There are presets and tuning options for this encoder to help fine tune your encoding results:
 - `-preset` ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
@@ -131,25 +193,23 @@ There are presets and tuning options for this encoder to help fine tune your enc
 
 Slower presets allow for better compressions, and film which lowers deblocking for high quality movie content:  
 ```sh
-ffmpeg -i input.mov -c:v libx264 -present slow -tune film -crf 23 output.mp4
+ffmpeg -i input.mov -c:v libx264 -preset slow -tune film -crf 23 output.mp4
 ```
 ???
-More details can be found on the [FFmpeg wiki for H.264 encoding](https://trac.ffmpeg.org/wiki/Encode/H.264)
-Bitrates control the quality of the video compression, which in turn alters the size of your file dramatically. Constant Bit Rate (CBR) uses the same amount of bits across all frames when needed and Variable Bit Rate (VBR) allows the encoder to use more bits for difficult scenes (complex texture or high motion), saving bits for the easy parts of the files to compress.
-
+Bit rates control the quality of the video compression, which in turn alters the size of your file dramatically. Constant Bit Rate (CBR) uses the same amount of bits across all frames when needed and Variable Bit Rate (VBR) allows the encoder to use more bits for difficult scenes (complex texture or high motion), saving bits for the easy parts of the files to compress.
 Rate control varies between codecs in FFmpeg,  but we can look at example such as H.264 to understand it more - selected by the libx264 library
 ---
 class: contentpage
-### **1.2 Bitrates**
+### **1.2 Bit rates**
 
-If you want to target a specific file size for your bitrate encodings you can use Two-Pass you can specify it using -b:v for video bitrate:  
+If you want to target a specific file size for your bit rate encodings you can use Two-Pass you can specify it using `-b:v` for video bit rate and `b:a` for audio bit rate:  
 ```sh
 ffmpeg -y -i input.mov -c:v libx264 -b:v 2600k -pass 1 -an -f null /dev/null && \
 ffmpeg -i input.mov -c:v libx264 -b:v 2600k -pass 2 -c:a aac -b:a 128k output.mp4
 ```
-It's a two pass process and you need to export the first pass to a local file using `-f null /dev/null`. A file named `ffmpeg2pass-0.log.mbtree` will appear in your `pwd`. The second pass will read this file and calculate the required bitrate for the MP4 creation. 
+It's a two pass process and you need to export the first pass to a local file using `-f null /dev/null`. A file named `ffmpeg2pass-0.log.mbtree` will appear in your `pwd`. The second pass will read this file and calculate the required bit rate for the MP4 creation. 
 
-Lossless bitrates:
+Lossless bit rates:
 
 It's possible to use `-crf 0` for lossless H.264 High 4:4:4 Predictive encoding. For other H.264 lossless encoding use '-qp 0', FFmpeg's Quantization Parameter:
 ```sh
@@ -197,7 +257,7 @@ class: contentpage
  > > Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barn-yuv.png)
 ---
 class: contentpage
-### **1.3 Chroma subsampling and colourspaces**
+### **1.4 Chroma subsampling and colourspaces**
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
 
@@ -227,14 +287,14 @@ ffmpeg -i input.mov -c:v libx264 -vf format=yuv420p output.mp4
 NOTE: Pixel formats change between FFmpeg version releases based on development of the libraries. This is the cause of Framemd5 file differences between FFmpeg version releases, as the pix_fmt settings for the codec are used to decompress to raw video for framemd5 creation. Framemd5s are not long-term fixity.
 ---
 class: contentpage
-### **1.4 Colourspace and models**
+### **1.4 Chroma subsampling and colourspaces**
 
 You can also embed colorspace metadata to your encodings using These FFmpeg commands:  
-- color_primaries selecting the colour model to be tagged with.  
+- `color_primaries` selecting the colour model to be tagged with.  
   FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020 (REC.2020)  
-- color_trc marks the video with transfer characteristics (gamma).  
+- `color_trc` marks the video with transfer characteristics (gamma).  
   FFmpeg values include: smpte170m (REC.601 NTSC), gamma28 (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_10 / _12 (REC.2020 10-bit/12-bit)  
-- colorspace marks the video for having the given colourspace.  
+- `colorspace` marks the video for having the given colourspace.  
   FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_cl / _ncl (REC.2020 constant/non-constant luminance) 
  
 You can use the video filter colormatrix to change one colourspace to another, for example bt709 to bt2020 only:  
@@ -244,36 +304,7 @@ ffmpeg -i input.mov -vf colormatrix=bt709:bt2020 output.mov
 
 <font color="orange">Practise:</font> Try to change a colour space to another using the video filter colormatrix, or appending/amending existing colour metadata in some of your test files.    
 ```sh
-ffmpeg -i input.mov -color_primaries bt2020 -color_trc bt2020_10 -colorspace bt2020_cl output.mov
-```
-
----
-class: contentpage
-### **1.5 Lossless video encoding examples**
-
-Encoding FFV1 Matroska to V210 MOV losslessly  
-```sh
-ffmpeg
--i input.mkv
--map 0
---movflags write_colr
--c:v v210
--pix_fmt yuv422p10le 
--color_primaries bt709
--color_trc bt709
--colorspace bt709
--color_range mpeg 
--metadata:s:v:0 "encoder=Uncompressed 10-bit 4:2:2"
--c:a copy
--vf setfield=tff,setdar=16/9
--f mov output.mov
-```
-
-This is our BFI command that encodes FFV1 Matroska files to V210 Mov files with metadata that matches an Apple Quicktime V210 MOV. It has MOV specific requests like movflags, encoder metadata and the -f mov flag.  
-
-You can add these two commands after your output.mov to create a FrameMD5 of the transcode simultaneously.  
-```sh
--f framemd5 -an output.framemd5
+ffmpeg -i input.mov -color_primaries bt2020 -color_trc bt2020 -colorspace bt2020 output.mov
 ```
 ---
 class: contentpage
@@ -298,40 +329,140 @@ ffmpeg
 -vf setfield=tff,setdar=4/3
 output.mkv
 ```
-The -map command this time has a -dn which tells FFmpeg not map any data streams to the Matroska. The FFV1 codec has a number of options to create your best lossless encoding, including level 3 (the latest version release), gop 1, slicecrc active, slices 24 per frame.  
+The -map command this time has a -dn which tells FFmpeg not map any data streams to the Matroska. The FFV1 codec has a number of options to create your best lossless encoding, including level 3 (the latest version release), gop 1, slicecrc active, slices 24 per frame. View [FFV1 Cheat Sheet from FFmpeg](https://trac.ffmpeg.org/wiki/Encode/FFV1) for more guidance.  
 
+A simple example encoding command to convert lossless video to FFV1 and maintain file as-is:  
+```sh
+ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 
+ -c:a copy output.mkv
+```
+Or for two pass encoding you would use (as-is video and no audio):  
+```sh
+ffmpeg -i input.mov -map 0 -an -c:v ffv1 -level 3 -g 1 -slicecrc 1 -slices 24 -pass 1  
+passlogfile ffv1_input.log -f nut dev/null
+
+ffmpeg -i input.mov -map 0 -an -c:v ffv1 -level 3 -g 1 -slicecrc 1 -slices 24 -pass 2  
+passlogfile ffv1_input.log output.mkv
+ ```
 ---
 class: contentpage
 ### **1.5 Lossless video encoding examples**
 
-DPX sequence in a folder to JPEG2000 wrapped in an MXF:  
+Encoding FFV1 Matroska to V210 MOV losslessly  
 ```sh
-ffmpeg -y -framerate 24 -i \PATH\test\0%05d.dpx -c:v libopenjpeg -pix_fmt gbrp10le 123.mxf
-
+ffmpeg
+-i input.mkv
+-map 0
+--movflags write_colr
+-c:v v210
+-pix_fmt yuv422p10le 
+-color_primaries bt709
+-color_trc bt709
+-colorspace bt709
+-color_range mpeg 
+-metadata:s:v:0 "encoder=Uncompressed 10-bit 4:2:2"
+-c:a copy
+-vf setfield=tff,setdar=16/9
+-f mov output.mov
 ```
+You can add framemd5 commands to the above to create a FrameMD5 of the transcode simultaneously.  
+```sh
+-f framemd5 -an output.framemd5
+```
+
+This is our BFI command that encodes FFV1 Matroska files to V210 Mov files with metadata that matches Apple Quicktime spec as closely as possible.  
+
 ---
 class: contentpage
 ### **1.6 Lossy video encoding examples**
+
+FFV1 Matroska to ProRes 422HQ
+
+```sh
+ffmpeg -i
+input.mkv
+-map 0
+-c:v prores_ks
+-profile:v 3
+-pix_fmt yuv422p10le
+-c:a copy
+-vendor ap10
+-flags +ildct
+-color_primaries bt709
+-color_trc bt709
+-colorspace bt709
+-movflags +faststart
+output.mov
+```
+
+These don't make Apple ProRes files that fully conform to the Apple specifications but the resulting file will play file across video players. `faststart` is used to ensure the Moov atom is at the head of the video file to begin download of streaming video.  
+---
+class: contentpage
+### **1.6 Lossy video encoding examples**
+
+This is a BFI automated MP4 access copy creation script which runs 24/7 transcoding files from all our ingest pathways. This specific example handles off-air TV recordings with MPEG-TS video streams in .ts container:  
+
+```sh
+ffmpeg -nostdin
+-i input.mkv
+-map 0:v:0
+-map 0:a?
+-disposition:a:1 default
+-dn
+-c:v libx264
+-crf 28
+-pix_fmt yuv420p
+-vf yadif,scale=-1:1080:flags=lanczos,pad=1920:1080:-1:-1
+-c:a aac
+-movflags +faststart
+-y
+output.mp4
+-f null -
+```
+We force access copies into 16:9 aspect with either letterbox or pillar box. CRF 28 is the very highest you can set a transcode for H.264 before you start to see compression artifacts. The video filter `yadif` is used to deinterlace video source files so they play cleanly on computer and other media.  
+???
+The scaling filter works for both upscaling and downscaling. We use the Lanczos scaling algorithm (flags=lanczos), which is slower than alternatives but gives better results than the default bilinear algorithm.
+The padding filter (pad=1920:1080:240:0) forces the frame if needed following scale, populating any space with black.
 ---
 class: contentpage
 ### **1.7 Other FFmpeg commands**
 
-To run some experiments lets make a 10 second audiovisual file using FFmpeg lavfi filters as your inputs  
+To rewrap a video without changing the codecs you can use stream copy tool:
 ```sh
-ffmpeg -f lavfi -i testsrc=size=1920x1080 -f lavfi -i "sine=frequency=1000:sample_rate=48000"
--t 10 input.mov
+ffmpeg -i input.mov -c copy -map 0 output.mkv
 ```
-You can trim video down to specific time code start and stops, and encode the output  
+You can trim video down to specific time code start and stop. Use `-to` and supply a time code, or use `-t` and supply total seconds, eg `-t 15`:   
 ```sh
 ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
 ```
-You can export one thumbnails every frame between 1 and 2 seconds and save them as `png` files  
+You can export thumbnails for every frame, here between 1 and 2 seconds and save them as `png` files:  
 ```sh
-ffmpeg -i input.mov -vf select=`between(t,1,5)` -vsync 0 output_images%d.png 
+ffmpeg -i input.mov -vf select=`between(t,1,2)` -vsync 0 output_images%d.png 
 ```
-Mute audio in a video file, between two time codes  
+Mute audio in a video file, between 3 seconds and 5 seconds into an audio stream:  
 ```sh
 ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
+```
+---
+class: contentpage
+### **1.7 Other FFmpeg commands**
+
+You can convert a DCP file to an H.264 file, or if you change the audio to stream copy `-c:a copy` you can set the output video to Matroska:
+```sh
+ffmpeg -i video.mxf -i audio.mxf -c:v libx264 -pix_fmt yuv420p -c:a aac output_dcp.mp4 
+```
+You can flip a video image horizontally or vertically, or both:
+```sh
+ffmpeg -i input.mov -filter:v "hflip,vflip" -c:a copy output.mov
+```
+Concatenate multiple videos of the same type together into one file. First create a text file with one file one each line then use that text file to concatenate the files into one new file (use -safe 0 if using absolute paths in file):   
+```
+file 'first_file.mp4'
+file 'second_file.mp4'
+file 'third_file.mp4'
+```
+```sh
+ffmpeg -f concat -safe 0 -i list_of_files.txt -c copy output_concat.ext
 ```
 ---
 class: contentpage
@@ -343,13 +474,24 @@ cd <dpx_folder>
 ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 
 -pix_fmt yuv444p10le -r 25 your_dpx_file.mov
 ```
-
-
+Sometimes you might have drift of a few frames between your video and audio streams causing lip sync issues. This command can shift the streams slightly to fix this using stream copy, configured to move the audio stream approx 2 frames at 25fps: 
+```sh
+ffmpeg -i input.mov -itsoffset 0.125 -i input.mov -map 0:v -map 1:a -c copy output.mov
+```
+Cropping video is possible with the crop filter, with default encoding of H.264 and audio AAC:
+```sh
+ffmpeg -i input.mov -vf "crop=width:height" output.mov
+```
+Many of these command ideas are taken from [FFmprovisr from Amia Open Source](https://amiaopensource.github.io/ffmprovisr/) written by the AV preservation community.
 ---
 class: contentpage
 ### **2. FFmpeg video filters**
 
+FFmpeg offers a vast array of image filters that can help with QC checking video files. In this session, I'll be covering some key filters and demonstrating how they are seamlessly integrated into QC workflow using QC Tools.  
 
+???
+As film and AV archivists, we're constantly tasked with ensuring the integrity and quality of our collections. 
+---
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
     </script>

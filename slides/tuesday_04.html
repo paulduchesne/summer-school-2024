@@ -176,7 +176,7 @@ A downside of using MD5 is that it can be quite slow to hash files, which can ad
 
 ---
 class: contentpage
-### **2. CLI checksum creation**
+### **2 CLI checksum creation**
 
 You can create many cyrtographic and non-cryptograpic checksum hashes using the CLI.  
 
@@ -308,12 +308,34 @@ Software `Meld` allow comparison of FrameMD5s, highlighting where differences oc
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.42.10.png" width="1030">]
 
-FFmpeg also provide a FrameCRC tool which is similar to FrameMD5 
+FFmpeg also provide a FrameCRC tool which is similar to FrameMD5.  
+
+The BFI had problems with our lossless FrameMD5 verification recently for V210 movs being transcoded from FFV1 Matroska files. We had to call on some help from Dave Rice and the problem and solution is detailed in my blog entry [The Case of the Failing FrameMD5](https://digitensions.home.blog/2021/06/08/python-ffv1-to-v210-transcoding-script-using-ffmpeg/)
+???
+tldr, V210 movs captured with Black Magic technology were not respecting the Apple spec that no data is written to borders around the video image. Transcode to FFV1 preserved this lossless data, but reconversion back to V210 meant FFmpeg correctly compressed these regions in line with Apple spec, so the FrameMD5 was failing between lossy edges of V210 and lossless edges of FFV1. Solution, LUT cropping of the frames of both files to only supply the central section of image for framemd5 comparison.
+
 ---
 class: contentpage
 ### **2.6 FFV1 slice checksums**
 
-The FFV1 codec has embedded CRC32 checksums for every slice within each frame on the timeline. The max slice count is visible in the file metadata, generally video slices are 16 or 24 slices, but RAWcooked slices start at 64 slices per frame  
+The FFV1 codec can include `slices` within every frame of a video. It's optional to select `slicecrcs` are active, and to choose how many slices you want per frame. Video files start from 24 slices, and RAWcooked encoded videos range from 64 to 200+ slices per frame.  
+
+```sh
+ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 
+ -c:a copy output.mkv
+```
+For every slice there is an embedded CRC checksum, so for one minute of video footage at 25 frames per second you have 36,000 CRC embedded into the codec.  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/checksum_map.png" width="800">]
+
+???
+Dave Rice makes a lovely comparison between stream/whole file checksums in AV files being like a country wide fire alarm for the services, that somewhere in Germany there's a fire. With FFV1 Codec, this is more granular, instead of it being a country wide alarm it shows you which state the fire is in, and which region of that state... Making that fire much easier to find/fix!
+Really valuable fixity checking over time, possibly run at the point files are migrated between long-term storage.
+Remember if you find any breaks you can try to fix them in MediaConch!! Amazing tools for our long-term video tape storage.
+---
+class: contentpage
+### **2.6 FFV1 slice checksums**
+
+The max slice count is visible in the file metadata, and confirmation that the error detection type is per slice.  
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.25.41.png" width="450">]
 To perform a fixity check of the file you just need to decode the video with FFmpeg again, and to display any FFV1 CRC mismatches in the terminal window use a command like the example below
