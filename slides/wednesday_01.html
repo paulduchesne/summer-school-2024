@@ -37,9 +37,7 @@ QCTools
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-30 at 14.20.38.png" width="340">]
-Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-30 at 14.20.38.png" width="480">]
 ```
 Demuxing                                  ---> Decoding                                      __
 ---------------------------------------------|-----------------------------------------------  |
@@ -52,6 +50,8 @@ Combines multiple streams into one container | Converts raw/encoded streams into
 Organises the data for synchronised playback | Can reduce stream size while maintaining quality   
 ```
 ???
+Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
+
 Step through the graphic:
 - libavformat library is called for demuxers (and muxers) to read input files and get packets of data from them.
 - When multiple input files are demuxed, FFmpeg keeps them syncronised using the lowest timestamp on any active input stream (?)
@@ -61,30 +61,6 @@ Step through the graphic:
 - These are passed to the muxer which writes the encoded packets to the output file
 
 *Transcoding can be encoded format to another, or it can be a change of the parameters within the same stream format.
----
-class: contentpage
-### **1 FFmpeg video encoding**
-
-- **libavutil**  
-A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
-
-- **libavcodec**  
-A library containing decoders and encoders for audio and video codecs  
-
-- **libavformat**  
-A library containing demuxers and muxers for multimedia container formats  
-
-- **libavdevice**  
-A library containing input and output devices for grabbing from and rendering to many common multimedia software frameworks  
-
-- **libavfilter**  
-A Library containing many media filters  
-
-- **libswscale**  
-A library performing highly optimised image scaling and colour space / pixel format conversion  
-
-- **libswresample**  
-A library preforming optimised audio resampling, rematrixing and sample format conversions  
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
@@ -112,6 +88,30 @@ We need to use lossless and lossy compression codecs for creation of preservatio
 - RealVideo was first released in 1997 and was crucial in introducing the concept of internet-based audio and video to consumers.  
 - QuickTime 4 was released in 1999. Apple collaborated with a firm called Sorenson who specialised in video codecs and together launched a format that became hugely popular for streaming film trailers.  
 - Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs flv and f4v were often paired with Sorenson and VP4 video codecs.  
+---
+class: contentpage
+### **1 FFmpeg video encoding**
+
+- **libavutil**  
+A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
+
+- **libavcodec**  
+A library containing decoders and encoders for audio and video codecs  
+
+- **libavformat**  
+A library containing demuxers and muxers for multimedia container formats  
+
+- **libavdevice**  
+A library containing input and output devices for grabbing from and rendering to many common multimedia software frameworks  
+
+- **libavfilter**  
+A Library containing many media filters  
+
+- **libswscale**  
+A library performing highly optimised image scaling and colour space / pixel format conversion  
+
+- **libswresample**  
+A library preforming optimised audio resampling, rematrixing and sample format conversions  
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
@@ -147,9 +147,7 @@ class: contentpage
 Lossless compression reduces the size of a video file without losing any information or quality. These algorithms preserve the original data in the video stream, and decompression returns a bit perfect copy of the original.
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 20.59.37.png" width="900">]
-```sh
-ffmpeg -i input.mov -c:v libx264 -preset veryslow -g 1 -qp 0 lossless_output.mov
-```
+
 ---
 class: contentpage
 ### **1.1 Lossy vs Lossless compression**
@@ -157,10 +155,6 @@ class: contentpage
 Codecs that use lossy compression reduce the size of a file by discarding some of the redundant information from the original video stream. This process cannot be reversed and the original data cannot be retrieved.  
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 21.00.09.png" width="900">]
-
-```sh
-ffmpeg -i input.mov -c:v libx264 -g 12 -crf 23 lossy_output.mp4
-```
 
 ---
 class: contentpage
@@ -345,7 +339,7 @@ class: contentpage
 class: contentpage
 ### **1.4 Chroma subsampling and colourspaces**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
 
 ---
 class: contentpage
