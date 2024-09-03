@@ -32,9 +32,6 @@ class: contentpage
 
 7. MediaTrace  
 
-8. FFV1 codec checksums  
-      
-
 ---
 class: contentpage
 ### **1. Intro to RAWcooked**
@@ -66,7 +63,7 @@ Command            | Description
 --accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images      
 ```
 
-Practical: RAWcooked encode the DPX sequence  
+<font color="orange">Practise:</font> RAWcooked encode the DPX sequence  
 
 ```sh
 rawcooked --all --no-accept-gaps /path_to_seqence/dpx_sequence/ >> encoding_data.log
@@ -143,7 +140,7 @@ The metadata is structured into groups and output in this order:
 
 Mediainfo supports most audiovisual formatse. Because this software open source and have active development this software may alter over time as sponsors request support for additional features.  
 
-The basic command returns a list of grouped metadata in key value pairs:  
+<font color="orange">Practise:</font> Call the basic command to view metadata delivered in key/value pairs    
 ```sh
 mediainfo file.mov
 ```

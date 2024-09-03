@@ -14,7 +14,7 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-FFmpeg video encoding  
+FFmpeg video encoding intro  
 > 1.1 Lossy vs Lossless compression  
 > 1.2 Bit rate  
 > 1.3 Bit-depth  
@@ -24,41 +24,122 @@ FFmpeg video encoding
 > 1.7 Other interesting FFmpeg commands
 
 FFmpeg filters  
-> 2.1  
+> 2.1 Video filters 
+> 2.2 Audio filters 
+> 2.3 Detection filters 
+> 2.4 Visualisation filters  
+> 2.5 Generative filters  
 
-QC Tools  
-> 3.1  
+QCTools  
+> 3.1 QC workflow tool using FFmpeg filters  
+> 3.2 
 
 ---
 class: contentpage
-### **1. FFmpeg video encoding**
+### **1 FFmpeg video encoding**
 
-Why do we need to encode?
-
-- To save storage space
-- To optimise video quality
-- To make adaptable access files
-- To maintain accessibility to obsolete codecs over time
-
-The FFmpeg team reverse engineer virtually every video and audio codec that exists. We're incredibly lucky to have an open-source tool like FFmpeg to help with codec obsolescence and encoding/decoding. Obsolete formats saved by FFmpeg:   
-- Cinepak  
-- RealVideo    
-- QuickTime 4    
-- Flash Video  
-
-FFmpeg allows for granular encoding choices that include encoding libraries, chroma subsampling, colourspace, bit-depth and bit rate.  
-```sh
-ffmpeg -f lavfi -i testsrc=size=720x576 -c:v v210 -f lavfi
--i "sine=frequency=1000:sample_rate=48000" -c:a pcm_s16le -t 10 test_file.mov
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-30 at 14.20.38.png" width="340">]
+Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
 ```
+Demuxing                                  ---> Decoding                                      __
+---------------------------------------------|-----------------------------------------------  |
+Separates the streams from a container file  | Reverses the process of encoding              Filters
+Extracts individual audiovisual data packets | Converts compressed data back to raw data     Applied
+                                                                                               |       
+Muxing                                    <--- Encoding / Transcoding                       <--  
+---------------------------------------------|-----------------------------------------------
+Combines multiple streams into one container | Converts raw/encoded streams into another format  
+Organises the data for synchronised playback | Can reduce stream size while maintaining quality   
+```
+???
+Step through the graphic:
+- libavformat library is called for demuxers (and muxers) to read input files and get packets of data from them.
+- When multiple input files are demuxed, FFmpeg keeps them syncronised using the lowest timestamp on any active input stream (?)
+- libavcodec library - encoded packets are passed to the decoder (unless stream copy active), and decode produces uncompressed frames (TRANSCODING ONLY)
+- libavfilter - If any filtering is called for it will be applied at this stage (we'll look at this more later)
+- After filtering the frames are passed to the encoder which encodes them and outputs encoded packets  
+- These are passed to the muxer which writes the encoded packets to the output file
+
+*Transcoding can be encoded format to another, or it can be a change of the parameters within the same stream format.
+---
+class: contentpage
+### **1 FFmpeg video encoding**
+
+- **libavutil**  
+A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
+
+- **libavcodec**  
+A library containing decoders and encoders for audio and video codecs  
+
+- **libavformat**  
+A library containing demuxers and muxers for multimedia container formats  
+
+- **libavdevice**  
+A library containing input and output devices for grabbing from and rendering to many common multimedia software frameworks  
+
+- **libavfilter**  
+A Library containing many media filters  
+
+- **libswscale**  
+A library performing highly optimised image scaling and colour space / pixel format conversion  
+
+- **libswresample**  
+A library preforming optimised audio resampling, rematrixing and sample format conversions  
+---
+class: contentpage
+### **1 FFmpeg video encoding**
+
+- FFmpeg will receive inputs from regular files, pipes, network streams and capture devices as long as they are specified in the command with the `-i` option  
+- Each input can contain any number of video, audio, subtitle, attachment and data streams, within reason  
+- The allowed number and types of streams output will be limited by the container format selected during encoding  
+- The `-map` option is critical to good mapping of streams from source to output without losing any precious stream data  
+- Calling streams in commands is simple using their stream order indices (0, 1, 2)
+- Input files must always be listed first in the command order, and output files last - they cannot overlap  
+- FFmpeg allows for granular encoding choices that include encoding libraries, chroma subsampling, colourspace, bit-depth and bit rate  
+  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 15.31.37.png" width="900">] 
+The FFmpeg team reverse engineer virtually every video and audio codec that exists. We're incredibly lucky to have an open-source tool like FFmpeg to help with codec obsolescence and encoding/decoding.  
 
 ???
+Containers may also be referred to interchangeably as ‘formats’ or ‘wrappers’.. But they do more
+than just hold the contents of a file together. They are responsible for identifying the data, knowing
+how much of the data there is, understanding what kind of data streams are present and
+information about them, storing time data, self-identification data, and metadata about itself and its
+contents.
+
 We need to use lossless and lossy compression codecs for creation of preservation masters and access copies. 
 - Cinepak - a lossy video codecs released in 1991 and incorporated into Apple’s QuickTime video suite in 1992.  
 - RealVideo was first released in 1997 and was crucial in introducing the concept of internet-based audio and video to consumers.  
 - QuickTime 4 was released in 1999. Apple collaborated with a firm called Sorenson who specialised in video codecs and together launched a format that became hugely popular for streaming film trailers.  
 - Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs flv and f4v were often paired with Sorenson and VP4 video codecs.  
+---
+class: contentpage
+### **1 FFmpeg video encoding**
 
+FFmpeg commands generally consist of a '-flag' and a following value. They usually, but not alwasy, are placed between the input file and the output file in the command line  
+
+```
+ flag / argument        | Description                                                      
+------------------------|----------------------------------------------------------------  
+ -i filename.ext        | indicates an input file
+ -c:v video_codec       | select video codec                                                
+ -c:a audio_codec       | select audio codec                                                
+ -map stream_choice     | map specified streams to new file, or all using 0                               
+ -vf video_filter       | select video filter                                               
+ -af audio_filter       | select audio filter                                               
+ -filter_complex        | selects filter for multiple inputs or outputs                     
+ -pix_fmt value         | specifies colourspace and chroma subsampling preferred for output                  
+ -crf integer 0+        | numerical value for constant rate factor, 0 = best   
+ -b:v [integer]k        | numerical value sets the kilobit bitrate of the output file               
+ -f integer             | sets the frames per second of the output file                     
+ -aspect 4:3            | set the display aspect ratio                                      
+ -colorspace value      | tags video with the specific colourspace                        
+```
+
+If you want to try an FFmpeg command in a for or while loop, you will want to add the `-nostdin` flag at the beginning, which blocks FFmpeg's default behaviour of receiving and acting on standard inputs
+```bash
+ffmpeg -nostdin -i input.mov...
+```
 ---
 class: contentpage
 ### **1.1 Lossy vs Lossless compression**
@@ -87,17 +168,20 @@ class: contentpage
 
 Group of Picture (GOP) length 1 can be used to determine that every file is a key frame and that no image data is discarded  
 ```sh
-ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 1 -c:a copy h264_gop1.mp4
-ffmpeg -i lossless.mov -c:v libx264 -map 0 -g 12 -c:a copy h264_gop12.mp4
+ffmpeg -i input.mov -c:v libx264 -g 1 -c:a copy output.mp4
 ```
-
 The file size will still using H.264 I frame compression using GOP=1, but you won't create any B/P frames so the size won't be as small as lossy compression. The default GOP in FFmpeg is 12.  
 
-<font color="orange">Practise:</font> Make two conversions of a lossless video with GOP=1 and GOP=12 setting. Then use this command to view the GOP settings in FFprobe:  
+To set a keyfranme interval for every 2 seconds of a 25 fps file:  
+```sh
+ffmpeg -i input.mov -c:v libx264 -key_int_min 25 -g 50 -sc_threshold 0 -c:a copy output.mp4
+```
+The key interval minimum is every second, with a maximum keyframe every 2 seconds. `-sc_threshold` ensures a new keyframe is set on a scene change.  
+
+<font color="orange">Practise:</font> Try the commands above, then use FFprobe to view the frame I,B and P frames:  
 ```sh
 ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
 ```
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/gops.png" width="260">]
 
 ???
 FFrobe probe command:
@@ -424,31 +508,14 @@ You can trim video down to specific time code start and stop. Use `-to` and supp
 ```sh
 ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
 ```
-You can export thumbnails for every frame, here between 1 and 2 seconds and save them as `png` files:  
-```sh
-ffmpeg -i input.mov -vf select=`between(t,1,2)` -vsync 0 output_images%d.png 
-```
-Mute audio in a video file, between 3 seconds and 5 seconds into an audio stream:  
-```sh
-ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
-```
----
-class: contentpage
-### **1.7 Other FFmpeg commands**
-
 You can convert a DCP file to an H.264 file, or if you change the audio to stream copy `-c:a copy` you can set the output video to Matroska:
 ```sh
 ffmpeg -i video.mxf -i audio.mxf -c:v libx264 -pix_fmt yuv420p -c:a aac output_dcp.mp4 
-```
-You can flip a video image horizontally or vertically, or both:
-```sh
-ffmpeg -i input.mov -filter:v "hflip,vflip" -c:a copy output.mov
 ```
 Concatenate multiple videos of the same type together into one file. First create a text file with one file one each line then use that text file to concatenate the files into one new file (use -safe 0 if using absolute paths in file):   
 ```
 file 'first_file.mp4'
 file 'second_file.mp4'
-file 'third_file.mp4'
 ```
 ```sh
 ffmpeg -f concat -safe 0 -i list_of_files.txt -c copy output_concat.ext
@@ -467,21 +534,185 @@ Sometimes you might have drift of a few frames between your video and audio stre
 ```sh
 ffmpeg -i input.mov -itsoffset 0.125 -i input.mov -map 0:v -map 1:a -c copy output.mov
 ```
-Cropping video is possible with the crop filter, with default encoding of H.264 and audio AAC:
-```sh
-ffmpeg -i input.mov -vf "crop=width:height" output.mov
-```
+
 Many of these command ideas are taken from [FFmprovisr from Amia Open Source](https://amiaopensource.github.io/ffmprovisr/) written by the AV preservation community.
+
 ---
 class: contentpage
-### **2. FFmpeg video filters**
+### **2. FFmpeg filters**
 
-FFmpeg offers a vast array of image filters that can help with QC checking video files. In this session, I'll be covering some key filters and demonstrating how they are seamlessly integrated into QC workflow using QC Tools.  
+Filters come in two classes, the first is simple filtergraphs which have just one input and output of the same type.
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.24.png" width="700">]
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.30.png" width="800">]
+
+```sh
+-filter  -vf   -af
+```
+???
+Simple filtergraphs are simple because they have one input and one output, both of the same type.
+To select these filters you use the -filter flag, or for video streams -vf, and audio -af
+These filters are inserted between the decoding and the encoding stages, and you can add multiple simple filters into this gap.
+---
+class: contentpage
+### **2. FFmpeg filters**
+
+Complex filtegraphs can have multiple inputs and/or multiple outputs, or when the stream type differs from input.  
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.37.png" width="600">]
+```sh
+-filter_complex
+```
+???
+An example would be an overlay filter that might overlay a watermark to an image as it has two inputs
+---
+class: contentpage
+### **2.1 Video filters**
+
+Deinterlacing filters options that remove top of bottom field interlacement in video from broadcast sources:
+```sh
+-vf yadif, -vf bwdif, -vf kerndeint
+```
+Cropping video is possible with the crop filter, with default encoding of H.264 and audio AAC:
+```sh
+ffmpeg -i input.mov -filter:v "crop=672:572:24:32" output.mov
+```
+You can export thumbnails for every frame, here between 1 and 2 seconds and save them as `png` files:  
+```sh
+ffmpeg -i input.mov -vf select=`between(t,1,2)` -vsync 0 output_images%d.png 
+```
+You can flip a video image horizontally or vertically using `hflip` and `vflip` filters:
+```sh
+ffmpeg -i input.mov -filter:v "hflip,vflip" -c:a copy output.mov
+```
+You can join filters together like the yadif filter, colormatix which we've seen can be used to tag a colourspace, and format which selects a Pixel Format.  
+```sh
+-vf "yadif,colormatrix=bt601:bt709,format=yuv420p"
+```
+???
+YADIF, Yet Another Deinterlacing Filter (most used in AV pres)
+BWDIF, Bob Weaver Deinterlacing Filter
+KERNDEING, Donald Graft's adaptive kernel deinterlacing
+---
+class: contentpage
+### **2.2 Audio filters**
+
+Mute audio in a video file, between 3 seconds and 5 seconds into an audio stream:  
+```sh
+ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
+```
+The loudnorm filter applies a standard audio loudness normalisation:
+```sh
+ffmpeg -i input.wav -af loudnorm -c:a mp3 -b:a 256k -ar 48000 output.mp3 
+```
+The silenceremove filter will remove silent audio at the beginning of an audio file. The dB level can be adjusted  
+```sh
+ffmpeg -i input.wav -af silenceremove=start_threshold=-57dB:start_duration=1:start_periods=1
+-c:a pcm_s16le -ar 48000 output.wav
+```
+The aecho filter allows you to set an echo with your favourite parameters:
+```sh
+ffmpeg -i input.wav -af "aecho=0.8:0.9:1000:0.3" -c:a copy output.wav 
+```
+Use the afade filter to fade in the first 5 seconds of audio, with type `t=in`:
+```sh
+ffmpeg -i input.wav -af "afade=t=in:ss=0:d=15" -c:a copy output.wav
+```
+???
+Other notable audio filters:
+asr, Automation Speech Recognition using PocketSphinx
+---
+class: contentpage
+### **2.3 Detection filters**
+
+Blackdetect can be used to identify in and out points of video that is nearly black and longer than 0.05 of a second:  
+```sh
+ffmpeg -i input.mov -vf "blackdetect=d=0.05:pix_th=0.1" -f null -
+```
+Cropdetect filter auto-detects crops sizes of a video frame allowing this to be determined by black pixels:
+```sh
+ffmpeg -i input.mov -vf "cropdetect,metadata=mode=print" -f null -
+```
+Freezedetect will detect frozen video during a specified duration, and logs a message:
+```sh
+ffmpeg -i input.mov -vf "freezedetect=d=0.25:n=-60dB" -f null -
+```
+Silencedetect will detect silence in your audio (-50dB for over one second) and log a message when silence is found 
+```sh
+ffmpeg -i input.mp3 -af "silencedetect=noise=-50dB:d=1" -f null -
+```
+
+These and other detection filters can be used in Python code if you search in the logs for the filtername, capturing the timecodes for the occurrences.  
+???
+scdet, scene detection
+vfrdet, detect variable frame rates
+volumedetect, logs the mean volume of 16-bit signed integer samples
+
+---
+class: contentpage
+### **2.4 Generative filters**
+
+FFmpeg's lavfi library can be used to generate content for test video files, or for viewing in FFplay.  
+
+You can synthesize a `voice utterance` using the libflite library using `flite`:
+```sh
+ffplay -f lavfi flite=text='Two roads diverged in a yellow wood and sorry I couldn't travel both'
+```
+You can generate video and audio content for video files using sine wave and mandelbrot (a geometric representation of complex numbers):
+```sh
+ffmpeg -f lavfi -i mandelbrot -c:v v210 -f lavfi -i "sine=frequency=1000:sample_rate=48000"
+-c:a pcm_s16le -t 5 output.mov
+```
+Many test sources can be generated for use in test files:
+```sh
+ffplay -f lavfi -i "testsrc=duration=5:size=1920x1080:rate=25"
+```
+Extract an audio spectrogram of a whole audio track, 1024x1024 pixels
+```sh
+ffmpeg -i input.mov showspectrum=s=1280x480:scale=log
+```
+---
+class: contentpage
+### **2.5 Visualisation filters**
+
+The histogram filter computes and draws a colour distibution historgram for the input video. It's highly customisable but can be used simply with:
+```sh
+ffplay -i input.mov -vf histogram
+```
+The vectorscope filter displays two colour component values in a two dimensional graph:
+```sh
+ffplay -i input.mov -vf vectorscope=m=color
+```
+Simulate a video waveform monitor using the waveform filter, which plots colour component intensity:
+```sh
+ffplay -i input.mov -vf waveform
+```
+Finally you can map the colour pixels of your video on to a CIE colour diagram:
+```sh
+ffmpeg -i input.mov -vf ciescope
+```
+
+Many of these visualisation filters are incorpated into open-source softwares.
 
 ???
-As film and AV archivists, we're constantly tasked with ensuring the integrity and quality of our collections. 
+Histogram: A representation of the color component distribution in an image
+Vectorscope: A digital representation of oscilloscopes for video and audio
 ---
-    </textarea>
+class: contentpage
+### **3. QC Tools**
+
+The MediaArea software QC Tools uses FFmpeg filters extensively to help quality control audiovisual files.
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 22.54.26.png" width="700">]
+---
+class: contentpage
+### **3. QC Tools**
+
+QCTools accepts a variety of video formats, including \*.avi, \*.mkv, \*.mov, and \*.mp4, as well as a diverse selection of codecs. Uncompressed video formats are ideal for the most accurate interpretation of the video. QCTools relies on FFmpeg’s libavcodec and libformat libraries to analyze and playback video which allows QCTools to support a wide variety of digital audiovisual formats.
+
+The [QCTools manual](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf) provides excellent guide to use QC Tools.
+</textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">

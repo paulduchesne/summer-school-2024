@@ -547,17 +547,15 @@ class: contentpage
 ### **Agenda 3**
 
 Introduction to FFmpeg  
-> 3.1 The FFmpeg libraries  
-> 3.2 The basic FFmpeg command  
-> 3.3 Useful audiovisual flags  
-> 3.4 Encoding defaults    
-> 3.5 FFprobe and FFplay  
-> 3.6 Guides and help pages   
-> 3.7 FFmpeg's FFV1 codec   
+> 3.1 The basic FFmpeg command  
+> 3.2 Format defaults    
+> 3.3 FFprobe and FFplay  
+> 3.4 Guides and help pages   
+> 3.5 FFmpeg's FFV1 codec   
 
 ---
 class: contentpage
-### **Introduction to FFmpeg**
+### **3 Introduction to FFmpeg**
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.13.26.png" width="650">]
 
 - FFmpeg encodes, decodes, muxes and demuxes audiovisual file formats at speed  
@@ -567,34 +565,10 @@ class: contentpage
 - FFmpeg comes with a metadata analysis and extraction tool FFprobe  
 - Playback of all FFmpeg formats and codecs and live streams is possible with FFplay  
 - It can be used via the CLI, with third party GUIs or via their own API  
----
 
-class: contentpage
-### **3.1 The FFmpeg libraries**
-
-- **libavutil**  
-A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
-
-- **libavcodec**  
-A library containing decoders and encoders for audio and video codecs  
-
-- **libavformat**  
-A library containing demuxers and muxers for multimedia container formats  
-
-- **libavdevice**  
-A library containing input and output devices for grabbing from and rendering to many common multimedia software frameworks  
-
-- **libavfilter**  
-A Library containing many media filters  
-
-- **libswscale**  
-A library performing highly optimised image scaling and colour space / pixel format conversion  
-
-- **libswresample**  
-A library preforming optimised audio resampling, rematrixing and sample format conversions  
 ---
 class: contentpage
-### **3.2 The basic FFmpeg command**
+### **3.1 The basic FFmpeg command**
 
 This basic FFmpeg encoding command begins with calling the installed software `ffmpeg`. Following this you use the `-i` input flag followed by the path to your file.  Finally supply the path and filename of your new encoded file. If you have a file called `input.mov` this would convert it into an `mp4` version  
 ```bash
@@ -613,60 +587,31 @@ ffmpeg -i input.mkv -c:a copy output.mov
 The input.mkv video will be re-encoded to ProRes in the first command, and the audio will be unchanged in the second command. But what happens to their other streams?  
 ---
 class: contentpage
-### **3.3 Encoding defaults**
+### **3.2 Format defaults**
 
-It's important to know that if you do not select codec parameters carefully that FFmpeg will fall back to its default codec settings which are determined by the extension of the output file, so our previous examples will have audio changed to aac, and video to H.264!  
+It's important to know that if you do not select format parameters carefully that FFmpeg will use default codec settings, determined by the extension of the output file.   
 
-> **.avi**  default video mpeg4 - default audio mp3  
-
-> **.mkv**  default video H.264 - default audio ac3    
-
-> **.mov**  default video H.264 - default audio AAC   
-
-> **.mp4**  default video H.264 - default audio AAC  
-
-> **.mpg**  default video mpeg1video - default audio mp2   
-
-> **.mxf**  default video mpeg2video - default audio pcm_s16le   
-
-> **.wav**  default audio pcm_s16le (16 bit PCM)  
-
-
-It's very important to specify exactly what codecs are wanted in the finished file  
-```bash
-ffmpeg -i input.mkv -c:v prores_ks -c:a pcm_s16le output.mov
 ```
+Format     | Default video   | Default audio  
+-----------|-----------------|----------------
+avi        | mpeg4           | mp3  
+mkv        | H.264           | ac3  
+mov        | H.264           | aac  
+mp4        | H.264           | aac  
+mpg        | mpeg1video      | mp2  
+mxf        | mpeg2video      | pcm_s16le  
+wav        | -               | pcm_s16le  
+```
+[FFmprovisr Codec Defaults](https://amiaopensource.github.io/ffmprovisr/index.html#codec-defaults) for FFmpeg.
+
+It's very important to specify exactly what codecs are wanted in the finished file:  
+```bash
+ffmpeg -i input.mkv -c:v v210 -c:a pcm_s16le output.mov
+```
+
 ---
 class: contentpage
-### **3.4 Useful audiovisual flags**
-
-These commands always have a flag and an argument, and usually sit between the input file and the output file  
-
-```
- flag / argument        | Description                                                      
-------------------------|----------------------------------------------------------------  
- -i filename.ext        | indicates an input file
- -c:v video_codec       | select video codec                                                
- -c:a audio_codec       | select audio codec                                                
- -map stream_choice     | map specified streams to new file, or all using 0                               
- -vf video_filter       | select video filter                                               
- -af audio_filter       | select audio filter                                               
- -filter_complex        | selects filter for multiple inputs or outputs                     
- -pix_fmt value         | specifies colourspace and chroma subsampling preferred for output                  
- -crf integer 0+        | numerical value for constant rate factor, 0 = best   
- -b:v [integer]k        | numerical value sets the kilobit bitrate of the output file               
- -f integer             | sets the frames per second of the output file                     
- -aspect 4:3            | set the display aspect ratio                                      
- -colorspace vallue     | tags video with the specific colourspace                        
-```
-
-If you want to try an FFmpeg command in a for or while loop, you will want to add the `-nostdin` flag at the beginning, which blocks FFmpeg's default behaviour of receiving and acting on standard inputs
-```bash
-ffmpeg -nostdin -i input.mov...
-```
----
-class: contentpage
-### **3.5 FFprobe**
+### **3.3 FFprobe**
 
 To extract metadata from a video file you can use FFprobe to retrieve it. This basic command will return your file's available technical metadata. The first gives you all the FFmpeg programme information but the second represses this information  
 ```bash
@@ -688,7 +633,7 @@ ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=n
 
 ---
 class: contentpage
-### **3.5 FFplay**
+### **3.3 FFplay**
 
 When an FFmpeg command allows you to save a video, FFplay allows you to stream it to a GUI windows and view the output. This uses the FFmpeg lavfi filter which can generate visual and audio contents to create test files  
 ```bash
@@ -707,12 +652,12 @@ ffplay -f lavfi "movie='input.mov', signalstats=out=brng:color=cyan[out]"
 ```
 ---
 class: contentpage
-### **3.6 Guides and help pages**
+### **3.4 Guides and help pages**
 
 <font color="orange">Practise:</font> To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
 ```bash
 man ffmpeg
-ffmpeg -h (long / full)
+ffmpeg -h long / full
 ffmpeg -version
 ffmpeg -codecs
 ffmpeg -formats
@@ -734,17 +679,17 @@ ffmpeg -filters
 
 ---
 class: contentpage
-### **3.7 FFmpeg's FFV1 codec**
+### **3.5 FFmpeg's FFV1 codec**
 
 FFV1 is a lossless video codec that was initially created by the FFmpeg community 21 years ago. Since 2009 it has been used for preservation and funding has been found for its development.  
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.15.17.png" width="700">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.15.17.png" width="670">]
 
 ---
 class: contentpage
-### **3.7 FFmpeg's FFV1 codec**
+### **3.5 FFmpeg's FFV1 codec**
 
-FFV1 is a lossless intraframe compression codec, and the encoder and decoder are part of FFmpeg's libavcodec library. File size reductions can be significant with this codec. RAWcooked standard size reductions are between one and two thirds. The BFI have found this to be the case with 2K RGB scans, sometimes even one fifth the size of the original scan.  
+File size reductions can be significant, with RAWcooked standard size reductions are between one and two thirds.    
 
 > *'Author Mike Casey summarized some of the advantages of FFV1 including "roughly 65% less data than a comparable file using the v210 codec" because "FFV1 uses variable bit rate encoding so the size of the resulting file varies according to the nature of the program content." At scale, this can result in a huge savings in storage cost and processing time.'*
 > [Library of Congress FFV1 format description](https://www.loc.gov/preservation/digital/formats/fdd/fdd000341.shtml)
@@ -752,29 +697,29 @@ FFV1 is a lossless intraframe compression codec, and the encoder and decoder are
 The format has limited support with proprietary editing softwares but decoding and encoding is available:  
 - Adobe Premiere (via DirectShow), Archivematica, Blender, Davinci Resolve, Handbrake, kdenlive, Shotcut
 
-The FFV1 codec is most frequently paired with the Matroska wrapper, and this combination have recently been designated 'Preferred Format' by the Federal Agencies Digitization Guidelines Initiative.  Matroska is an open source project designed to create container formats able to hold unlimited numbers of video, audio, picture or subtitle tracks in one file. The Matroska project have several containers:
-- MKV for video, MKA for audio, MKS for subtitles, and MK3D for stereoscopic video.
+The FFV1 codec is most frequently paired with the Matroska wrapper, and this combination have recently been designated 'Preferred Format' by the Federal Agencies Digitization Guidelines Initiative.  
 
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-09-03 at 16.17.55.png" width="240">]
+[Matroska](https://www.matroska.org/index.html) is an open source project designed to create container formats able to hold unlimited numbers of video, audio, picture or subtitle tracks in one file. The Matroska project have several containers:
+- MKV for video, MKA for audio, MKS for subtitles and MK3D for stereoscopic video.
+???
+The BFI have found this to be the case with 2K RGB scans, sometimes even one fifth the size of the original scan.
 ---
 class: contentpage
-### **3.7 FFmpeg's FFV1 codec**
+### **3.5 FFmpeg's FFV1 codec**
 
-FFV1 has specific encoding parameters to ensure the best lossless encoding for preservation use:  
+FFV1 has specific encoding parameters to ensure the best lossless encoding for preservation use and these are the key values to supply for lossless preservation encoding:  
 ```
 | Argument      | Value  | Description                                                        |  
 |---------------|--------|--------------------------------------------------------------------|  
-| -coder        | 0,1,2  | Customisable coders, 0 Golomb-Rice, 1 Range Coder, 2 Range Coder+  |
-| -context      | 0,1    | 0=small, 1=large                                                   |  
-| -g            | >=1    | Reuse context model with group of frames to improve compression    |  
+| -c:v          | ffv1   | Select FFmpeg's FFV1 codec for the output file                     |  
 | -level        | 1,3    | Select FFV1 version (always 3 for slicecrc/multithreading)         |  
-| -threads      | >=1    | Specify how many threads to match available CPU cores              |    
+| -g            | >=1    | Reuse context model with group of frames to improve compression    |  
 | -slices       | 16, 24 | The amount of slices affects multithreading performance, file size |  
 |               | 64 +   | and CRCs embedded. Increasing slices speeds encoding               |  
 | -slicecrc     | 0,1    | Activates error detections check of CRCs in bitstream. 0=off, 1=on |  
-| -pass         | 1,2    | FFV1 can make multipass encoding. Pass 1 outputs to log, pass 2+   |   
-|               |        | use the pass 1 log to compress the file more efficiently           |
-| -passlogfile  |filename| Supply the name of the log to store pass 1 data, needed for pass 2 |  
 ```
+
 A simple example encoding command to convert lossless video to FFV1 and maintain file as-is:  
 ```sh
 ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 

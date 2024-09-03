@@ -14,17 +14,22 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Intro to Hashing/Checksums (Paul)
+1. Intro to Hashing/Checksums (Paul)  
+
 2. CLI checksum creation  
-2.1 Whole file hashing  
-2.2 FFmpeg file hashing  
-2.3 FFmpeg stream hashing   
-2.4 FFmpeg framehash  
-2.5 FFmpeg FrameMD5   
-2.6 FFV1 slice checksums  
+> 2.1 Whole file hashing  
+> 2.2 FFmpeg file hashing  
+> 2.3 FFmpeg stream hashing   
+> 2.4 FFmpeg framehash  
+> 2.5 FFmpeg FrameMD5   
+> 2.6 FFV1 slice checksums  
+
 3. Python hashlib. (Paul)  
+
 4. Perceptual hashing, visual similarity matching. (Paul)  
+
 5. Bagit for Python. (Paul)  
+
 6. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)  
 
 ---
@@ -173,26 +178,23 @@ class: contentpage
 
 A downside of using MD5 is that it can be quite slow to hash files, which can add up if you are generating checksums across an entire system.
 
-
 ---
 class: contentpage
-### **2 CLI checksum creation**
+### **2. CLI checksum creation**
 
-You can create many cyrtographic and non-cryptograpic checksum hashes using the CLI.  
+You can create checksums easily using the Command Line Interface and in this section we'll be exploring these methods as they increase in granularity:  
 
-Non-cryptographic hashes generally are faster to compute and are more likely used for error checking and integrity verification. These include:  
-- CRC-32, Adler-32, xxHash  
+- 2.1 Whole file hashing with CLI tools  
 
-Cryptographic hashes can take longer to compute and are generally used for security like digital signatures and password storage. Generally they have high collision resistance, though not in the case of MD5s. These include:  
-- MD5 (though now considered weak), SHA-256 and BLAKE2  
+- 2.2 FFmpeg file hashing (not truly whole file)  
 
-For digital preservation you find checksums are used for:  
-- File integrity verification during transit  
-- Detection of data corruption when stored on tape, cloud, drives or disks
-- Detecting malicious attempts to alter content of a file  
-- Deduplication of assets  
-- Fixity checking over time  
-- Verifying lossless transcodings are identical  
+- 2.3 FFmpeg stream hashing  
+
+- 2.4 FFmpeg FrameHash  
+
+- 2.5 FFmpeg FrameMD5  
+
+- 2.6 FFmpeg FFV1 SliceCRC 
 
 ---
 class: contentpage
@@ -238,7 +240,7 @@ Supported algorithms:
 - MD5, murmur3, RIPEMD128, RIPEMD160, RIPEMD320, SHA160, SHA224, SHA256
 - SHA512/224, SHA512/256, SHA384, SHA512, CRC32 and adler32
 
-Practise: Make checksums using FFmpeg hash algorithms using the `-hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
+<font color="orange">Practise:</font> Make checksums using FFmpeg hash algorithms using the `-hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
 ```sh
 ffmpeg -i file.mov -f hash -hash MD5 -
 ffmpeg -i file.mov -f hash -hash CRC32 out.crc32
@@ -278,12 +280,15 @@ Framehash computes a cryptographic hash (default SHA256) for each audio and vide
 ```sh
 ffmpeg -i file.ext -map 0 -f framehash -
 ```
-As with FFmpeg stream hashing, if you add `-c copy` to the command it causes the framehash to generate checksums of the data as it's stored, and does not decode it.  
+As with FFmpeg stream hashing, if you add `-c copy` to the command it causes the framehash to generate checksums of the data as it's stored, and does not decode it. Not suitable for long-term fixity checking!  
+
+???
+Changing the pixel format will result in different has values event if the visual content is identical.
 ---
 class: contentpage
 ### **2.5 FFmpeg framemd5**
 
-FrameMD5 from FFmpeg provides frame level equality checks for your video and audio streams. To be used for immediate file assessment following lossless transcoding, and not recommended for long-term storage.  
+FrameMD5 from FFmpeg provides frame level equality checks for your video and audio streams. To be used for immediate file assessment following lossless transcoding, and not recommended for long-term fixity checks!   
 
 If you're making a lossless transcode then you would create a FrameMD5 of the source file, and another of the transcode. This command will create a FrameMD5 manifest for the first video stream and the first two audio streams of each file:  
 ```sh
@@ -298,7 +303,7 @@ fc mov.framemd5 mkv.framemd5
 ```
 If there is a difference between the two documents then the CLI will print out those differences  
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 20.36.16.png" width="1000">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 20.36.16.png" width="800">]
 
 ---
 class: contentpage
