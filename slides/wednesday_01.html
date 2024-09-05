@@ -21,18 +21,19 @@ FFmpeg video encoding intro
 > 1.4 Chroma subsampling and colourspaces     
 > 1.5 Lossless encoding examples  
 > 1.6 Lossy encoding examples  
-> 1.7 Other interesting FFmpeg commands
+> 1.7 Other interesting FFmpeg commands  
+> 1.8 Reading FFmpeg logs  
 
 FFmpeg filters  
-> 2.1 Video filters 
-> 2.2 Audio filters 
-> 2.3 Detection filters 
+> 2.1 Video filters  
+> 2.2 Audio filters  
+> 2.3 Detection filters  
 > 2.4 Visualisation filters  
 > 2.5 Generative filters  
 
 QCTools  
 > 3.1 QCTools  
-> 3.2 AV Artifacts Atlas
+> 3.2 AV Artifacts Atlas  
 
 ---
 class: contentpage
@@ -168,9 +169,9 @@ The file size will still using H.264 I frame compression using GOP=1, but you wo
 
 To set a keyfranme interval for every 2 seconds of a 25 fps file:  
 ```sh
-ffmpeg -i input.mov -c:v libx264 -key_int_min 25 -g 50 -sc_threshold 0 -c:a copy output.mp4
+ffmpeg -i input.mov -c:v libx264 -g 25 -sc_threshold 0 -c:a copy output.mp4
 ```
-The key interval minimum is every second, with a maximum keyframe every 2 seconds. `-sc_threshold` ensures a new keyframe is set on a scene change.  
+The GOP is set for every 25 frames (1 second). `-sc_threshold` ensures a new keyframe is set on a scene change.  
 
 <font color="orange">Practise:</font> Try the commands above, then use FFprobe to view the frame I,B and P frames:  
 ```sh
@@ -530,6 +531,9 @@ ffmpeg -i input.mov -itsoffset 0.125 -i input.mov -map 0:v -map 1:a -c copy outp
 ```
 
 Many of these command ideas are taken from [FFmprovisr from Amia Open Source](https://amiaopensource.github.io/ffmprovisr/) written by the AV preservation community.
+---
+class: contentpage
+### **1.8 Reading FFmpeg logs**
 
 ---
 class: contentpage
@@ -696,16 +700,19 @@ Vectorscope: A digital representation of oscilloscopes for video and audio
 class: contentpage
 ### **3. QC Tools**
 
-The MediaArea software QC Tools uses FFmpeg filters extensively to help quality control audiovisual files.
+The MediaArea software QC Tools uses FFmpeg filters extensively to help quality control audiovisual files. The tool helps users analyze and understand their digitized video files through use of audiovisual analytics and filtering.  
 
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 22.54.26.png" width="700">]
 ---
 class: contentpage
 ### **3. QC Tools**
 
-QCTools accepts a variety of video formats, including \*.avi, \*.mkv, \*.mov, and \*.mp4, as well as a diverse selection of codecs. Uncompressed video formats are ideal for the most accurate interpretation of the video. QCTools relies on FFmpeg’s libavcodec and libformat libraries to analyze and playback video which allows QCTools to support a wide variety of digital audiovisual formats.
-
 The [QCTools manual](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf) provides excellent guide to use QC Tools.
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 20.21.26.png" width="700">]
+
+
+
 </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
     </script>

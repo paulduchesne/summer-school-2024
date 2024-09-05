@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,21 +8,64 @@
     <textarea id="source">
 
 class: center, middle, titlepage
-### WED02: *DCPs.*
+### WED02: *RAWcooked for presevation and DCP creation*
 
 ---
 class: contentpage
 ### **Agenda**
 
-1. RAWcooked for Preservation (Jo)
+1. RAWcooked for Preservation
+> 1.1 About RAWcooked and the logs    
+> 1.2 Automating RAWcooked encoding    
+> 1.3 Problem solving  
+> 1.4 Software test methods  
+> 1.5 Bug fixes, patches and snapshots  
 2. DCPs (Paul)
 
       
 ---
 class: contentpage
+### **1.1 About RAWcooked and the logs**
 
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 21.55.53.png" width="480">]
 
+- Analysis of DPX, FFmpeg encoding, post-encoding analysis  
+- Capturing console output into log file for preservation  
+- Using logs to automate decision making  
+---
+class: contentpage
+### **1.2 Automating RAWcooked encoding**
 
+- Create a safe test environment away from preservation files
+- Capture metadata for DPX and embed into the Matroska wrapper
+- Automating MediaConch policy validations for DPX / MKV
+- Encoding log analysis for success and failure  
+- Looping the above options
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Error and Warning messages  
+- Dead end error, no encoding  
+- Error with encoding  
+- Warning: non-conforming files present but not listed in hash  
+- Issue tracker to identify problem, or seek help  
+- `-d` flag for full FFmpeg command review
+---
+class: contentpage
+### **1.4 Software test methods**
+
+- Testing new releases of software to catch issues early  
+- Encode with reversibilty testing using checksums  
+- Hacking DPX files to test new features  
+---
+class: contentpage
+### **1.5 Bug fixes, patches and snapshots**
+
+- BFI example bugs found  
+- Patches and snapshot releases  
+- Evolution of the software through test  
+- RGBA support waiting!
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
