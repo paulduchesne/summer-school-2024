@@ -15,14 +15,14 @@ class: contentpage
 ### **Agenda**
 
 FFmpeg video encoding intro  
-> 1.1 Lossy vs Lossless compression  
-> 1.2 Bit rate  
-> 1.3 Bit-depth  
-> 1.4 Chroma subsampling and colourspaces     
-> 1.5 Lossless encoding examples  
-> 1.6 Lossy encoding examples  
-> 1.7 Other interesting FFmpeg commands  
-> 1.8 Reading FFmpeg logs  
+> 1.1 Reading FFmpeg logs  
+> 1.2 Lossless vs Lossy compression  
+> 1.3 Bit rate  
+> 1.4 Bit-depth  
+> 1.5 Chroma subsampling and colourspaces     
+> 1.6 Lossless encoding examples  
+> 1.7 Lossy encoding examples  
+> 1.8 Other interesting FFmpeg commands  
 
 FFmpeg filters  
 > 2.1 Video filters  
@@ -35,33 +35,6 @@ QCTools
 > 3.1 QCTools  
 > 3.2 AV Artifacts Atlas  
 
----
-class: contentpage
-### **1 FFmpeg video encoding**
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-30 at 14.20.38.png" width="480">]
-```
-Demuxing                                  ---> Decoding                                      __
----------------------------------------------|-----------------------------------------------  |
-Separates the streams from a container file  | Reverses the process of encoding              Filters
-Extracts individual audiovisual data packets | Converts compressed data back to raw data     Applied
-                                                                                               |       
-Muxing                                    <--- Encoding / Transcoding                       <--  
----------------------------------------------|-----------------------------------------------
-Combines multiple streams into one container | Converts raw/encoded streams into another format  
-Organises the data for synchronised playback | Can reduce stream size while maintaining quality   
-```
-???
-Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
-
-Step through the graphic:
-- libavformat library is called for demuxers (and muxers) to read input files and get packets of data from them.
-- When multiple input files are demuxed, FFmpeg keeps them syncronised using the lowest timestamp on any active input stream (?)
-- libavcodec library - encoded packets are passed to the decoder (unless stream copy active), and decode produces uncompressed frames (TRANSCODING ONLY)
-- libavfilter - If any filtering is called for it will be applied at this stage (we'll look at this more later)
-- After filtering the frames are passed to the encoder which encodes them and outputs encoded packets  
-- These are passed to the muxer which writes the encoded packets to the output file
-
-*Transcoding can be encoded format to another, or it can be a change of the parameters within the same stream format.
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
@@ -116,6 +89,34 @@ A library preforming optimised audio resampling, rematrixing and sample format c
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-30 at 14.20.38.png" width="460">]
+```
+Demuxing                                  ---> Decoding                                      __
+---------------------------------------------|-----------------------------------------------  |
+Separates the streams from a container file  | Reverses the process of encoding              Filters
+Extracts individual audiovisual data packets | Converts compressed data back to raw data     Applied
+                                                                                               |       
+Muxing                                    <--- Encoding / Transcoding                       <--  
+---------------------------------------------|-----------------------------------------------
+Combines multiple streams into one container | Converts raw/encoded streams into another format  
+Organises the data for synchronised playback | Can reduce stream size while maintaining quality   
+```
+???
+Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
+Demuxing is separating the streams, decoding is separating the bits of a stream, encoding is putting the bits together again, and muxing is putting the streams together again.
+
+Step through the graphic:
+- libavformat library is called for demuxers (and muxers) to read input files and get packets of data from them.
+- When multiple input files are demuxed, FFmpeg keeps them syncronised using the lowest timestamp on any active input stream (?)
+- libavcodec library - encoded packets are passed to the decoder (unless stream copy active), and decode produces uncompressed frames (TRANSCODING ONLY)
+- libavfilter - If any filtering is called for it will be applied at this stage (we'll look at this more later)
+- After filtering the frames are passed to the encoder which encodes them and outputs encoded packets  
+- These are passed to the muxer which writes the encoded packets to the output file
+
+*Transcoding can be encoded format to another, or it can be a change of the parameters within the same stream format.
+---
+class: contentpage
+### **1 FFmpeg video encoding**
 
 FFmpeg commands generally consist of a '-flag' and a following value. They usually, but not alwasy, are placed between the input file and the output file in the command line  
 
@@ -143,7 +144,36 @@ ffmpeg -nostdin -i input.mov...
 ```
 ---
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.1 Reading FFmpeg logs**
+
+Don't panic if it fails! A log failure can be a bit scary but they are also really helpful.
+
+The opening contents of a FFmpeg Log:
+- They always start with FFmpeg's version data, what's enabled and library data
+- Then they detail the input file's configuration reporting on all streams (count from 0+)
+- They next supply information about the output file depending on defaults/your command
+- Next they tell you what the mapping plan is for the new file with stream numbering  
+
+The `demux - decoding - encoding - mux` order can be useful when reading the second section of logs:
+- To find errors fast don't read from the top-down, read from the bottom-upward!
+- Look for the word 'Error'. 'Warnings' generally don't break a process but indicate something isn't ideal  
+- The logs are colour coded and errors tend to show up in red  
+- Check the syntax in your command first as errors are mostly caused by us (eg, missing '-i')
+- Search for difficult error messages online or with LLMs - most problems have already been discussed on 
+  sites like `Stackoverflow` or the `FFmpeg user forum` and solutions are waiting for you there!
+  
+  
+Inspired by Ashley Blewer's presentation [Adventures in Reading FFmpeg Logs](https://youtu.be/15ZUnR3Nx1k)
+???
+Before we start encoding tests, it's worth a chat about the logs!
+[SHOW SAMPLES JOANNA]
+Input stream data:
+tbn is a containers time base (timebase is responsible for display of data during specified time - a timing reference used in digitised audiovisual media)
+tbc is codecs timebase
+tbr is estimated timebase from these two pieces of data - different to a recording framerate!
+---
+class: contentpage
+### **1.2 Lossless vs Lossy compression**
 
 Lossless compression reduces the size of a video file without losing any information or quality. These algorithms preserve the original data in the video stream, and decompression returns a bit perfect copy of the original.
 
@@ -151,7 +181,7 @@ Lossless compression reduces the size of a video file without losing any informa
 
 ---
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.2 Lossless vs Lossy compression**
 
 Codecs that use lossy compression reduce the size of a file by discarding some of the redundant information from the original video stream. This process cannot be reversed and the original data cannot be retrieved.  
 
@@ -159,7 +189,7 @@ Codecs that use lossy compression reduce the size of a file by discarding some o
 
 ---
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.2 Lossless vs Lossy compression**
 
 Group of Picture (GOP) length 1 can be used to determine that every file is a key frame and that no image data is discarded  
 ```sh
@@ -183,7 +213,7 @@ FFrobe probe command:
 verbatim level error, show enties for frame (pict type) 
 ---
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.2 Lossless vs Lossy compression**
 
 A number of video codecs can export lossless and lossy video, including:
 ```
@@ -218,8 +248,9 @@ AV1 supports new video technologies like High Dynamic Range and Wide Color Gamut
 SoCs = Systm on a Chip, single piece of silicon that intgetrates computers CPU with the Graphics Processing Unit (GPU), mempry and other components.
 We're going to use H.264 for our examples as these new codecs require additonal libraries installing at build to support them.
 ---
+
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.2 Lossless vs Lossy compression**
 
 Audio compression codecs are used like video to encode audio streams within a file.  
 ```sh
@@ -248,7 +279,7 @@ WebM & OGG   | Vorbis, Opus
 It's best not to encode lossy to lossy if you can avoid it but either encode from a lossless source or use the copy command if supported by the output container.  
 ---
 class: contentpage
-### **1.1 Lossy vs Lossless compression**
+### **1.2 Lossless vs Lossy compression**
 
 Don't forget all the supported codecs can be found in `ffmpeg -codecs` help. There are some surprises in the list!  
 
@@ -258,7 +289,7 @@ Don't forget all the supported codecs can be found in `ffmpeg -codecs` help. The
 I'm a particular fan of 'brute force and ignorance' codec, AKA BFI. At the bottom.
 ---
 class: contentpage
-### **1.2 Bit rates**
+### **1.3 Bit rates**
 
 Bit rates control the quality of the video compression, which in turn alters the size of your file dramatically. You may have heard of Constant Bit Rate (CBR) and Variable Bit Rate (VBR). VBR generally gives better overall quality when file size and bit rate are not constrained.  
 
@@ -281,7 +312,7 @@ Bit rates control the quality of the video compression, which in turn alters the
 Rate control varies between codecs in FFmpeg,  but we can look at example such as H.264 to understand it more - selected by the libx264 library
 ---
 class: contentpage
-### **1.2 Bit rates**
+### **1.3 Bit rates**
 
 If you want to target a specific file size for your bit rate encodings you can use Two-Pass you can specify it using `-b:v` for video bit rate and `b:a` for audio bit rate:  
 ```sh
@@ -302,24 +333,23 @@ ffmpeg -i input.mov -c:v libx264 -preset veryslow -qp 0 output.mkv
 Quantization Parameter controsl amout of compression for every macroblock in a frame, range from 0-51 in H264. Best just used for lossless.
 ---
 class: contentpage
-### **1.3 Bit depth (Quantization)**
+### **1.4 Bit depth (Quantisation)**
 
 This is my lovely cat Eisenstein on the left in 8 bit greyscale. The image on the right is at 4-bit. The left 8-bit curve is smoother than the 4-bit curve where less bits are available to describe the tones of the analogue wave.  
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/4_8_bit_eisey.png" width="1000">]
 
-For an RGB file this would be 8-bits for red, 8-bit for green and 8-bit for blue components.  
-And for YUV, 8-bit for Y luminance, and 8-bit each for U and V chrominance.  
+For a YUV file that would be 8-bit for Y luminance, and 8-bit each for U and V chrominance.  
  
-- 8-bit: 256 bits per sample (256 variations)  
-- 10-bit: 1024 bits per sample (1024 variations)  
-- 12-bit: 4096 bits per sample (4096 variations)  
-- 16-bit: 65536 bits per sample (65536 variations)  
+- 8-bit has 256 bits per sample (256 x 3 for colour video)  
+- 10-bit has 1024 bits per sample (1024 x 3)  
+- 12-bit has 4096 bits per sample (4096 x 3)  
+- 16-bit has 65536 bits per sample (65536 x 3)  
 ???
 4-bit has only 16 bits per samples, so 16 gradation changes. This is known as Quantisation
 ---
 class: contentpage
-### **1.4 Chroma subsampling and colourspaces**
+### **1.5 Chroma subsampling and colourspaces**
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/chroma_subsampling.png" width="1000">]
 
@@ -331,20 +361,20 @@ Chroma subsampling is an alternative way to encode your colour media. The proces
 You’ve probably seen some chroma subsampling values described as four part ratios, 4:2:2:4, where this is the case the final number 4 refers to the sampling of the alpha channel.  
 ---
 class: contentpage
-### **1.4 Chroma subsampling and colourspaces**
+### **1.5 Chroma subsampling and colourspaces**
 
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.31.png" width="900">]
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.19.12.png" width="900">]
  > > Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barn-yuv.png)
 ---
 class: contentpage
-### **1.4 Chroma subsampling and colourspaces**
+### **1.5 Chroma subsampling and colourspaces**
 
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-08-28 at 17.24.09.png" width="620">]
 
 ---
 class: contentpage
-### **1.4 Chroma subsampling and colourspaces**
+### **1.5 Chroma subsampling and colourspaces**
 
 Colourspace, bit-depth and chroma subsampling are selected in FFmpeg using the Pixel Format:    
 - `-pix_fmt yuv422p10le`: YUV colourspace, 4:2:2 chroma subsampling, 10 bit-depth, little endian  
@@ -368,7 +398,7 @@ ffmpeg -i input.mov -c:v libx264 -vf format=yuv420p output.mp4
 NOTE: Pixel formats change between FFmpeg version releases based on development of the libraries. This is the cause of Framemd5 file differences between FFmpeg version releases, as the pix_fmt settings for the codec are used to decompress to raw video for framemd5 creation. Framemd5s are not long-term fixity.
 ---
 class: contentpage
-### **1.4 Chroma subsampling and colourspaces**
+### **1.5 Chroma subsampling and colourspaces**
 
 You can also embed colorspace metadata to your encodings using These FFmpeg commands:  
 - `color_primaries` selecting the colour model to be tagged with.  
@@ -389,7 +419,7 @@ ffmpeg -i input.mov -color_primaries bt2020 -color_trc bt2020 -colorspace bt2020
 ```
 ---
 class: contentpage
-### **1.5 Lossless video encoding examples**
+### **1.6 Lossless video encoding examples**
 
 Encoding V210 MOV to FFV1 Matroska losslessly 
 ```sh
@@ -414,7 +444,7 @@ The -map command this time has a -dn which tells FFmpeg not map any data streams
 
 ---
 class: contentpage
-### **1.5 Lossless video encoding examples**
+### **1.6 Lossless video encoding examples**
 
 Encoding FFV1 Matroska to V210 MOV losslessly  
 ```sh
@@ -442,7 +472,7 @@ This is our BFI command that encodes FFV1 Matroska files to V210 Mov files with 
 
 ---
 class: contentpage
-### **1.6 Lossy video encoding examples**
+### **1.7 Lossy video encoding examples**
 
 FFV1 Matroska to ProRes 422HQ
 
@@ -466,7 +496,7 @@ output.mov
 These don't make Apple ProRes files that fully conform to the Apple specifications but the resulting file will play file across video players. `faststart` is used to ensure the Moov atom is at the head of the video file to begin download of streaming video.  
 ---
 class: contentpage
-### **1.6 Lossy video encoding examples**
+### **1.7 Lossy video encoding examples**
 
 This is a BFI automated MP4 access copy creation script which runs 24/7 transcoding files from all our ingest pathways. This specific example handles off-air TV recordings with MPEG-TS video streams in .ts container:  
 
@@ -493,7 +523,7 @@ The scaling filter works for both upscaling and downscaling. We use the Lanczos 
 The padding filter (pad=1920:1080:240:0) forces the frame if needed following scale, populating any space with black.
 ---
 class: contentpage
-### **1.7 Other FFmpeg commands**
+### **1.8 Other FFmpeg commands**
 
 To rewrap a video without changing the codecs you can use stream copy tool:
 ```sh
@@ -517,7 +547,7 @@ ffmpeg -f concat -safe 0 -i list_of_files.txt -c copy output_concat.ext
 ```
 ---
 class: contentpage
-### **1.7 Other FFmpeg commands**
+### **1.8 Other FFmpeg commands**
 
 Convert an image sequence, such as your DPX sequence into a lossy ProRes 4:4:4 MOV file with framerate 25 fps 
 ```sh
@@ -533,37 +563,53 @@ ffmpeg -i input.mov -itsoffset 0.125 -i input.mov -map 0:v -map 1:a -c copy outp
 Many of these command ideas are taken from [FFmprovisr from Amia Open Source](https://amiaopensource.github.io/ffmprovisr/) written by the AV preservation community.
 ---
 class: contentpage
-### **1.8 Reading FFmpeg logs**
-
----
-class: contentpage
 ### **2. FFmpeg filters**
 
-Filters come in two classes, the first is simple filtergraphs which have just one input and output of the same type.
+Filters are created using the `libavfilter` library and come in two classes, the first are simple filtergraphs which have just one input and output of the same type.
 
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.24.png" width="700">]
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.24.png" width="650">]
 
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.30.png" width="800">]
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.30.png" width="700">]
 
 ```sh
--filter  -vf   -af
+-filter:v  -vf  -filter:a  -af
 ```
 ???
+LIBAVFILTER library
+Filters can only be applid during encoding. Stream copy will not apply filters.
 Simple filtergraphs are simple because they have one input and one output, both of the same type.
-To select these filters you use the -filter flag, or for video streams -vf, and audio -af
-These filters are inserted between the decoding and the encoding stages, and you can add multiple simple filters into this gap.
+To select these filters you use the -filter: flag, or for video streams -vf, and audio -af
+These filters are inserted between the decoding and the encoding stages.
 ---
 class: contentpage
 ### **2. FFmpeg filters**
 
-Complex filtegraphs can have multiple inputs and/or multiple outputs, or when the stream type differs from input.  
+Complex filtegraphs can have multiple inputs and/or multiple outputs, or have stream types that differ between input and output.  
 
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.37.png" width="600">]
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 17.43.37.png" width="500">]
 ```sh
 -filter_complex
 ```
 ???
-An example would be an overlay filter that might overlay a watermark to an image as it has two inputs
+An example would be an overlay filter that might overlay a watermark JPEG image to a second input video stream (two different types of inputs)
+---
+class: contentpage
+### **2. FFmpeg filters**
+
+To use an FFmpeg example of a simple `filtergraph` that has one input/output but two split filters:
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 16.46.32.png" width="600">]
+
+This filter command splits the input streams into two streams named [main] and [tmp]. [tmp] is sent to stream crop and vertical flip, and [main] is sent to the overlay filter where it merges back with [tmp]. 
+```sh
+-vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
+``` 
+
+- Filters in the same linear chain are separated only by a comma 
+- Filters in distinct linear chains are separated by a semicolon
+
+In this example `crop` and `vflip` are in one linear chain. `split` and `overlay` are separately in another.
+
 ---
 class: contentpage
 ### **2.1 Video filters**
@@ -572,7 +618,7 @@ Deinterlacing filters options that remove top of bottom field interlacement in v
 ```sh
 -vf yadif, -vf bwdif, -vf kerndeint
 ```
-Cropping video is possible with the crop filter, with default encoding of H.264 and audio AAC:
+Cropping video is possible with the crop filter, after the equals it takes a list of parameters separated by colons:
 ```sh
 ffmpeg -i input.mov -filter:v "crop=672:572:24:32" output.mov
 ```
