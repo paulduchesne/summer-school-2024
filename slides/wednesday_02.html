@@ -8,33 +8,297 @@
     <textarea id="source">
 
 class: center, middle, titlepage
-### WED02: *RAWcooked for presevation and DCP creation*
+### WED02: *RAWcooked for preservation and DCP creation*
 
 ---
 class: contentpage
 ### **Agenda**
 
 1. RAWcooked for Preservation
-> 1.1 About RAWcooked and the logs    
-> 1.2 Automating RAWcooked encoding    
-> 1.3 Problem solving  
+> 1.1 RAWcooked commands
+> 1.2 BFI workflow overview   
+> 1.3 Automating stages of the workflow     
 > 1.4 Software test methods  
 > 1.5 Bug fixes, patches and snapshots  
 2. DCPs (Paul)
 
-      
 ---
 class: contentpage
-### **1.1 About RAWcooked and the logs**
+### **1. RAWcooked for preservation**
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 20.18.42.png" width="1000">]
+- RAWcooked encodes DPX, TIFF and EXR image sequences or AVI into a lossless FFV1 video stream  
+- Any PCM audio supplied with a sequence is converted to a lossless FLAC audio stream 
+- RAWcooked reversibility data ensures bit perfect restoration  
+- All are muxed in a Matroska wrapper by FFmpeg, including sidecar files  
+- Lossless compression reduces sequence sizes by between one and two thirds
+- FFV1 slice level CRCs for granular file verification  
+- Video files can be integrated into media asset management systems for viewing
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 21.55.53.png" width="480">]
+???
+From Media Area, initally released 2018
+Licensed flavours enable funding for the developer team
+Sponsorship for new flavours and developments is supported
+Made by archivists for archivists
+ - Previous TAR, ZIP or Bagit files with no real storage savings
+FLAC - Free Lossless Audio Codec, FFV1, Matroska all OPEN STANDARDS
+FFmpeg and Rawcooked open-source softwares
+Images from BFI 3PB prervation project launched in 2019, saved us roughly 1.4PB and saved ~ £45,000 is magnetic tape storage alone
+---
 
-- Analysis of DPX, FFmpeg encoding, post-encoding analysis  
-- Capturing console output into log file for preservation  
-- Using logs to automate decision making  
+class: contentpage
+### **1.1 RAWcooked commands**
+
+Help pages:
+```sh
+rawcooked -h
+man rawcooked
+```
+Adding license information to your software  
+```sh
+--store-license <temp BFI license>
+```
+Show which 'flavours' are available to your new license
+```sh
+--show-license
+```
+If you purchase a sublicense you can create your own license values
+```sh
+--sublicense value
+```
+And you can set the duration that the license will run for for x months, end date is last day of month 
+```sh
+--sublicense-dur 3
+```
 ---
 class: contentpage
-### **1.2 Automating RAWcooked encoding**
+### **1.1 RAWcooked commands**
+
+The basic RAWcooked command that allows for good preservation practise:  
+```sh
+rawcooked --all --no-accept-gaps INPUT -o OUTPUT.mkv &>> OUTPUT.mkv.txt
+```
+
+The `--all` contains these RAWcooked commands:  
+```sh
+Command            | Description                                                              
+-------------------|---------------------------------------------------------------------  
+--encode/decode    | The correct option is selected automatically                             
+--info             | Prints information about the files                                       
+--conch            | Conformance checks the format supplied                                   
+--hash             | Computes hashes for each DPX or audiovisual file                         
+--coherency        | Checks coherency of all files in the sequence                            
+--check-padding    | Looks for non-zero padding in DPX, issue warning  if found               
+--check            | Runs post-encode checks that file decodes safely                         
+--accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images
+```
+Setting a larger attachment size value, default is 1048576 bytes (1MB)
+```sh
+rawcooked --all --no-accept-gaps -s 5242880 INPUT -o OUTPUT.mkv
+```
+---
+class: contentpage
+### **1.1 RAWcooked commands**
+
+You can tell RAWcooked to answer No or Yes to questions asked during automated encoding by adding to your RAWcooked command
+```sh
+rawcooked --all --no-accept-gaps -n <or> -y -s 5242880 INPUT -o OUTPUT.mkv
+```
+Create a FrameMD5 of input frames and store as a sidecar file, with and without audio streams, by adding to your RAWcooked command
+```sh
+rawcooked --all --no-accept-gaps -y -s 5242880 INPUT -o OUTPUT.mkv --framemd5
+rawcooked --all --no-accept-gaps -y -s 5242880 INPUT -o OUTPUT.mkv --framemd5-an
+```
+Ask RAWcooked to print the FFmpeg command and not run the encoding using '-d'
+```sh
+rawcooked --all --no-accept-gaps -d -s 5242880 INPUT -o OUTPUT.mkv --framemd5
+```
+<font color="orange">Practise:</font> Try printing an FFmpeg command output for your dpx sample
+---
+class: contentpage
+### **1.2 BFI workflow overview**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 21.15.39.png" width="950">]
+
+BFI workflows use Bash shell scripts, MediaConch and MediaInfo for validation of DPX and Matroskas.  
+The open source [DPX workflow scripts](https://github.com/bfidatadigipres/dpx_encoding) can be viewed in full on the BFI GitHub.
+???
+1. (Start top left) DPX sequences moved into dpx_to_cook folder
+2. MediaInfo extracts metadata and makes sidecar files/Mediaconch policy checks DPX sequences
+3. Failed policy sees DPX moved to dpx_to_review / Passed policy sees DPX moved to rawcook folder
+4. RAWcook scripts processes files in 'rawcook' folder, FFv1 matroska encoded to mkv_cooked
+5. Logs of encoding placed alongside MKV and checked by post rawcook script for success/failure messages
+6. Successful encoded MKVs are checked against MKV Matroska policy
+7. Passed MKV files are moved to the check script / DPX moved to dpx_cooked
+8. Failed MKVs are moved to review folder / DPX left in place for reattempt
+9. RAWcooked --check script runs test against MKV, if pass DPX seqence is deleted and MKV moves to DPI ingest / else fail and retry
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+Shell script that iterates through subfolders in PATH checking each first DPX against a mediaconch policy
+
+```sh
+#!/bin/bash -x
+DPATH="/path_to_folder/dpx_to_cook/"
+POLICY="path_to_dpx_mediaconch_policy"
+TAR_LIST="/path_to_tar_list/"
+RAWCOOK_LIST="/path_to_rawcook_list/"
+
+find "${PATH}" -maxdepth 1 -mindepth 1 -type d -mmin +30 | while IFS= read -r fdr; do
+  # Find first DPX of sequence
+  dpx=$(ls "$folder" | head -1)
+  # Check first DPX against DPX policy
+  check=$(mediaconch -p "$POLICY" "${DPATH}/${fdr}/${dpx}" | grep "pass! ${DPATH}/${fdr}/${dpx}")
+  if [ -z "$check" ]
+    then
+      # DPX failed policy, file for TAR wrap
+      echo "${DPATH}/${folder}" >> "$TAR_LIST"
+    else
+      # DPX passed policy, file for RAWcook
+      echo "${DPATH}/${folder}" >> "$RAWCOOK_LIST"
+  fi
+done
+```
+???
+Find loops pipes results to while loop.
+`IFS= read -r` tells the while loop to read each line passed to it one at a time, and for the line to be stored into 'fdr' variable
+Semicolon breaks the command and start the do COMMAND block. 
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+Placing move commands within loops can be problematic, regularly failing. The lists of successful and failed Mediaconch passes are used here to move the sequences in batches to their new folders for processing.  
+```sh
+RAWCOOK_PATH="/path_to_folder/rawcook/"
+TAR_PATH="/path_to_folder/tar_preservation/"
+
+# Move files outside of while loop
+cat "${RAWCOOK_LIST}" | parallel --jobs 3 mv "{}" "${RAWCOOK_PATH}"
+cat "${TAR_LIST}" | parallel --jobs 3 mv "{}" "${TAR_PATH}"
+
+# Refresh lists
+echo "" > "${RAWCOOK_LIST}"
+echo "" > "${TAR_LIST}"
+```
+
+DPX sequences that do not match MediaConch policy requirements are TAR wrapped.  
+
+Our metadata requirements include:
+- Compression is Raw / Lossless
+- RGB Bitdepth is 8-bit LE / 10-bit BE or LE / 12-bit BE / 16-bit BE or LE
+- Y Luma is 10-bit BE / 16-bit BE
+- No alpha channels are present, RGBA, RGB/A
+???
+I don't place `mv` commands in a if block. They generally fail when I've tried so I tend to use the list of paths to mame t
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+```sh
+#!/bin/bash -x
+RPATH="/path_to_folder/rawcook/"
+MPATH="path_to_folder/mkv_cooked/"
+TAR_LIST="/path_to_tar_list/"
+RAWCOOK_LIST="/path_to_rawcook_list/"
+
+# Ensure looping RAWcooked encoding doesn't process file already running
+find "${RPATH}" -maxdepth 1 -mindepth 1 -type d -name "N_*" | while IFS= read -r folders; do
+  folder_clean=$(basename "$folders")
+  encoding=$(grep -c "$folder_clean" "${MPATH}encoding.log")
+  if [ "$encoding" -eq 0 ]
+    then
+      echo "$folder_clean" >> "${RPATH}list.txt"
+    else
+      echo "File already encoding."
+  fi
+done
+```
+Use the `list.txt` to begin parallel encoding of DPX sequences
+```sh
+cat "${RPATH}list.txt" | parallel --jobs 3 
+   "rawcooked -y --all --no-accept-gaps ${RPATH}{} -o ${MPATH}{}.mkv &>> ${MPATH}{}.mkv.txt"
+```
+???
+encoding.log is created in a later script to monitor DPX sequences being processed - this stops duplicate encodings
+The DPX sequence encoding moves directly to the mkv-cooked path so no moves are necessary in this script
+Lists used are reset at end of code
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 22.46.28.png" width="500">]
+
+The encoding log has three stages:
+ - RAWcooked analysis of the DPX sequence, reporting of any issues  
+ - FFmpeg encoding of the sequence to FFV1 / Matroska  
+ - RAWcooked post encoding check of the encoded file, reporting of encoding success 
+
+This phrase is key to identifying a success RAWcooked encoding:
+```
+Reversibility was checked, no issues detected.
+```
+
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+The post encoding check script searches within the mkv_cooked/ path for log files that completed over 30 minutes ago:  
+```sh
+#!/bin/bash -x
+MPATH="path_to_folder/mkv_cooked/"
+
+find "${MPATH}" -name "*.mkv.txt" -mmin +30 | while IFS= read -r fname; do
+  success_check=$(grep 'Reversibility was checked, no issue detected.' "$fname")
+  # Fetch MKV file name by cutting '.txt' from end of path
+  mkv_filename=$(basename "$fname" | rev | cut -c 5- | rev )
+  # Fetch DPX folder name by cutting '.mkv.txt' from end of path
+  dpx_success_path=$(echo "$fname" | rev | cut -c 9- | rev )
+
+  if [ -z "$success_check" ];
+    then
+      log "SKIP: Matroska $mkv_filename has not completed, or has errors detected"
+    else
+      echo "$dpx_success_path" >> "${MPATH}rawcooked_success.log"
+      echo "$mkv_filename" >> "${MPATH}successful_mkv_list.txt"
+  fi
+done
+```
+The `rawcooked_success.log` tracks complete encodings and `successful_mkv_list.txt` is used to move MKVs to MediaConch check and if pass, on to the `check` folder
+---
+class: contentpage
+### **1.3 Automating stages of the workflow**
+
+Build a list of all MKV in the `check` folder then run the `rawcooked --check` command
+```sh
+#!/bin/bash -x
+CPATH="path_to_folder/check/"
+
+find "$MPATH" -name '*.mkv' -mmin +30 | sort > "${MPATH}mkv_list.txt"
+grep ^N "${MPATH}mkv_list.txt" | parallel --jobs 5
+   "rawcooked --check ${MPATH}{} &>> ${MPATH}{}.txt"
+```
+```sh
+# Search for .txt files for success message
+grep '/mnt/' "${MKV_PATH}mkv_list.txt" | while IFS= read -r log_list; do
+  success_check=$(grep 'Reversibility was checked, no issue detected.' "${log_list}.txt")
+  mkv_file=$(basename "$log_list")
+  dpx_seq=$(echo "$mkv_file" | rev | cut -c 5- | rev )
+  if [ -z "$success_check" ];
+    then
+      echo "FAILED: Matroska $mkv_file has errors detected."
+      echo "$mkv_file" >> "${MKV_PATH}failure_mkv_list.txt"
+    else
+      echo "PASSED: RAWcooked MKV $mkv_file passed --check successfully and will be moved to DPI ingest"
+      echo "$dpx_seq" >> "${DPX_PATH}dpx_deletion_list.txt"
+      echo "$mkv_file" >> "${MKV_PATH}successful_mkv_list.txt"
+  fi
+done
+```
+???
+Build a list of MKV files in check folder and write to list
+Use that list to launch parallel check runs of all the MKVs and output to log.
+Use that log to check again for the confirmation statement that all is well, then write DPX to list for automatied deletion, and write MKV naem to success_mkv_list so that the MKV is moved out of DPX workflows and into ingest workflows.
+---
 
 - Create a safe test environment away from preservation files
 - Capture metadata for DPX and embed into the Matroska wrapper

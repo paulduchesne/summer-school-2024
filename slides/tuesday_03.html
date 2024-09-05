@@ -34,40 +34,38 @@ class: contentpage
 
 ---
 class: contentpage
-### **1. Intro to RAWcooked**
+### **1. RAWcook the files**
 
-RAWcooked software from MediaArea is a CLI only encoding tool that converts image sequences from DPX, TIFF, EXR and AVI and PCM audio into the FFV1 video codec and FLAC audio codec, in a Matroska wrapper. It also decodes FFV1 Matroska files back to their existing form, a bit-by-bit perfect copy of the original image sequence. Generally this lossless compression to FFV1 reduces the overall file size by between one and two thirds.  
+RAWcooked software from MediaArea is a CLI only encoding tool that converts image sequences from DPX, TIFF, EXR and AVI and PCM audio into the FFV1 video codec and FLAC audio codec, in a Matroska wrapper.  
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.43.22.png" width="480">]
+RAWcooked demuxes and decodes FFV1 Matroska files back to a bit-by-bit perfect copy of the original image sequence. Lossless compression to FFV1 reduces the overall file size by between one and two thirds.  
 
-The [RAWcooked manual](https://mediaarea.net/RAWcooked/man) from Media Area
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 20.18.42.png" width="1000">]
+
+Image courtesy of BFI National Archive
 
 ---
 class: contentpage
 ### **1. RAWcook the files**
-
-The `--all` command can be used to encode image sequences and audio files to FFV1 Matroska files, and also to decode FFV1 Matroskas back to their original image sequence.  It was created by MediaArea with sponsorship from the New York Public Library who requested a really simple preservation command that ensured best practises were maintained easily  
-
-The command contains several others, all essential for long-term preservation  
-
-```
-Command            | Description                                                              
--------------------|---------------------------------------------------------------------  
---encode/decode    | The correct option is selected automatically                             
---info             | Prints information about the files                                       
---conch            | Conformance checks the format supplied                                   
---hash             | Computes hashes for each DPX or audiovisual file                         
---coherency        | Checks coherency of all files in the sequence                            
---check-padding    | Looks for non-zero padding in DPX, issue warning  if found               
---check            | Runs post-encode checks that file decodes safely                         
---accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images      
-```
 
 <font color="orange">Practise:</font> RAWcooked encode the DPX sequence  
 
 ```sh
 rawcooked --all --no-accept-gaps /path_to_seqence/dpx_sequence/ >> encoding_data.log
 ```
+
+The command contains several others, all essential for long-term preservation: 
+> --encode/decode  
+> --info     
+> --conch  
+> --hash   
+> --coherency   
+> --check-padding  
+> --check  
+> --accept-gaps   
+
+The `--all` command can be used to encode image sequences and audio files to FFV1 Matroska files, and also to decode FFV1 Matroskas back to their original image sequence.  It was created by MediaArea with sponsorship from the New York Public Library who requested a really simple preservation command that ensured best practises were maintained easily  
+
 ---
 class: contentpage
 ### **2. Intro to Metadata**
