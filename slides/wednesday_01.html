@@ -670,29 +670,29 @@ asr, Automation Speech Recognition using PocketSphinx
 class: contentpage
 ### **2.3 Detection filters**
 
-Blackdetect can be used to identify in and out points of video that is nearly black and longer than 0.05 of a second:  
+Blackdetect can be used to identify in and out points of video that is nearly black and longer than 0.05 of a second, and ensure you just map the first video stream:  
 ```sh
-ffmpeg -i input.mov -vf "blackdetect=d=0.05:pix_th=0.1" -f null -
+ffmpeg -i input.mov -vf "blackdetect=d=0.05:pix_th=0.1" -map 0:v:0 -f null -
 ```
 Cropdetect filter auto-detects crops sizes of a video frame allowing this to be determined by black pixels:
 ```sh
 ffmpeg -i input.mov -vf "cropdetect,metadata=mode=print" -f null -
 ```
-Freezedetect will detect frozen video during a specified duration, and logs a message:
+Freezedetect finds frozen video great than set duration and noise tolerance 0.05, and use the metadata filter to capture just this data to a text file called freeze.txt:
 ```sh
-ffmpeg -i input.mov -vf "freezedetect=d=0.25:n=-60dB" -f null -
+ffmpeg -i input.mov -vf "freezedetect=d=0.25:n=0.05,metadata=mode=print:file=freeze.txt" -f null -
 ```
-Silencedetect will detect silence in your audio (-50dB for over one second) and log a message when silence is found 
+Silencedetect will detect silence in your audio (-50dB for over one second) and log a message when silence is found:  
 ```sh
 ffmpeg -i input.mp3 -af "silencedetect=noise=-50dB:d=1" -f null -
 ```
-
-These and other detection filters can be used in Python code if you search in the logs for the filtername, capturing the timecodes for the occurrences.  
 ???
+Duration defaults are I think 2 seconds. The difference ratio for n is between 0 and 1. Default dB is -60
+
+These and other detection filters can be used in Python code if you search in the logs for the filtername, capturing the timecodes for the occurrences (look at this more Thursday)
 scdet, scene detection
 vfrdet, detect variable frame rates
 volumedetect, logs the mean volume of 16-bit signed integer samples
-
 ---
 class: contentpage
 ### **2.4 Generative filters**
