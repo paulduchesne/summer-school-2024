@@ -182,7 +182,7 @@ A downside of using MD5 is that it can be quite slow to hash files, which can ad
 class: contentpage
 ### **2. CLI checksum creation**
 
-You can create checksums easily using the Command Line Interface and in this section we'll be exploring these methods as they increase in granularity:  
+You can create checksums easily using the Command Line Interface:  
 
 - 2.1 Whole file hashing with CLI tools  
 
@@ -200,47 +200,44 @@ You can create checksums easily using the Command Line Interface and in this sec
 class: contentpage
 ### **2.1 Whole file hashing**
 
-Linux and Unix toolkits come with some checksum creation tools as standard:  
-
-- SHA: sha1sum, sha224sum, sha256sum, sha384sum, sha512sum  (Linux)
-- BLAKE2: b2sum  (Linux)  
-- SHA: shasum  (MacOS / Linux)
-- CRC-32: cksum  (MacOS / Linux)
-- MD5: md5 (MacOS / Linux)
-- MULTIPLE: certutil (Windows Command Prompt)
-- MULTIPLE: Get-FileHash (Windows Powershell)
-
+- SHA: sha1sum, sha224sum, sha256sum, sha384sum, sha512sum (Linux) / shasum  (MacOS / Linux)
 ```sh
-sha256 file.ext
+sha256 file.ext  /  shasum -a 256 file.ext
+```
+- BLAKE2: b2sum  (Linux) 
+```sh
 b2sum file.ext
-shasum -a 256 file.ext
+```
+- CRC-32: cksum  (MacOS / Linux)
+```sh
 cksum -o 3 file.ext
-md5 file.ext
-certutil -hashfile file.ext MD5 / SHA1 / SHA256
-Get-FileHash -Path file.ext -Algorithm MD5 / SHA1 / SHA256
+```
+- MD5: md5 (MacOS / Linux)  /  md5sum (Linux)
+```sh
+md5 file.ext  /  md5sum file.ext
+```
+- MULTIPLE CHECKSUMS: certutil (Windows Command Prompt) / Get-FileHash (Windows Powershell)
+```sh
+certutil -hashfile file.ext SHA256  /  Get-FileHash -Path file.ext -Algorithm MD5
 ```  
-
-Alternatives that can be installed include:  
-- Support multipe checksum types: openssl, rhash, 7-Zip
-- xxHash: xxh32sum, xxh64sum, xxh128sum
 ---
 class: contentpage
 ### **2.2 FFmpeg file hashing**
 
-You can also use FFmpeg to generate a single file checksum. However, they are not whole file as they don't include any data except stream data. This will make the results different to the whole file checksums.  
+You can also use FFmpeg to generate a single file checksum. 
 
-This command will create a SHA256 file checksum for the image and audio streams, and output it to a separate file called `out.sha256`, example follows:  
 ```sh
 ffmpeg -i file.mov -f hash out.sha256
 SHA256=ce61d513ad70393e2ec0efc297b536cb4a90000898ea60e3fef98580e5b723f3
 ```
-
-FFmpeg supports many checksum algorithms, but it defaults to SHA256 if no algorithm is supplied.  
-Supported algorithms:  
+This command will create a SHA256 file checksum for the image and audio streams, and output it to a separate file called `out.sha256`. No algorithm is requested here, and FFmpeg defaults to SHA256.  
+  
+FFmpeg supports many checksum algorithms:  
 - MD5, murmur3, RIPEMD128, RIPEMD160, RIPEMD320, SHA160, SHA224, SHA256
 - SHA512/224, SHA512/256, SHA384, SHA512, CRC32 and adler32
+  
+<font color="orange">Practise:</font> Make checksums using FFmpeg hash algorithms using the `-f hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
 
-<font color="orange">Practise:</font> Make checksums using FFmpeg hash algorithms using the `-hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
 ```sh
 ffmpeg -i file.mov -f hash -hash MD5 -
 ffmpeg -i file.mov -f hash -hash CRC32 out.crc32
@@ -249,19 +246,20 @@ ffmpeg -i file.mov -f hash -hash CRC32 out.crc32
 class: contentpage
 ### **2.3 FFmpeg stream hashing**
 
-Many archives retain checksums for a file at stream level, so instead of a single whole file checksum they generate one for each AV stream. FFmpeg does not support checksum creation for whole file, only the streams collectively or individually.    
+Many archives retain checksums for a file at stream level, separate checksums for video and audio streams.  
 
-FFmpeg can generate a single stream checksum by using `stream copy` to read, not decode the stream  
+FFmpeg can generate a single stream checksum by using `stream copy` to read, not decode the stream:  
 ```sh
-ffmpeg -i file.ext -map 0:v -c copy -f crc32 -
+ffmpeg -i file.ext -map 0:v -c copy -f md5 -
 ```
 
-This command will decode the first audio stream to generate an checksum and print to the CLI  
+This command will decode the first audio stream to generate an checksum and print to the CLI:  
 ```sh
-ffmpeg -i file.ext -map 0:a:0 -f sha256 -
+ffmpeg -i file.ext -map 0:a:0 -f hash -hash sha512 -
 ```
 
-FFmpeg has the `streamhash` muxer that will export a checksum for each stream, example below. The map flag tells FFmpeg to generate checksums for every stream    
+FFmpeg has the `streamhash` muxer that will export a checksum for each stream, example below.  
+The map flag tells FFmpeg to generate checksums for every stream:  
 ```sh
 ffmpeg -i file.ext -map 0 -c copy -f streamhash -hash md5 -
 0,a,MD5=acec0c1c506a2c4d6973e7d48a88e31d=N/A speed=N/A    

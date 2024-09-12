@@ -50,18 +50,6 @@ class: contentpage
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 15.31.37.png" width="900">] 
 The FFmpeg team reverse engineer virtually every video and audio codec that exists. We're incredibly lucky to have an open-source tool like FFmpeg to help with codec obsolescence and encoding/decoding.  
 
-???
-Containers may also be referred to interchangeably as ‘formats’ or ‘wrappers’.. But they do more
-than just hold the contents of a file together. They are responsible for identifying the data, knowing
-how much of the data there is, understanding what kind of data streams are present and
-information about them, storing time data, self-identification data, and metadata about itself and its
-contents.
-
-We need to use lossless and lossy compression codecs for creation of preservation masters and access copies. 
-- Cinepak - a lossy video codecs released in 1991 and incorporated into Apple’s QuickTime video suite in 1992.  
-- RealVideo was first released in 1997 and was crucial in introducing the concept of internet-based audio and video to consumers.  
-- QuickTime 4 was released in 1999. Apple collaborated with a firm called Sorenson who specialised in video codecs and together launched a format that became hugely popular for streaming film trailers.  
-- Flash Video is a container file format used to deliver digital video over the internet using Adobe flash player. The codecs flv and f4v were often paired with Sorenson and VP4 video codecs.  
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
@@ -101,19 +89,6 @@ Muxing                                    <--- Encoding / Transcoding           
 Combines multiple streams into one container | Converts raw/encoded streams into another format  
 Organises the data for synchronised playback | Can reduce stream size while maintaining quality   
 ```
-???
-Muxing (multiplexing) and demuxing (demultiplexing) are terms you hear alongside encoding, decoding and transcoding. With most encoding/transcoding processes demuxing and remuxing are seemlessly integrated as shown in FFmpeg's diagram of their transcoding process (above). For clarity:  
-Demuxing is separating the streams, decoding is separating the bits of a stream, encoding is putting the bits together again, and muxing is putting the streams together again.
-
-Step through the graphic:
-- libavformat library is called for demuxers (and muxers) to read input files and get packets of data from them.
-- When multiple input files are demuxed, FFmpeg keeps them syncronised using the lowest timestamp on any active input stream (?)
-- libavcodec library - encoded packets are passed to the decoder (unless stream copy active), and decode produces uncompressed frames (TRANSCODING ONLY)
-- libavfilter - If any filtering is called for it will be applied at this stage (we'll look at this more later)
-- After filtering the frames are passed to the encoder which encodes them and outputs encoded packets  
-- These are passed to the muxer which writes the encoded packets to the output file
-
-*Transcoding can be encoded format to another, or it can be a change of the parameters within the same stream format.
 ---
 class: contentpage
 ### **1 FFmpeg video encoding**
@@ -138,7 +113,7 @@ FFmpeg commands generally consist of a '-flag' and a following value. They usual
  -colorspace value      | tags video with the specific colourspace                        
 ```
 
-If you want to try an FFmpeg command in a for or while loop, you will want to add the `-nostdin` flag at the beginning, which blocks FFmpeg's default behaviour of receiving and acting on standard inputs
+To use FFmpeg command in a loop add the `-nostdin` flag at the beginning which blocks FFmpeg's default behaviour of receiving and acting on standard inputs:
 ```bash
 ffmpeg -nostdin -i input.mov...
 ```
@@ -148,11 +123,11 @@ class: contentpage
 
 Don't panic if it fails! A log failure can be a bit scary but they are also really helpful.
 
-The opening contents of a FFmpeg Log:
-- They always start with FFmpeg's version data, what's enabled and library data
-- Then they detail the input file's configuration reporting on all streams (count from 0+)
-- They next supply information about the output file depending on defaults/your command
-- Next they tell you what the mapping plan is for the new file with stream numbering  
+The opening contents of a FFmpeg Log:  
+- Start with FFmpeg's version data and library data  
+- Input file's configuration reporting on all streams (count from 0+)  
+- Information about the output file  
+- Mapping plan is for the new file with stream numbering  
 
 The `demux - decoding - encoding - mux` order can be useful when reading the second section of logs:
 - To find errors fast don't read from the top-down, read from the bottom-upward!
@@ -162,15 +137,7 @@ The `demux - decoding - encoding - mux` order can be useful when reading the sec
 - Search for difficult error messages online or with LLMs - most problems have already been discussed on 
   sites like `Stackoverflow` or the `FFmpeg user forum` and solutions are waiting for you there!
   
-  
 Inspired by Ashley Blewer's presentation [Adventures in Reading FFmpeg Logs](https://youtu.be/15ZUnR3Nx1k)
-???
-Before we start encoding tests, it's worth a chat about the logs!
-[SHOW SAMPLES JOANNA]
-Input stream data:
-tbn is a containers time base (timebase is responsible for display of data during specified time - a timing reference used in digitised audiovisual media)
-tbc is codecs timebase
-tbr is estimated timebase from these two pieces of data - different to a recording framerate!
 ---
 class: contentpage
 ### **1.2 Lossless vs Lossy compression**
@@ -197,7 +164,7 @@ ffmpeg -i input.mov -c:v libx264 -g 1 -c:a copy output.mp4
 ```
 The file size will still using H.264 I frame compression using GOP=1, but you won't create any B/P frames so the size won't be as small as lossy compression. The default GOP in FFmpeg is 12.  
 
-To set a keyfranme interval for every 2 seconds of a 25 fps file:  
+To set a key frame interval for every 2 seconds of a 25 fps file:  
 ```sh
 ffmpeg -i input.mov -c:v libx264 -g 25 -sc_threshold 0 -c:a copy output.mp4
 ```
@@ -208,9 +175,6 @@ The GOP is set for every 25 frames (1 second). `-sc_threshold` ensures a new key
 ffprobe -v error -show_entries frame=pict_type -of default=nw=1 file.ext
 ```
 
-???
-FFrobe probe command:
-verbatim level error, show enties for frame (pict type) 
 ---
 class: contentpage
 ### **1.2 Lossless vs Lossy compression**
@@ -275,8 +239,6 @@ VOB          | MP2, AC3
 RMVB         | Vorbis, HE-AAC
 WebM & OGG   | Vorbis, Opus
 ```
-???
-It's best not to encode lossy to lossy if you can avoid it but either encode from a lossless source or use the copy command if supported by the output container.  
 ---
 class: contentpage
 ### **1.2 Lossless vs Lossy compression**
@@ -285,8 +247,6 @@ Don't forget all the supported codecs can be found in `ffmpeg -codecs` help. The
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-02 at 16.57.12.png" width="880">]
 
-???
-I'm a particular fan of 'brute force and ignorance' codec, AKA BFI. At the bottom.
 ---
 class: contentpage
 ### **1.3 Bit rates**
@@ -307,9 +267,6 @@ Slower presets allow for better compressions, and film which lowers deblocking f
 ```sh
 ffmpeg -i input.mov -c:v libx264 -preset slow -tune film -crf 23 output.mp4
 ```
-???
-Bit rates control the quality of the video compression, which in turn alters the size of your file dramatically. Constant Bit Rate (CBR) uses the same amount of bits across all frames when needed and Variable Bit Rate (VBR) allows the encoder to use more bits for difficult scenes (complex texture or high motion), saving bits for the easy parts of the files to compress.
-Rate control varies between codecs in FFmpeg,  but we can look at example such as H.264 to understand it more - selected by the libx264 library
 ---
 class: contentpage
 ### **1.3 Bit rates**
@@ -329,8 +286,6 @@ ffmpeg -i input.mov -c:v libx264 -preset veryslow -qp 0 output.mkv
 ```
 
 <font color="orange">Practise:</font> Try creating a lossless H.264 file from a lossless source. Make and compare Framemd5 files for the two using the `-an` flag to just compare video streams. See what the size differences are.
-???
-Quantization Parameter controsl amout of compression for every macroblock in a frame, range from 0-51 in H264. Best just used for lossless.
 ---
 class: contentpage
 ### **1.4 Bit depth (Quantisation)**
@@ -346,6 +301,7 @@ For a YUV file that would be 8-bit for Y luminance, and 8-bit each for U and V c
 - 12-bit has 4096 bits per sample (4096 x 3)  
 - 16-bit has 65536 bits per sample (65536 x 3)  
 ???
+
 4-bit has only 16 bits per samples, so 16 gradation changes. This is known as Quantisation
 ---
 class: contentpage

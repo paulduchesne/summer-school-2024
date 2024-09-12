@@ -36,9 +36,7 @@ class: contentpage
 class: contentpage
 ### **1. RAWcook the files**
 
-RAWcooked software from MediaArea is a CLI only encoding tool that converts image sequences from DPX, TIFF, EXR and AVI and PCM audio into the FFV1 video codec and FLAC audio codec, in a Matroska wrapper.  
-
-RAWcooked demuxes and decodes FFV1 Matroska files back to a bit-by-bit perfect copy of the original image sequence. Lossless compression to FFV1 reduces the overall file size by between one and two thirds.  
+RAWcooked from MediaArea is a CLI only encoding tool that converts image sequences and audio to FFV1 video codec and FLAC audio codec, in a Matroska wrapper. RAWcooked demuxes and decodes FFV1 Matroska files back to a bit-by-bit perfect copy of the original image sequence.
 
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 20.18.42.png" width="1000">]
 
@@ -48,10 +46,10 @@ Image courtesy of BFI National Archive
 class: contentpage
 ### **1. RAWcook the files**
 
-<font color="orange">Practise:</font> RAWcooked encode the DPX sequence  
+RAWcooked has a very helpful `--all` command which we can use today to encode the DPX sequence
 
 ```sh
-rawcooked --all --no-accept-gaps /path_to_seqence/dpx_sequence/ >> encoding_data.log
+rawcooked --all /path_to_seqence/dpx_sequence/ >> encoding_data.log
 ```
 
 The command contains several others, all essential for long-term preservation: 
@@ -64,7 +62,7 @@ The command contains several others, all essential for long-term preservation:
 > --check  
 > --accept-gaps   
 
-The `--all` command can be used to encode image sequences and audio files to FFV1 Matroska files, and also to decode FFV1 Matroskas back to their original image sequence.  It was created by MediaArea with sponsorship from the New York Public Library who requested a really simple preservation command that ensured best practises were maintained easily  
+<font color="orange">Practise:</font> RAWcooked encode the DPX sequence using the `-all` command.  
 
 ---
 class: contentpage
@@ -131,13 +129,15 @@ class: contentpage
 The metadata is structured in a form that's easy to read and can be exported in several different formats including HTML, XML, JSON, EBUCore an PBCore (more viewing options in the GUI).  
 
 The metadata is structured into groups and output in this order:  
-- General - Container, format, profile, overall duration and bit rate, writing libary and application    
-- Video / Image - Format, codec, aspect, frame rate, colour information, chroma subsampling, scan information  
-- Audio - Format, codec, sample rate, channels, bit depth and rate, language  
-- Other - Format, codec, language of subtitle / Time code format, duration, frame rate / Chapter count and list & Menu data for streamed services  
+- General   
+- Video / Image
+- Audio  
+- Text  
+- Other  
+- Menu  
 
-Mediainfo supports most audiovisual formatse. Because this software open source and have active development this software may alter over time as sponsors request support for additional features.  
-
+Mediainfo supports most audiovisual formats, and can alter over time with sponsorship.  
+  
 <font color="orange">Practise:</font> Call the basic command to view metadata delivered in key/value pairs    
 ```sh
 mediainfo file.mov
@@ -146,7 +146,7 @@ mediainfo file.mov
 class: contentpage
 ### **5. MediaInfo**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot.png" width="1000">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot.png" width="1140">]
 ---
 class: contentpage
 ### **5. MediaInfo**
@@ -206,7 +206,7 @@ class: contentpage
 
 A MediaConch policy is an XML document, this is the BFI's RAWcooked FFV1 Matroska policy:  
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 17.23.42.png" width="900">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 17.23.42.png" width="1200">]
 
 ---
 class: contentpage
@@ -248,13 +248,13 @@ mediaconch -p dpx_policy.xml different_dpx_file.dpx
 class: contentpage
 ### **6. MediaConch**
 
-MediaArea are committed to the long-term use of the FFV1 and Matroska formats. MediaConch not only validates these formats, but can correct bit flip in the FFV1 codec, and fix segment size issues in Matroska files.  
+MediaConch is also above to correct bit flip in the FFV1 codec, and fix segment size issues in Matroska files.  
 
-**Bit flip** refers to a memory error (soft error) where a random bit can flip from 0 to 1, or vice versa. It's not too common, but it can happen to any file stored over time.
+- **Bit flip** refers to a memory error (soft error) where a random bit can flip from 0 to 1, or vice versa. It's not too common, but it can happen to any file stored over time.
 
-**Matroska segment size errors** can occassionally show a '0' instead of the actual size of the segment in bytes.  
+- **Matroska segment size errors** can occassionally show a '0' instead of the actual size of the segment in bytes.  
 
-There's an excellent guide on the MediaArea website for [MediaConch Fixity](https://mediaarea.net/MediaConch/Documentation/Fixity) where sample files with these errors can be downloaded and fixes applied using this MediaConch command:  
+MediaArea website has a guide to [MediaConch Fixity](https://mediaarea.net/MediaConch/Documentation/Fixity) where sample files with these errors can be downloaded and fixes applied using this MediaConch command:  
 ```sh
 mediaconch file.mkv --TryToFix --Force
 ```
