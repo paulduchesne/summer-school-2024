@@ -10,18 +10,98 @@
     <textarea id="source">
 
 class: center, middle, titlepage
-### WED02: *DCPs.*
+### WED02: *RAWcooked and DCPs.*
 
 ---
 class: contentpage
 ### **Agenda**
 
 1. RAWcooked for Preservation (Jo)
-2. DCPs (Paul)
+2. DCPs     
+2.1 Introduction to DCPs     
+2.2 Creating DCPs with DCP-o-matic     
+2.3 DCP validation with ClairMeta
 
       
 ---
 class: contentpage
+
+
+---
+class: contentpage
+### **2. DCPs**
+
+
+
+---
+class: contentpage
+### **2.1 Introduction to DCPs**
+
+DCPs aka Digital Cinema Packages were the standardised replacement to analogue film projection, introduced circa 2010. JPEG-2000 and WAV components in an MXF wrapper, with an emphasis on lockability and security (due to piracy conerns). 2K (common) or 4K (rare) resolution with a limited range of framerates.
+
+Interesting sidenote, `Film Curatorship (Usai, Francis, Horwath, Loebenstein)` from 2008 posits a likely arms-race on resolution necitating constant format upgrades, *this did not happen*. 
+
+We now live in a world where people watch 8K televsion in there homes on a screen this big, but pay 20 bucks to watch 2K on a screen this big. Crazy. 
+
+
+
+---
+class: contentpage
+### **2.1 Introduction to DCPs**
+
+If we want to desseminate our media to be projected in a cinema context we will want the ability to create our own DCPs.
+
+Today we will look at two tools, DCP-o-matic to create the distributable package, and ClairMeta to validate our package.
+
+---
+class: contentpage
+### **2.2 Creating DCPs with DCP-o-matic**
+
+
+DCP-o-matic has a nice graphical application, but today we are going to stay with the command line version. 
+
+Why?
+
+Because if you can use the command line version, you can automate creation - for example, make DCPs of these forty projects, or even make a DCP by default for every film scan.
+
+
+---
+class: contentpage
+### **2.2 Creating DCPs with DCP-o-matic**
+
+Check DCP-o-matic is installed
+
+```sh
+dcpomatic2_create -v
+```
+
+Create a DCP
+
+```sh
+dcpomatic2_create -o test_dcp --container-ratio 185 --content-ratio 185 -c SHR -n "Test DCP" DIRECTORY
+```
+
+dcpomatic2_create -o test_dcp --container-ratio 185 -c SHR -n "TEST DCP" ~/nicht_ohne_uns/
+
+
+
+dcpomatic2_cli test_dcp # work off the video created file
+
+
+Step through the options used:
+-o is the output directory
+--container-ratio 185 is the aspect ratio
+-c is the short code for what type of material it is FTR for Feature, SHR for Short, TLR for Trailer.
+-n is the title of the work
+and where the file or files live
+
+tour of created package
+
+
+
+---
+class: contentpage
+### **2.3 DCP validation with ClairMeta**
 
 
 
