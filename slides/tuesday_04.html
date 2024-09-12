@@ -14,7 +14,7 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Intro to Hashing/Checksums (Paul)
+1. Intro to Hashing/Checksums
 2. CLI checksum creation  
 2.1 Whole file hashing  
 2.2 FFmpeg file hashing  
@@ -22,10 +22,12 @@ class: contentpage
 2.4 FFmpeg framehash  
 2.5 FFmpeg FrameMD5   
 2.6 FFV1 slice checksums  
-3. Python hashlib. (Paul)  
-4. Perceptual hashing, visual similarity matching. (Paul)  
-5. Bagit for Python. (Paul)  
-6. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)  
+3. Python hashlib.   
+4. Perceptual hashing, visual similarity matching.   
+5. Bagit for Python. 
+6. OAIS
+7. PREMIS
+8. TAR wrapping with CLI 'tar' or Python 'tarfile'. 
 
 ---
 class: contentpage
@@ -49,8 +51,30 @@ md5sum test.jpg
 4a4d8a9873aa2194c658803c4c67744e
 ```
 
-TODO equivalent commands on different OSs    
-TODO also replace all the examples with macOS syntax
+---
+class: contentpage
+### **1. Intro to Checksums**
+
+Different operating systems have different ways of generating checksums, in order of complexity.
+
+macOS
+
+```sh
+md5 test.jpg
+```
+
+Linux
+
+```sh
+md5sum test.jpg
+```
+
+Windows
+
+```sh
+CertUtil -hashfile test.jpg MD5
+```
+
 
 ---
 class: contentpage
@@ -343,7 +367,7 @@ result = hashlib.md5(source.encode()).hexdigest()
 print(result)
 ```
 
-TODO make note that "encode" is transforming from text to binary.
+Some notes on the methods we are using here! `encode()` converts from a string to binary data, which is required to hash. `hexdigest()` turns this back into a string - the hash we can store and use.
 
 ---
 class: contentpage
@@ -538,66 +562,128 @@ class: contentpage
 
 ### **6. Bagit for Python**
 
-Walkthrough of bagit for Python.
+Walkthrough of bagit for Python!
 
-Practical: BagIt for film scans
 
-Bagit security features
+```python
+import bagit
+bagit.make_bag(bag_path, checksums=['md5'])
+```
+
+Tour of what "bag" looks like.
+
+Danger of "recursive bags" if process is run multiple times.
+
+We can also load our bag and validate it is correct.
+
+```python
+bag = bagit.Bag(bag_path)
+if bag.is_valid():
+    print('yes, we are good')
+else:
+    print('something went wrong')
+```
+
 
 
 ---
 class: contentpage
 
-### **5. TAR wrapping with CLI 'tar' or Python 'tarfile'**
+### **5. TAR wrapping with CLI 'tar'**
 
 Great, so we now have our "bag", but what do we do with it?
 
-Generally speaking most archives will then "wrap the bag". 
+Generally speaking many archives will then "wrap the bag". 
 TAR is a very old option (back to 1979) and widely supported means of wrapping files for storage or transport.
 
 
-As you have now heard many times, we can eaither create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
+As you have now heard many times, we can either create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
 
-Python has an inbuilt `tarfile` library!
-
-
-
-
-
-
-Practical: TAR wrap bagit
-
-Practical: untar
-
-
-
-
-
-TODO add in some conversation around OAIS
-
-TODO add some conversation around PREMIS.
+```sh
+tar cfv archive.tar bag_test/
+```
 
 
 ---
 class: contentpage
 
-### **6. Perceptual hashing, visual similarity matching**
+### **5. TAR wrapping with Python 'tarfile'**
 
-perceuptuial hashing has a different purpose, and worth introducing as a concept
-while checksum hashing for file validation is ubiqisuot, hashing for content similarity is more unusal and only a few institutions are doing (eg?)
 
-do in Python?
 
-example similar strings return similar hashes
+Python has an inbuilt `tarfile` library!
 
-example simialr images return similar hashes
+```python
+import tarfile
 
-where would this be useful for an archive, similarity detection
+with tarfile.open(f"./archive.tar", "w") as tar_file:
+      for x in iterdir():
+      
+      tar_file.add(f"{file_name}", arcname="sample")
 
-say someone gives you digital material, it is useful to be able to check if it is already in your collection, but any slight change precludes you from checking
+```
 
-perceptual hashes allow to find where the is content overlap, even if the file itself is slightly different
 
+---
+class: contentpage
+
+### **6. OAIS**
+
+TODO OAIS - discussion
+
+---
+class: contentpage
+
+### **7. PREMIS**
+
+TODO PREMIS - discussion
+
+
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+
+
+Perceptual hashing has a different goal and is worth introducing as a concept. While checksum hashing for file validation is ubiquitous, hashing for content similarity is more unusual, and only a few institutions are currently doing so, to my knowledge.
+
+TODO pick a random frame
+
+TODO loop through and find most similar frame, find most disimilar frame
+
+```python
+from PIL import Image
+import imagehash
+
+target_image = pathlib.Path.home() / 'Desktop' / 'image.jpg'
+target_hash = imagehash.average_hash(Image.open(str(target_image)))
+print(target_hash)
+
+
+img2 = pathlib.Path.home() / 'Desktop' / 'image2.jpg'
+hash2 = imagehash.average_hash(Image.open(str(img2)))
+print(hash2)
+print(target_hash - hash2) #  distance
+```
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+Where would this be useful for an archive?
+
+Say someone gives you digital material, it is useful to be able to check if it is already in your collection. Hashing processes like MD5 will tell you if you already have *exactly* the same file, but this will tell you if you have something which is just very similar.
+
+I am also personally very interested in its use in determining where visual work has been sampled or featured in other works.
+
+
+
+---
+class: center, middle, titlepage
+### End of Day Two.
 
 
     </textarea>
