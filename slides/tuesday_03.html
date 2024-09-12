@@ -21,11 +21,11 @@ class: contentpage
 1. Intro to RAWcooked  
    Rawcook the files  
       
-2. Intro to Metadata (Paul)
+2. Intro to Metadata
 
-3. embARC (Paul)
+3. embARC 
 
-4. FFprobe (Paul)
+4. FFprobe
 
 5. MediaInfo  
 
@@ -82,23 +82,63 @@ rawcooked --all --no-accept-gaps /path_to_seqence/dpx_sequence/ >> encoding_data
 class: contentpage
 ### **2. Intro to Metadata**
 
-File metadata (metadata literally meaning "data about data") are all the attributes of a file which are not the file themselves.
+File metadata (metadata literally meaning "data about data") are all the attributes of a file which are not the file themselves (or "payload").
 
-These can be things like the filename, the creation and modification timestamps. 
+These can be things like video framerate, the creation and modification timestamps. 
 
 For audiovisual archiving this can get significantly more involved as certain formats (e.g. DPX) allow the capture of a full range of information about the file which we may wish to view, validate, or edit.
 
-Practical: Open tiny RGB DPX in a hex editor.
-
-TODO Tangent: what even is a file?
-
-TODO use online hexeditor to load two files, a text file and a tiny one pixel dpx file image (gen from heidi source)
-
-TODO, what is the difference between text and binary data
-a text file can be opened on any computer and is stored in a manner which is decodable - ASCII editor
-binary data is a file which requires a specific application to open
 
 
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+When we talk about "files", we are really talking about two different things.
+
+We can use a hex editor to open the file and see what is inside. https://hexed.it is an good online resource.
+
+On the one hand we have text documents, like "txt" (or "py"!) which are just text. There is no metadata in the file.
+
+.left[<img src="../img/hex_text.png" width="700">]
+
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+When we open up a wav file from the Bundesarchiv film scan, we see something different.
+
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+
+.left[<img src="../img/hex_wav.png" width="700">]
+
+A guide to what we are seeing! The first four letters are called the "magic number" (no joke) which tells the application what type the file is ("RIFF"). Underneath we can see text which tell us interesting "context" (metadata) on the file. These seem randomly placed, but they are in very specific locations, and these are defined in the file specification.
+
+
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+Underneath is the audio expressed as "binary data", which allows us the flexibilty for the expression of any file: sound, video, 3d models etc etc.
+
+If we have a lossless file, we can sometimes see data which we can interpret "naively".
+
+
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+TODO: WAV sinewave
+
+
+---
+class: tangentpage
+### **Tanget 1: What is a file!**
+
+TODO: one pixel sinewave
 
 ---
 class: contentpage
@@ -108,9 +148,22 @@ embARC is from the Library of Congress/FADGI and is the result of concentrated w
 
 https://www.digitizationguidelines.gov/guidelines/digitize-DPXembedding.html
 
-Practical: Open tiny RGB DPX in embARC. 
+It is a tool to work specifically with DPX metadata.
+
+```sh
+java -jar ~/Desktop/embARC-0.4.0.jar '/home/paulduchesne/nicht_ohne_uns/dpx/nicht ohne uns 2min00086400.dpx' -print
+```
+
+Note that embARC is a java application which we run as a "jar". This can also be thought of as a similar paradigm as with Python: Python interpreter runs a Python script, Java interpreter runs a Jar file.
+
+---
+class: contentpage
+### **3. embARC**
 
 
+.left[<img src="../img/embarc.png" width="700">]
+
+`-print` will simply print out the existing metadata, but we can also use for conformance checks, where we define what fields need to checked and embARC ensures they are present.
 
 ---
 class: contentpage
@@ -119,13 +172,22 @@ class: contentpage
 FFprobe is a sibling tool of FFmpeg and also allows the extraction of metadata of audiovisual material. This can either be printed to the terminal
 
 ```sh
-ffprobe example
+ffprobe '/home/paulduchesne/nicht_ohne_uns/dpx/nicht ohne uns 2min00086400.dpx'
 ```
+.left[<img src="../img/ffprobe.png" width="700">]
 
-or exported as JSON, which is an explicitly machine readable format for data storage.
+
+---
+class: contentpage
+### **4. FFprobe**
+
+
+
+
+We can also export the metadata as JSON, which is an explicitly machine readable format for data storage.
 
 ```sh
-ffprobe json example
+ffprobe -v quiet -print_format json -show_format -show_streams '/home/paulduchesne/nicht_ohne_uns/dpx/nicht ohne uns 2min00086400.dpx'
 ```
 
 
