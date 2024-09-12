@@ -74,6 +74,8 @@ In the command line using the Python Interpreter to execute the code
 python myscript.py
 ```
 
+Depending on your install you may need to specifically call `python3`.
+
 ---
 class: contentpage
 ### **1.3 Basics: Print**
@@ -106,6 +108,8 @@ print(greeting)
 
 The code here is actually 'legal,' but we have inadvertently created what is called a 'variable' which we have not defined.
 
+Python doesn't know what `greeting` (without quotations) means.
+
 ---
 class: contentpage
 ### **1.5 Basics: Variables**
@@ -132,7 +136,7 @@ print(a_number)
 a_number = a_number+a_number
 print(a_number)
 ```
-or when we have an unknown value we are collecting (eg, perform an action on all files in a folder).
+or when we have an unknown values we are working with (eg, perform an action on all files in a folder).
 
 
 
@@ -181,7 +185,7 @@ A very important concept in Python is a list or an "array".
 some_people = ['paul', 'david', 'bethany', 'shana']
 ```
 
-These can contain a mix of types.
+Lists can contain a mix of types.
 
 ```python
 mixed_types = ['hello', 27, 3.1415]
@@ -193,7 +197,7 @@ mixed_types = ['hello', 27, 3.1415]
 class: contentpage
 ### **1.8 Basics: For Loops**
 
-Another key concept is the "for loop", which lets us work through a list, and apply an action to each list elements
+Another key concept is the "for loop", which lets us work through a list, and apply an action to each list elements. This is exactly the same concept we saw earlier during the command line session.
 
 ```python
 for a_number in [17, 27, 37, 47]:
@@ -206,7 +210,7 @@ for a_number in [17, 27, 37, 47]:
     print(a_number + 4)
 ```
 
-We can use this pattern to start to perform file operations, but first we will need to find a library to help us work with files!
+We can use this pattern to start to perform interesting file operations, but first we will need to find a library to help us work with filepaths!
 
 
 
@@ -222,16 +226,16 @@ For now, we are going to use a very useful library called Pathlib.
 
 ```python
 import pathlib
-for filename in ['test.wav', 'test.jpg', 'test.txt']:
+for filename in ['nicht ohne uns 2min00086400.dpx', 'nicht ohne uns 2min00086401.dpx', 'not_a_file.dpx']:
     print(type(filename))
-    pathlib_filename = pathlib.Path.cwd() / filename
+    pathlib_filename = pathlib.Path.home() / 'nicht_ohne_uns' / 'dpx' / filename
     print(type(pathlib_filename))
     print(pathlib_filename, pathlib_filename.exists())
 ```
 
 Note the `.exists()` method at the end of the `pathlib_filename`? 
 
-This is a "method" to check if the file exists at that location or not, and returns True or False. Different types have different methods (ie things you can do with them). This is also where documentation becomes very useful. 
+This is a "method" to check if the file exists at that location or not, and returns True or False. Different types have different methods (ie things you can do with them). This is also where documentation becomes very useful, to know what methods are available to use.
 
 https://docs.python.org/3/library/pathlib.html
 
@@ -240,7 +244,7 @@ https://docs.python.org/3/library/pathlib.html
 class: contentpage
 ### **1.10 Basics: If statements**
 
-If statements let us route operations depending on an assessment on whether something is true or false.
+`If statements` let us route operations depending on an assessment on whether something is true or not.
 
 ```python
 a_number = 37
@@ -256,7 +260,7 @@ else:
 
 Typical symbols here are '<' something is less than something else, '>' greater than, '==' equals, and '!=' not equals.
 
-Worth paying attention to '=' means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
+Worth paying attention the difference between '=' which means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
 
 Also you can use these checks outside of if statements.
 
@@ -272,9 +276,9 @@ We can also use "if statements" inside "for loops", or "for loops" inside "if st
 
 ```python
 import pathlib
-for filename in ['test.wav', 'test.jpg', 'test.txt']:
-    print(type(filename))
-    pathlib_filename = pathlib.Path.cwd() / filename
+for filename in ['nicht ohne uns 2min00086400.dpx', 'nicht ohne uns 2min00086401.dpx', 'not_a_file.dpx']:
+    print(filename)
+    pathlib_filename = pathlib.Path.home() / 'nicht_ohne_uns' / 'dpx' / filename
     if pathlib_filename.exists():
         print('THE FILE EXISTS, HOORAY')
     else:
@@ -290,7 +294,7 @@ class: contentpage
 The last thing I wanted to introduce was the `subprocess` library. Subprocess is cool because we can call command line applications from within Python!
 
 
-This can be useful if you want to orchestrate tools sequentially (video to MediaInfo, then FFmpeg, then result to FFprobe).
+This can be useful if you want to orchestrate tools sequentially (extract video metadata with MediaInfo, transcode using FFmpeg, make a checksum).
 
 
 
@@ -301,11 +305,11 @@ subprocess.call(['ffmpeg', '-version'])
 ```
 
 
-Good news is that we can have processes defined which work inside or outside of Python (eg a specific FFmpeg command to convert video files).
+Good part of this is that we can have processes defined which work inside or outside of Python (eg a specific FFmpeg command to convert video files).
 
-Bad news is that this can make our scripts OS dependant (eg "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run OS-agnostic.
+Bad news is that this can make our scripts OS dependant (eg "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run the same scripts OS-agnostic.
 
-You will also notice subprocess needs the command expressed as an array.
+You will also notice `subprocess` needs the command expressed as an array of strings.
 
 
 
@@ -372,7 +376,26 @@ Git itself is a command line application, but there are many options for graphic
 class: contentpage
 ### **3. Git**
 
-TO DO: basic git, make a directory a repo, change a file, make a commit.
+Turn your folder into a REPOSITORY. WOW!
+
+```sh
+git init
+```
+
+There is now a hidden folder called `.git` which will handle version management.
+
+We can update the file changes in the main folder space using `git add`
+
+```sh
+git add *
+```
+
+Git commit lets us label this snapshot, opportunity to provide some good context to what work was undertaken.
+
+
+```sh
+git commit -m 'starting'
+```
 
 Working with the Git CLI is good to know, especially if you need to resolve a version/merge problem, but generally speaking you could mostly get by with a graphical IDE integration and GitHub.
 
@@ -381,6 +404,8 @@ class: contentpage
 ### **4. GitHub**
 
 GitHub is a website which allows developers to host their software projects via Git, with a lot of other useful features to help with keeping track of project work.
+
+In the previous example we were just storing work on our own computer, GitHub lets us host it online, with benefits for collaboration between different coders.
 
 It is owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform which has some superior features, but GitHub still has much more traffic.
 

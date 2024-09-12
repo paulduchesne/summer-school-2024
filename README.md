@@ -42,9 +42,9 @@ python3 -m http.server 8822
 |  | Coffee Break | | | 
 | 11:00 - 12:30 | RAWcooked, DCPs | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_02.html)| 
 |  | Lunch | | | 
-| 13:30 - 15:00 | Whisper, Tesseract, Llama | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_03.html)| 
+| 13:30 - 15:00 | Tesseract, Llama | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_03.html)| 
 |  | Coffee Break | | |
-| 15:30 - 17:30 | spaCY, Wikidata | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_04.html)| 
+| 15:30 - 17:30 | Whisper, spaCY, Wikidata | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_04.html)| 
 
 **Thursday 2024-09-26**
 
