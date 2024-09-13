@@ -45,6 +45,7 @@ We now live in a world where people watch 8K televsion in there homes on a scree
 
 
 
+
 ---
 class: contentpage
 ### **2.1 Introduction to DCPs**
@@ -103,6 +104,15 @@ tour of created package
 class: contentpage
 ### **2.3 DCP validation with ClairMeta**
 
+ClairMeta is an opensource tool to check DCPs are valid, which can be used as an external Python library.
+
+```python
+from clairmeta import DCP
+
+dcp = DCP("path/to/dcp")
+dcp.parse()
+status, report = dcp.check()
+```
 
 
 
