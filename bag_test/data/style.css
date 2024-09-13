@@ -1,0 +1,15 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+@import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+body { 
+    font-family: 'Raleway'; 
+}
+h1, h2, h3 {
+    font-family: 'Raleway';
+}
+
+.titlepage {background-color:darkcyan;color: white;}
+.contentpage {background-color:white;color: darkcyan;} 
+.tangentpage {background-color:orange;color: white;} 

@@ -35,7 +35,7 @@ class: contentpage
 
 Checksums are "fixed width" (ie always the same length) digital fingerprints.
 
-They can be generated from text or files!
+They can be generated from source text or files!
 
 MD5 for the string "Paul Duchesne"!
 
@@ -44,11 +44,11 @@ echo -n "Paul Duchesne" | md5sum
 0396b497d1949e210d09692607734e97
 ```
 
-MD5 for a jpg image file!
+MD5 for a DPX file!
 
 ```sh
-md5sum test.jpg
-4a4d8a9873aa2194c658803c4c67744e
+md5sum media/dpx/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
 ---
@@ -60,19 +60,19 @@ Different operating systems have different ways of generating checksums, in orde
 macOS
 
 ```sh
-md5 test.jpg
+md5 media/dpx/0088600.dpx 
 ```
 
 Linux
 
 ```sh
-md5sum test.jpg
+md5sum media/dpx/0088600.dpx 
 ```
 
 Windows
 
 ```sh
-CertUtil -hashfile test.jpg MD5
+CertUtil -hashfile media/dpx/0088600.dpx MD5
 ```
 
 
@@ -137,6 +137,13 @@ class: contentpage
 Checksums are not reversible, you cannot recreate the source from the checksum, but you can verify if the source is unchanged.
 
 These characteristics mean this concept is used extensively in net and digital security.
+
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
 
 Example process: a user to a system (eg a website, database) creates a password, the system only stores the checksum.
 
@@ -372,7 +379,7 @@ Some notes on the methods we are using here! `encode()` converts from a string t
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of hashing a file.
 
@@ -380,7 +387,7 @@ Example of hashing a file.
 import hashlib
 import pathlib
 
-filepath = pathlib.Path.cwd() / 'test.jpg'
+filepath = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
 
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
@@ -391,26 +398,24 @@ with open(filepath, 'rb') as file:
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of hashing two files, and checking if they match.
 
 Note, we have condensed our code slightly, but it is doing exactly the same thing.
 
-TODO adapt to use film scan frames
-
 ```python
 import hashlib
 import pathlib
 
-filepath1 = pathlib.Path.cwd() / 'test.jpg'
-with open(pathlib.Path.cwd() / 'test.jpg', 'rb') as file:    
-    result1 = hashlib.md5(file.read()).hexdigest()  
+filepath1 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
+with open(filepath1, 'rb') as file1:    
+    result1 = hashlib.md5(file1.read()).hexdigest()  
     print(filepath1, result1)
 
-filepath2 = pathlib.Path.cwd() / 'test.py'
-with open(filepath2, 'rb') as file:    
-    result2 = hashlib.md5(file.read()).hexdigest()  
+filepath2 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088601.dpx'
+with open(filepath2, 'rb') as file2:    
+    result2 = hashlib.md5(file2.read()).hexdigest()  
     print(filepath2, result2)
 
 print(result1 == result2)
@@ -420,7 +425,7 @@ Okay, but say we want to hash the files in an entire directory! We don't want to
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Exmample of hashing multiple files (TODO use film scan frames) in a "for loop", 
 
@@ -428,9 +433,8 @@ Exmample of hashing multiple files (TODO use film scan frames) in a "for loop",
 import hashlib
 import pathlib
 
-for filepath in ['test.txt', 'test2.txt']:
-
-    with open(pathlib.Path.cwd() / filepath, 'rb') as file:  
+for filepath in ['0088600.dpx', '0088601.dpx']:
+    with open(pathlib.Path.cwd() / 'media' / 'dpx' / filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
 ```
@@ -441,7 +445,7 @@ Okay, better, but we don't want to have to write out all the file names!
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of processing a whole directory (TODO use film scans)
 
@@ -449,13 +453,16 @@ Example of processing a whole directory (TODO use film scans)
 import hashlib
 import pathlib
 
-for filepath in pathlib.Path.cwd().iterdir():
-
+dpx_frames = pathlib.Path.cwd() / 'media' / 'dpx'
+for filepath in dpx_frames.iterdir():
     with open(filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
+
+
 ```
 
+Note that if we want to not print the whole filename we can use `filepath.name`
 
 ---
 class: contentpage
@@ -560,29 +567,39 @@ python app.py
 ---
 class: contentpage
 
-### **6. Bagit for Python**
+### **4. Bagit for Python**
 
 Walkthrough of bagit for Python!
 
 
 ```python
 import bagit
-bagit.make_bag(bag_path, checksums=['md5'])
+import pathlib
+
+bagit.make_bag(pathlib.Path.cwd() / 'bag_test', checksums=['md5'])
 ```
 
-Tour of what "bag" looks like.
-
-Danger of "recursive bags" if process is run multiple times.
-
-We can also load our bag and validate it is correct.
+We can now load our bag and validate it is correct, meaning intact from when we bagged it.
 
 ```python
-bag = bagit.Bag(bag_path)
+bag = bagit.Bag(str(pathlib.Path.cwd() / 'bag_test'))
 if bag.is_valid():
     print('yes, we are good')
 else:
     print('something went wrong')
 ```
+
+---
+class: contentpage
+
+### **4. Bagit for Python**
+
+
+Tour of what "bag" looks like.
+
+
+
++++ Danger of "recursive bags" if process is run multiple times. +++
 
 
 
@@ -614,14 +631,17 @@ class: contentpage
 Python has an inbuilt `tarfile` library!
 
 ```python
+import pathlib
 import tarfile
 
-with tarfile.open(f"./archive.tar", "w") as tar_file:
-      for x in iterdir():
-      
-      tar_file.add(f"{file_name}", arcname="sample")
+with tarfile.open(pathlib.Path.cwd() / 'archive.tar', "w") as tar_file:
+    bag_files = pathlib.Path.cwd() / 'bag_test'
+    for file in bag_files.iterdir():
+        tar_file.add(file)
 
 ```
+
+
 
 
 ---
@@ -629,7 +649,19 @@ class: contentpage
 
 ### **6. OAIS**
 
-TODO OAIS - discussion
+Now is probably a good moment to raise the concept of OAIS, or Open Archival Information System.
+
+This is a standard (although, importantly, conceptual standard) around how archives should store their material. 
+
+I would recommend the DPC introduction to OAIS if you are interested: https://www.dpconline.org/docs/technology-watch-reports/1359-dpctw14-02/file.
+
+OAIS describes three stages in the archival objects lifecycle:
+- The Submission Information Package (aka SIP), the package entering archival control.
+- The Archival Information Package (aka AIP), the package in archival control.
+- The Distribution Information Package (aka DIP), the package leaving archival control.
+
+
+Because this is a conceptual or reference model there is some flexibility to interprete what an implementation should like.
 
 ---
 class: contentpage
