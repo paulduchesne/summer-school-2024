@@ -658,17 +658,24 @@ I would recommend the DPC introduction to OAIS if you are interested: https://ww
 OAIS describes three stages in the archival objects lifecycle:
 - The Submission Information Package (aka SIP), the package entering archival control.
 - The Archival Information Package (aka AIP), the package in archival control.
-- The Distribution Information Package (aka DIP), the package leaving archival control.
+- The Dissemination Information Package (aka DIP), the package leaving archival control.
 
 
-Because this is a conceptual or reference model there is some flexibility to interprete what an implementation should like.
+Because this is a conceptual or reference model there is some flexibility to interprete what an implementation should look like, but generally understood to mean that files should be stored in a state of assured fixity, with sufficent metadata to assess format conformance and playbility.
 
 ---
 class: contentpage
 
 ### **7. PREMIS**
 
-TODO PREMIS - discussion
+PREMIS is another concept originating from Library of Congress, which defines an expected model for expressing information around preservation activity. This includes defining the entities of those invoved in preservatoon activity: Objects, Events, Agents and Rights.
+
+These entities also have expected properties, instigating the collection of the sort of metadata required to properly contexulaise digital preservation activity.
+
+If you were so inspired you could literally express this using their XML or OWL schemas, otherwise it could be a good reference to understand what data you should be considering for collection: who created this file, when? Was the filename changed?
+
+
+https://www.loc.gov/standards/premis/v3/index.html
 
 
 
@@ -681,23 +688,38 @@ class: contentpage
 
 Perceptual hashing has a different goal and is worth introducing as a concept. While checksum hashing for file validation is ubiquitous, hashing for content similarity is more unusual, and only a few institutions are currently doing so, to my knowledge.
 
-TODO pick a random frame
+---
+class: contentpage
 
-TODO loop through and find most similar frame, find most disimilar frame
+### **8. Perceptual hashing, similarity matching**
+
 
 ```python
+import imagehash, pathlib, random, subprocess, tqdm
 from PIL import Image
-import imagehash
 
-target_image = pathlib.Path.home() / 'Desktop' / 'image.jpg'
-target_hash = imagehash.average_hash(Image.open(str(target_image)))
-print(target_hash)
+frames = pathlib.Path.cwd() / 'media' / 'dpx'
+for dpx_frame in frames.iterdir():
+    jpg_frame = dpx_frame.with_suffix('.jpg')
+    if not jpg_frame.exists():
+        subprocess.call(['ffmpeg', '-i', str(dpx_frame), str(jpg_frame)])
 
+jpeg_files = [x for x in frames.iterdir() if x.suffix == '.jpg']
+random_jpg = random.choice(jpeg_files)
+random_jpg_phash = imagehash.average_hash(Image.open(str(random_jpg)))
 
-img2 = pathlib.Path.home() / 'Desktop' / 'image2.jpg'
-hash2 = imagehash.average_hash(Image.open(str(img2)))
-print(hash2)
-print(target_hash - hash2) #  distance
+print(random_jpg, random_jpg_phash)
+
+result = []
+for jpg in tqdm.tqdm(jpeg_files):
+    compare_hash = imagehash.average_hash(Image.open(str(jpg)))
+    result.append([random_jpg_phash - compare_hash, jpg])
+
+result = sorted(result, key=lambda x: x[0])
+
+print('most closest file', result[1])
+print('most distant file', result[-1])
+
 ```
 
 ---

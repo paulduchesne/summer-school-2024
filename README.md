@@ -30,7 +30,7 @@ python3 -m http.server 8822
 |  | Coffee Break | | | 
 | 11:00 - 12:30 | Intro to Python, IDEs, Git, GitHub | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/tuesday_02.html) | 
 |  | Lunch | |  | 
-| 13:30 - 15:00 | RAWcooked, MediaArea, FFprobe, embARK | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/tuesday_03.html)| 
+| 13:30 - 15:00 | RAWcooked, MediaArea, FFprobe, embARC | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/tuesday_03.html)| 
 |  | Coffee Break | | |
 | 15:30 - 17:30 | Hashing, BagIt, TAR | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/tuesday_04.html) | 
 
