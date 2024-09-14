@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: Wednesday Morning</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
@@ -309,12 +309,15 @@ class: contentpage
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/chroma_subsampling.png" width="1000">]
 
-Chroma subsampling is an alternative way to encode your colour media. The process is lossy and only compresses chroma (colour) data, not the luminence (brightness). You'll be familiar with some of these ratios:  
-> 4:4:4 is chrominance sampled at the same rate as luminance (no compression)  
-> 4:2:2 is chrominance sampled at half the rate of luminance (the compression ~ 1/3 smaller than 4:4:4)  
-> 4:2:0 and 4:1:1 is chrominance sampled at half the rate (the compression ~ half the size of 4:4:4) 
+- 4:4:4 is chrominance sampled at the same rate as luminance (no compression)  
 
-You’ve probably seen some chroma subsampling values described as four part ratios, 4:2:2:4, where this is the case the final number 4 refers to the sampling of the alpha channel.  
+- 4:2:2 is chrominance sampled at half the rate of luminance (compression ~ 1/3 smaller than 4:4:4)  
+
+- 4:2:0 is chrominance sampled on alternate lines at half the rate of luminance (compression ~ half 4:4:4)
+
+- 4:1:1 is chrominance sampled at a quarter the rate of the luminance (compression ~ half 4:4:4)  
+  
+Chroma subsampling values described as four part ratios, eg 4:2:2:4 or 4:4:4:4, have additional chrominance stored in an alpha channel  
 ---
 class: contentpage
 ### **1.5 Chroma subsampling and colourspaces**
@@ -332,7 +335,7 @@ class: contentpage
 class: contentpage
 ### **1.5 Chroma subsampling and colourspaces**
 
-Colourspace, bit-depth and chroma subsampling are selected in FFmpeg using the Pixel Format:    
+FFmpeg Pixel Format:    
 - `-pix_fmt yuv422p10le`: YUV colourspace, 4:2:2 chroma subsampling, 10 bit-depth, little endian  
 - `-vf format=yuv420p`: The video filter `format` can also apply Pixel Format options  
 
@@ -350,28 +353,26 @@ ffmpeg -i input.mov -c:v libx264 -vf format=yuv420p output.mp4
 ```
 <font color="orange">Practise:</font> View available Pixel Formats in FFmpeg and try re-encoding your file to a different pix_fmt.  
 
-???
-NOTE: Pixel formats change between FFmpeg version releases based on development of the libraries. This is the cause of Framemd5 file differences between FFmpeg version releases, as the pix_fmt settings for the codec are used to decompress to raw video for framemd5 creation. Framemd5s are not long-term fixity.
 ---
 class: contentpage
 ### **1.5 Chroma subsampling and colourspaces**
 
-You can also embed colorspace metadata to your encodings using These FFmpeg commands:  
+Embedding colorspace metadata and accepted FFmpeg arguments:  
 - `color_primaries` selecting the colour model to be tagged with.  
-  FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020 (REC.2020)  
+  smpte170m, bt470bg, bt709, bt2020  
 - `color_trc` marks the video with transfer characteristics (gamma).  
-  FFmpeg values include: smpte170m (REC.601 NTSC), gamma28 (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_10 / _12 (REC.2020 10-bit/12-bit)  
+  smpte170m, gamma28, bt709, bt2020_10 / _12  
 - `colorspace` marks the video for having the given colourspace.  
-  FFmpeg values include: smpte170m (REC.601 NTSC), bt470bg (REC.601 PAL), bt709 (REC.709/sRGB), bt2020_cl / _ncl (REC.2020 constant/non-constant luminance) 
+  smpte170m, bt470bg, bt709, bt2020_cl/_ncl
  
-You can use the video filter colormatrix to change one colourspace to another, for example bt709 to bt2020 only:  
+Use video filter colormatrix to change colourspaces:  
 ```sh
-ffmpeg -i input.mov -vf colormatrix=bt709:bt2020 output.mov
+ffmpeg -i input.mov -vf colormatrix=bt709:bt2020 -c copy -map 0 output.mov
 ```
 
 <font color="orange">Practise:</font> Try to change a colour space to another using the video filter colormatrix, or appending/amending existing colour metadata in some of your test files.    
 ```sh
-ffmpeg -i input.mov -color_primaries bt2020 -color_trc bt2020 -colorspace bt2020 output.mov
+ffmpeg -i input.mov -color_primaries bt709 -color_trc bt709 -colorspace bt709 -c copy output.mov
 ```
 ---
 class: contentpage
@@ -396,8 +397,8 @@ ffmpeg
 -vf setfield=tff,setdar=4/3
 output.mkv
 ```
-The -map command this time has a -dn which tells FFmpeg not map any data streams to the Matroska. The FFV1 codec has a number of options to create your best lossless encoding, including level 3 (the latest version release), gop 1, slicecrc active, slices 24 per frame. View [FFV1 Cheat Sheet from FFmpeg](https://trac.ffmpeg.org/wiki/Encode/FFV1) for more guidance.  
-
+  
+View [FFV1 Cheat Sheet from FFmpeg](https://trac.ffmpeg.org/wiki/Encode/FFV1) for more guidance.  
 ---
 class: contentpage
 ### **1.6 Lossless video encoding examples**
@@ -424,7 +425,7 @@ You can add framemd5 commands to the above to create a FrameMD5 of the transcode
 -f framemd5 -an output.framemd5
 ```
 
-This is our BFI command that encodes FFV1 Matroska files to V210 Mov files with metadata that matches Apple Quicktime spec as closely as possible.  
+Useful blog from BAVC [Converting FFV1/MKV to v210/MOV](https://bavc.org/converting-ffv1mkv-v210mov/)   
 
 ---
 class: contentpage
@@ -449,12 +450,12 @@ input.mkv
 output.mov
 ```
 
-These don't make Apple ProRes files that fully conform to the Apple specifications but the resulting file will play file across video players. `faststart` is used to ensure the Moov atom is at the head of the video file to begin download of streaming video.  
+These don't make Apple ProRes files that fully conform to the Apple specifications but the resulting file will play across video players.  
 ---
 class: contentpage
 ### **1.7 Lossy video encoding examples**
 
-This is a BFI automated MP4 access copy creation script which runs 24/7 transcoding files from all our ingest pathways. This specific example handles off-air TV recordings with MPEG-TS video streams in .ts container:  
+BFI automated encoding to H.264 MP4 for access copy creation:  
 
 ```sh
 ffmpeg -nostdin
@@ -471,12 +472,9 @@ ffmpeg -nostdin
 -movflags +faststart
 -y
 output.mp4
--f null -
 ```
-We force access copies into 16:9 aspect with either letterbox or pillar box. CRF 28 is the very highest you can set a transcode for H.264 before you start to see compression artifacts. The video filter `yadif` is used to deinterlace video source files so they play cleanly on computer and other media.  
-???
-The scaling filter works for both upscaling and downscaling. We use the Lanczos scaling algorithm (flags=lanczos), which is slower than alternatives but gives better results than the default bilinear algorithm.
-The padding filter (pad=1920:1080:240:0) forces the frame if needed following scale, populating any space with black.
+Access copies are forced to 16:9 aspect either letterbox or pillar box. CRF 28 is the very highest you can set a transcode for H.264 before you start to see compression artifacts. The video filter `yadif` is used to deinterlace video source files so they play cleanly on computer and other media.  
+
 ---
 class: contentpage
 ### **1.8 Other FFmpeg commands**
