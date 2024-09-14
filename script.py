@@ -1,7 +1,9 @@
 import pathlib
-for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
-    if pathlib_filename.exists():
-        print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
-    else:
-        raise Exception('WHERE IS FILE', pathlib_filename)
+from clairmeta import DCP
+
+dcp = DCP(pathlib.Path.cwd() / 'test_dcp' / 'TestDcp_SHR-1_F-178_XX-XX_MOS_2K_20240914_SMPTE_OV')
+dcp.parse()
+status, report = dcp.check()
+
+
+    #   TestDcp_SHR-1_F-178_XX-XX_MOS_2K_20240914_SMPTE_OV/cpl_1c6ad489-fa93-4ddb-9cea-5a1ce6f71e0e.xml

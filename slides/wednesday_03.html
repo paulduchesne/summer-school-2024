@@ -11,64 +11,98 @@
 class: center, middle, titlepage
 ### WED03: *Extracting content metadata.*
 
----
-class: contentpage
-### **Agenda**
-
-1. Pre-LLMs ( < 2023)    
-1.1 Speech to text.    
-1.2 OCR.    
-1.3 Image analysis.    
-1.4 Experimental
-
-2. Post-LLMs ( > 2023)    
-2.1 ~~Speech to text~~ Whisper    
-2.2 ~~OCR~~ LLMs   
-2.3 ~~Image analysis.~~ LLMs  
-2.4 ~~Experimental~~ LLMs
-
----
-class: contentpage
-### **1. Pre-LLMs ( < 2023)**
-
-
----
-class: contentpage
-### **1.1 Speech to text**
 
 
 
 ---
 class: contentpage
-### **1.2 OCR **
+### **Content Metadata**
 
-Tesseract, keras ocr, skribus
+We have looked a bit at extracting technical metadata from media, but now we are going to look at something else - extracting metadata around the content of the media.
 
-
----
-class: contentpage
-### **1.3 Image analysis **
-
-
+This is an area which is being revolustionised by Machine Learning/Artifical Intelligence/Large Language Models (like ChatGPT).
 
 
 ---
 class: contentpage
-### **1.4 Experimental **
+### **Content Metadata**
 
-colour 
+Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+
+Speech to text.    
+OCR.    
+Image analysis.    
+Experimental/Other.
+
+---
+class: contentpage
+### **Content Metadata**
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+
+~~Speech to text.~~ now -> Whisper    
+~~OCR.~~ now -> LLM        
+~~Image analysis.~~ now -> LLM     
+~~Experimental/Other.~~ now -> LLM   
+
 
 
 ---
 class: contentpage
-### **2. Post-LLMs ( > 2023) **
+### **Machine Learning**
+
+These systems all have in common the idea of an artifical neural network, and idea which has been around since th 1940s, but has only achieved reccent widespread use due to computational oiwer and innovative strategies.
+
+An artifical neural network very roughly approximates the way our own brains work, in that they comprise many many many very simple "nodes", which develop to behave in certain ways, and complexity arises out of many many nodes communicating with many many other nodes.
 
 
 ---
 class: contentpage
-### **2.1 ~~Speech to text~~ Whisper  **
+### **Machine Learning**
 
-Developed by OpenAI and released in 2022, it is now completely ubiquitous. It returns speech-to-text "cooked", with punctuation and disfluences removed. As with all neural network models it comes in a variety of "sizes" dependant on complexity, which generally correlate to quality of results.
+A traditional artifical neural network has three components, "inputs", "hidden layers", and "outputs".
+
+- The inputs could be numbers, letters, pixels, audio samples, as long as the expressed as numbers.
+
+- The hidden layers sit inbetween. These are sequential layers of nodes which are all inteerconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
+
+
+- The outputs could be as simple as a "yes" or "no" answer to the question, "is this a spanish word?"
+
+The power of artifical neural networks are that they can applied to almost any subject or dsicipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot exaplin how a certain trained neural net (or "model") is producing a certain reuslt.
+
+Depending on source material we can also see undesired biases replicated. 
+
+
+
+
+---
+class: contentpage
+### **Whisper**
+
+With this context we can now start to look at Whisper from OpenAI. Whisper is now so ubitious it has almost completely replaced all other copetitors and all other speech to text systems.
+It returns speech-to-text "cooked", with punctuation and disfluences removed. As with all neural network models it comes in a variety of "sizes" dependant on complexity, which generally correlate to quality of results.
+
+
+
+feed basic audio
+
+then discuss models
+
+discuss language
+
+disucess translate
+
+discuss output
+
+
+
+
+
+
+
+
+
 
 Install using pip
 
