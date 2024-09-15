@@ -479,17 +479,17 @@ Access copies are forced to 16:9 aspect either letterbox or pillar box. CRF 28 i
 class: contentpage
 ### **1.8 Other FFmpeg commands**
 
-To rewrap a video without changing the codecs you can use stream copy tool:
+To rewrap a video without changing the codecs use stream copy tool:
 ```sh
 ffmpeg -i input.mov -c copy -map 0 output.mkv
 ```
-You can trim video down to specific time code start and stop. Use `-to` and supply a time code, or use `-t` and supply total seconds, eg `-t 15`:   
+Trim video using `-ss`, and `-to` by suppling time codes. Use `-t` and supply total seconds for new duration:   
 ```sh
 ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
 ```
-You can convert a DCP file to an H.264 file, or if you change the audio to stream copy `-c:a copy` you can set the output video to Matroska:
+Convert DCP MXF files to an H.264 file:
 ```sh
-ffmpeg -i video.mxf -i audio.mxf -c:v libx264 -pix_fmt yuv420p -c:a aac output_dcp.mp4 
+ffmpeg -i video.mxf -i audio.mxf -c:v libx264 -pix_fmt yuv420p -c:a aac output.mp4 
 ```
 Concatenate multiple videos of the same type together into one file. First create a text file with one file one each line then use that text file to concatenate the files into one new file (use -safe 0 if using absolute paths in file):   
 ```
@@ -509,7 +509,7 @@ cd <dpx_folder>
 ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 
 -pix_fmt yuv444p10le -r 25 your_dpx_file.mov
 ```
-Sometimes you might have drift of a few frames between your video and audio streams causing lip sync issues. This command can shift the streams slightly to fix this using stream copy, configured to move the audio stream approx 2 frames at 25fps: 
+Itsoffset can be used to correct lipsync between your video and audio streams:  
 ```sh
 ffmpeg -i input.mov -itsoffset 0.125 -i input.mov -map 0:v -map 1:a -c copy output.mov
 ```
@@ -528,12 +528,6 @@ Filters are created using the `libavfilter` library and come in two classes, the
 ```sh
 -filter:v  -vf  -filter:a  -af
 ```
-???
-LIBAVFILTER library
-Filters can only be applid during encoding. Stream copy will not apply filters.
-Simple filtergraphs are simple because they have one input and one output, both of the same type.
-To select these filters you use the -filter: flag, or for video streams -vf, and audio -af
-These filters are inserted between the decoding and the encoding stages.
 ---
 class: contentpage
 ### **2. FFmpeg filters**
@@ -544,17 +538,16 @@ Complex filtegraphs can have multiple inputs and/or multiple outputs, or have st
 ```sh
 -filter_complex
 ```
-???
-An example would be an overlay filter that might overlay a watermark JPEG image to a second input video stream (two different types of inputs)
+
 ---
 class: contentpage
 ### **2. FFmpeg filters**
 
-To use an FFmpeg example of a simple `filtergraph` that has one input/output but two split filters:
+This is FFmpeg example of a simple `filtergraph` that has one input/output but two split filters:
 
 .center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 16.46.32.png" width="600">]
 
-This filter command splits the input streams into two streams named [main] and [tmp]. [tmp] is sent to stream crop and vertical flip, and [main] is sent to the overlay filter where it merges back with [tmp]. 
+The input stream splits into two named `main` and `tmp`. `tmp` is sent to stream crop and vertical flip, and `main` to the overlay filter where it merges back with `tmp`. 
 ```sh
 -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
 ``` 
@@ -576,22 +569,18 @@ Cropping video is possible with the crop filter, after the equals it takes a lis
 ```sh
 ffmpeg -i input.mov -filter:v "crop=672:572:24:32" output.mov
 ```
-You can export thumbnails for every frame, here between 1 and 2 seconds and save them as `png` files:  
+Export thumbnails for every frame between 1 and 2 seconds, saved as `png` files:  
 ```sh
 ffmpeg -i input.mov -vf select=`between(t,1,2)` -vsync 0 output_images%d.png 
 ```
-You can flip a video image horizontally or vertically using `hflip` and `vflip` filters:
+Flip a video image horizontally or vertically using `hflip` and `vflip` filters:
 ```sh
 ffmpeg -i input.mov -filter:v "hflip,vflip" -c:a copy output.mov
 ```
-You can join filters together like the yadif filter, colormatix which we've seen can be used to tag a colourspace, and format which selects a Pixel Format.  
+Chain filters together like the yadif, colormatix and format which selects a Pixel Format:  
 ```sh
 -vf "yadif,colormatrix=bt601:bt709,format=yuv420p"
 ```
-???
-YADIF, Yet Another Deinterlacing Filter (most used in AV pres)
-BWDIF, Bob Weaver Deinterlacing Filter
-KERNDEING, Donald Graft's adaptive kernel deinterlacing
 ---
 class: contentpage
 ### **2.2 Audio filters**
@@ -609,7 +598,7 @@ The silenceremove filter will remove silent audio at the beginning of an audio f
 ffmpeg -i input.wav -af silenceremove=start_threshold=-57dB:start_duration=1:start_periods=1
 -c:a pcm_s16le -ar 48000 output.wav
 ```
-The aecho filter allows you to set an echo with your favourite parameters:
+The aecho filter allows you to set an echo with adjustable parameters:
 ```sh
 ffmpeg -i input.wav -af "aecho=0.8:0.9:1000:0.3" -c:a copy output.wav 
 ```
@@ -617,16 +606,13 @@ Use the afade filter to fade in the first 5 seconds of audio, with type `t=in`:
 ```sh
 ffmpeg -i input.wav -af "afade=t=in:ss=0:d=15" -c:a copy output.wav
 ```
-???
-Other notable audio filters:
-asr, Automation Speech Recognition using PocketSphinx
 ---
 class: contentpage
 ### **2.3 Detection filters**
 
 Blackdetect can be used to identify in and out points of video that is nearly black and longer than 0.05 of a second, and ensure you just map the first video stream:  
 ```sh
-ffmpeg -i input.mov -vf "blackdetect=d=0.05:pix_th=0.1" -map 0:v:0 -f null -
+ffmpeg -i input.mov -vf "blackdetect=d=0.05:pix_th=0.10" -map 0:v:0 -f null -
 ```
 Cropdetect filter auto-detects crops sizes of a video frame allowing this to be determined by black pixels:
 ```sh
@@ -640,24 +626,18 @@ Silencedetect will detect silence in your audio (-50dB for over one second) and 
 ```sh
 ffmpeg -i input.mp3 -af "silencedetect=noise=-50dB:d=1" -f null -
 ```
-???
-Duration defaults are I think 2 seconds. The difference ratio for n is between 0 and 1. Default dB is -60
 
-These and other detection filters can be used in Python code if you search in the logs for the filtername, capturing the timecodes for the occurrences (look at this more Thursday)
-scdet, scene detection
-vfrdet, detect variable frame rates
-volumedetect, logs the mean volume of 16-bit signed integer samples
 ---
 class: contentpage
 ### **2.4 Generative filters**
 
 FFmpeg's lavfi library can be used to generate content for test video files, or for viewing in FFplay.  
 
-You can synthesize a `voice utterance` using the libflite library using `flite`:
+Synthesize a `voice utterance` using the libflite library using `flite`:
 ```sh
-ffplay -f lavfi flite=text='Two roads diverged in a yellow wood and sorry I couldn't travel both'
+ffplay -f lavfi flite=text='Two roads diverged in a yellow wood...'
 ```
-You can generate video and audio content for video files using sine wave and mandelbrot (a geometric representation of complex numbers):
+Generate video and audio content for video files using sine wave and mandelbrot:
 ```sh
 ffmpeg -f lavfi -i mandelbrot -c:v v210 -f lavfi -i "sine=frequency=1000:sample_rate=48000"
 -c:a pcm_s16le -t 5 output.mov
@@ -686,32 +666,48 @@ Simulate a video waveform monitor using the waveform filter, which plots colour 
 ```sh
 ffplay -i input.mov -vf waveform
 ```
-Finally you can map the colour pixels of your video on to a CIE colour diagram:
+Map the colour pixels of your video on to a CIE colour diagram:
 ```sh
 ffmpeg -i input.mov -vf ciescope
 ```
 
-Many of these visualisation filters are incorpated into open-source softwares.
-
-???
-Histogram: A representation of the color component distribution in an image
-Vectorscope: A digital representation of oscilloscopes for video and audio
 ---
 class: contentpage
 ### **3. QC Tools**
 
-The MediaArea software QC Tools uses FFmpeg filters extensively to help quality control audiovisual files. The tool helps users analyze and understand their digitized video files through use of audiovisual analytics and filtering.  
+[QCTools](https://mediaarea.net/QCTools) uses FFmpeg filters extensively to help quality control audiovisual files. The tool helps users analyse and understand their digitised video files through use of audiovisual analytics and filtering.  
 
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-03 at 22.54.26.png" width="700">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/qc_tools.png" width="1000">]
+
+
 ---
 class: contentpage
 ### **3. QC Tools**
 
-The [QCTools manual](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf) provides excellent guide to use QC Tools.
+There's excellent documentation for [QCTools](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf) including some helpful graphics:
 
-.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 20.21.26.png" width="700">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 20.32.03.png" width="800">]
 
+---
+class: contentpage
+### **3. QC Tools**
 
+[AV Artifacts Atlas](https://www.avartifactatlas.com/) provide amazing detail about audiovisual problems found by archivists, documented with illustrations of how the problem can be identifed in QCTools:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-15 at 23.48.59.png" width="600">]
+
+---
+class: contentpage
+### **3. QC Tools**
+
+```sh
+ffmpeg -i input.mov -bsf noise=60 -map 0 -c copy output_noise.mov
+```
+
+<font color="orange">Practise:</font> Use FFmpeg to add random bits to a new version of a file to create artificial noise then analyse both in QC Tools with help of the following resources:  
+- [MediaArea QCTools](https://mediaarea.net/QCTools)  
+- [QCTools documentation](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf)  
+- [AV Artifacts Atlas](https://www.avartifactatlas.com/)
 
 </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
