@@ -1,10 +1,12 @@
 #!/bin/env python3
 
 '''
-Create a SQL database to test the requests API call against
-These scripts were written with the help of this amazing resource:
-https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask
+Run from a Python VENV that has Flask installed
 pip install flask
+
+Uses an existing SQL database to test the requests API calls against with Flask
+These scripts were inspired by this project:
+https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask
 
 Once running the list of books from books.db can be viewed here:
 http://127.0.0.1:5000/api/v1/resources/books/all
@@ -14,12 +16,11 @@ http://127.0.0.1:5000/api/v1/resources/books/all
 import sqlite3
 
 # External libraries
-import flask
-from flask import request, jsonify
+from flask import request, jsonify, Flask
 
 
 # Initialise the Flash DEBUG configuration
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # Configures data as a dictionary in col[0]/row[idx]
@@ -83,5 +84,41 @@ def api_filter():
     results = cur.execute(query, to_filter).fetchall()
 
     return jsonify(results)
+
+@app.route('/api/v1/resources/books', methods=['POST'])
+def add_book():
+    book = request.json
+    
+    required_fields = ['author', 'title', 'first_sentence', 'published']
+    if not all(field in book for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    conn = sqlite3.connect('books.db')
+    cur = conn.cursor()
+    cur.execute('INSERT INTO books (author, title, first_sentence, published) VALUES (?, ?, ?, ?)',
+                (book['author'], book['title'], book['first_sentence'], book['published']))
+    conn.commit()
+    new_id = cur.lastrowid
+    conn.close()
+    
+    return jsonify({'id': new_id, 'message': 'Book added successfully'}), 201
+
+@app.route('/api/v1/resources/books', methods=['DELETE'])
+def delete_book():
+    data = request.json
+    if not data or 'title' not in data or 'author' not in data:
+        return jsonify({'error': 'Must provide both title and author'}), 400
+
+    conn = sqlite3.connect('books.db')
+    cur = conn.cursor()
+    cur.execute('DELETE FROM books WHERE title = ? AND author = ?',
+                (data['title'], data['author']))
+    if cur.rowcount == 0:
+        conn.close()
+        return jsonify({'message': 'No matching book found'}), 404
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Book deleted successfully'}), 200
+
 
 app.run()

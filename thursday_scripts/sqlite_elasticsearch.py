@@ -2,7 +2,8 @@
 
 '''
 Example functions for SQLite, ElasticSearch
-Ensure Elasticsearch installed first via package managers
+Ensure Elasticsearch project installed first via package managers
+Then create an Python VENV to install python package to:
 pip install elasticsearch
 '''
 
@@ -51,7 +52,7 @@ def create_database_content(target_path) -> None:
                 users.commit()
 
 
-def fetch_database_content(field, arg) -> dict:
+def fetch_database_content(field, arg) -> list:
     '''
     Pull data from SQL database for test
     '''
@@ -60,6 +61,8 @@ def fetch_database_content(field, arg) -> dict:
     cursor.execute(f"SELECT * FROM DOWNLOADS where {field} = {arg})")
     data = cursor.fetchall()
     print(data)
+    if isinstance(data, dict):
+        return list(data)
     return data
 
 
