@@ -1,33 +1,164 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: WED04</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
 
+
+
+
+
+
+
 class: center, middle, titlepage
-### WED04: *Entity fishing and LOD.*
+### WED04: *External Connections.*
 
 ---
 class: contentpage
 ### **Agenda**
 
-1.    
-1.1 
+In this session we are going to talk about "external connections". Up until now all our processes have been happening locally, but what if we seek to connect with the outside world?
+
+You will notice that Wikipedia and Wikidata feature very heavily in thhis section as they both comprise the largets unified open knowdlege resources on the web. 
+
+1. DROID        
+    1.1 PRONOM     
+2. Wikification of text
+3. OpenRefine & Wikidata
+      3.1 Linking
+      3.2 Leveraging
+      
+
+
+
 ---
 class: contentpage
+### **1. DROID**
+
+DROID is a very interesting tool from the National Archives in the UK which profiles files. It is very useful if you are given a full collection of digital files given to you, and you want to figure out what you have been given.
+
+https://digital-preservation.github.io/droid/
+
+One of these profiles is a connection to PRONOM which is a registry of file formats, also maintained by the UK National Archives.
+
+https://www.nationalarchives.gov.uk/PRONOM/Default.aspx
+
+
+
+
+
+---
+class: contentpage
+### **1. DROID**
+
+
+
+To run DROID from the command line we are going to want to download the "bin" from the DROID GitHub releases page.
+
+https://github.com/digital-preservation/droid/releases
+
+Once we have unpacked the bin.zip we can run the following to show everything is working.
+
+```sh
+java -jar droid-command-line-6.8.0.jar -v
+```
+
+And now we can use it on a directory! Here using our scans. This is not especially interesting as the film scans are quite homogenous, but try pointing towards your Downloads directory and seeing what reports you get.
+
+```sh
+java -jar droid-command-line-6.8.0.jar -a /home/paulduchesne/Desktop/summer-school-2024/media -o /home/paulduchesne/Desktop/droid_test.csv
+```
+
+Just to unpack what is happening here, DROID is processing each file and checking that the "signature" of the file (which we saw earlier) are correct and match the extension - this is to catch any instances where someone has taken a "image.jpg" and renamed as "image.dpx".
+
+
+What is especially interesting, and the focus of this session is the PUID column, which is printing the PRONOM identieifre.
+
+
+---
+class: contentpage
+### **1.1 PRONOM**
+
+
+
+If we go across to the PRONOM technical registry we can look up this identifier and get more contextual information on what this file is
+
+This exciting to me for two reasons, one it means that archives can start to compare their digital collections with a greater level of detail, ie when I talk about fmt/193 we both know we are talking about the same thing
+
+
+
+https://www.wikidata.org/wiki/Q1676669
+
+
+but also this can link out to playability information. So one of the outstanding issues for an audiovisual archive is the question how much of my collection is at risk, and these tools are the means of identfying at scale where there are parts of your collection
+
+note that I'm really talking about born digital collections here, obviously if you are digitising to a certain spec you should be well aware of the playability of those files.
+
+
+
+
+---
+class: contentpage
+### **2. Concept Wikification**
+
+The first section covered connecting technical signature externally, but now we can revisit the generated content extraction from the last session and look at a process called wikifiction.
+
+This is a very new field for archives, but can be seen as a continution of the "subject" cataologuing field.
+
+From the previous session we extracted the speech-to-text of our film scan, we can now feed it to an LLM and ask it to match across to wikipedia entities.
+
+We are in an interesting possition where the really big langaugae models seem to be performing very well, the lower level are performing 
+
+two consdierations are context aware wikification, for eaxmple if I said "I grew up in Australia and visited Newcastle often", that newcastle being different to "I grew up in the UK and visited Newcastle often".
+
+second is that there is a differnec between an LLM inventing a good looking wiki address and knowing whether the wiki entity exists.
+
+
+<!-- https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales -->
+
+
+
+
+
+
+
+---
+class: contentpage
+### **3. OpenRefine and Wikidata**
+
+
+The last section to cover around linking is a bit of a step away from digital archving itself, but looking at linking the entities themselves. By "entities" we mean cataloguing items like film "works" and people.
+
+We are going to use the popular data manipultaion tool OpenRefine as this will allow us to leverage existing data statements to inform making the right connections.
+
+OpenRefine, load dataset from NTTW example
+
+use inbuilt reconciliation service, then add data statements
+
+pike-cooper as an example where if your ogranisations are using Wikipedia as shared identifiers, and you have APIs which expose collection data you can return federated queries.
+
+The dream is that we will one day be able to ask questions like, what elements do I hold in my collection which no-one else holds.
+
+
+
+
+
+
+---
+class: center, middle, titlepage
+### End of Day Three.
+
+
+
 
 
 
 
     </textarea>
-    <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
-    </script>
-    <script type="text/javascript">
-      var slideshow = remark.create({ratio: "16:9"});
-    </script>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+    <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
   </body>
 </html>

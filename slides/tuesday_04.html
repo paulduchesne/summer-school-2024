@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: TUE04</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
+
+
+
+
+
+
+
 
 class: center, middle, titlepage
 ### TUE04: *Fixity and storage.*
@@ -14,23 +21,20 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Intro to Hashing/Checksums (Paul)  
-
+1. Intro to Hashing/Checksums
 2. CLI checksum creation  
-> 2.1 Whole file hashing  
-> 2.2 FFmpeg file hashing  
-> 2.3 FFmpeg stream hashing   
-> 2.4 FFmpeg framehash  
-> 2.5 FFmpeg FrameMD5   
-> 2.6 FFV1 slice checksums  
-
-3. Python hashlib. (Paul)  
-
-4. Perceptual hashing, visual similarity matching. (Paul)  
-
-5. Bagit for Python. (Paul)  
-
-6. TAR wrapping with CLI 'tar' or Python 'tarfile'. (Paul)  
+2.1 Whole file hashing  
+2.2 FFmpeg file hashing  
+2.3 FFmpeg stream hashing   
+2.4 FFmpeg framehash  
+2.5 FFmpeg FrameMD5   
+2.6 FFV1 slice checksums  
+3. Python hashlib.   
+4. Perceptual hashing, visual similarity matching.   
+5. Bagit for Python. 
+6. OAIS
+7. PREMIS
+8. TAR wrapping with CLI 'tar' or Python 'tarfile'. 
 
 ---
 class: contentpage
@@ -38,7 +42,7 @@ class: contentpage
 
 Checksums are "fixed width" (ie always the same length) digital fingerprints.
 
-They can be generated from text or files!
+They can be generated from source text or files!
 
 MD5 for the string "Paul Duchesne"!
 
@@ -47,15 +51,37 @@ echo -n "Paul Duchesne" | md5sum
 0396b497d1949e210d09692607734e97
 ```
 
-MD5 for a jpg image file!
+MD5 for a DPX file!
 
 ```sh
-md5sum test.jpg
-4a4d8a9873aa2194c658803c4c67744e
+md5sum media/dpx/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
-TODO equivalent commands on different OSs    
-TODO also replace all the examples with macOS syntax
+---
+class: contentpage
+### **1. Intro to Checksums**
+
+Different operating systems have different ways of generating checksums, in order of complexity.
+
+macOS
+
+```sh
+md5 media/dpx/0088600.dpx 
+```
+
+Linux
+
+```sh
+md5sum media/dpx/0088600.dpx 
+```
+
+Windows
+
+```sh
+CertUtil -hashfile media/dpx/0088600.dpx MD5
+```
+
 
 ---
 class: contentpage
@@ -118,6 +144,13 @@ class: contentpage
 Checksums are not reversible, you cannot recreate the source from the checksum, but you can verify if the source is unchanged.
 
 These characteristics mean this concept is used extensively in net and digital security.
+
+
+---
+class: contentpage
+
+### **1. Intro to Checksums**
+
 
 Example process: a user to a system (eg a website, database) creates a password, the system only stores the checksum.
 
@@ -368,12 +401,12 @@ result = hashlib.md5(source.encode()).hexdigest()
 print(result)
 ```
 
-TODO make note that "encode" is transforming from text to binary.
+Some notes on the methods we are using here! `encode()` converts from a string to binary data, which is required to hash. `hexdigest()` turns this back into a string - the hash we can store and use.
 
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of hashing a file.
 
@@ -381,7 +414,7 @@ Example of hashing a file.
 import hashlib
 import pathlib
 
-filepath = pathlib.Path.cwd() / 'test.jpg'
+filepath = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
 
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
@@ -392,26 +425,24 @@ with open(filepath, 'rb') as file:
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of hashing two files, and checking if they match.
 
 Note, we have condensed our code slightly, but it is doing exactly the same thing.
 
-TODO adapt to use film scan frames
-
 ```python
 import hashlib
 import pathlib
 
-filepath1 = pathlib.Path.cwd() / 'test.jpg'
-with open(pathlib.Path.cwd() / 'test.jpg', 'rb') as file:    
-    result1 = hashlib.md5(file.read()).hexdigest()  
+filepath1 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
+with open(filepath1, 'rb') as file1:    
+    result1 = hashlib.md5(file1.read()).hexdigest()  
     print(filepath1, result1)
 
-filepath2 = pathlib.Path.cwd() / 'test.py'
-with open(filepath2, 'rb') as file:    
-    result2 = hashlib.md5(file.read()).hexdigest()  
+filepath2 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088601.dpx'
+with open(filepath2, 'rb') as file2:    
+    result2 = hashlib.md5(file2.read()).hexdigest()  
     print(filepath2, result2)
 
 print(result1 == result2)
@@ -421,7 +452,7 @@ Okay, but say we want to hash the files in an entire directory! We don't want to
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Exmample of hashing multiple files (TODO use film scan frames) in a "for loop", 
 
@@ -429,9 +460,8 @@ Exmample of hashing multiple files (TODO use film scan frames) in a "for loop",
 import hashlib
 import pathlib
 
-for filepath in ['test.txt', 'test2.txt']:
-
-    with open(pathlib.Path.cwd() / filepath, 'rb') as file:  
+for filepath in ['0088600.dpx', '0088601.dpx']:
+    with open(pathlib.Path.cwd() / 'media' / 'dpx' / filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
 ```
@@ -442,7 +472,7 @@ Okay, better, but we don't want to have to write out all the file names!
 ---
 class: contentpage
 
-### **5. Python hashlib**
+### **3. Python hashlib**
 
 Example of processing a whole directory (TODO use film scans)
 
@@ -450,13 +480,16 @@ Example of processing a whole directory (TODO use film scans)
 import hashlib
 import pathlib
 
-for filepath in pathlib.Path.cwd().iterdir():
-
+dpx_frames = pathlib.Path.cwd() / 'media' / 'dpx'
+for filepath in dpx_frames.iterdir():
     with open(filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
+
+
 ```
 
+Note that if we want to not print the whole filename we can use `filepath.name`
 
 ---
 class: contentpage
@@ -561,40 +594,79 @@ python app.py
 ---
 class: contentpage
 
-### **6. Bagit for Python**
+### **4. Bagit for Python**
 
-Walkthrough of bagit for Python.
+Walkthrough of bagit for Python!
 
-Practical: BagIt for film scans
 
-Bagit security features
+```python
+import bagit
+import pathlib
+
+bagit.make_bag(pathlib.Path.cwd() / 'bag_test', checksums=['md5'])
+```
+
+We can now load our bag and validate it is correct, meaning intact from when we bagged it.
+
+```python
+bag = bagit.Bag(str(pathlib.Path.cwd() / 'bag_test'))
+if bag.is_valid():
+    print('yes, we are good')
+else:
+    print('something went wrong')
+```
+
+---
+class: contentpage
+
+### **4. Bagit for Python**
+
+
+Tour of what "bag" looks like.
+
+
+
++++ Danger of "recursive bags" if process is run multiple times. +++
+
 
 
 ---
 class: contentpage
 
-### **5. TAR wrapping with CLI 'tar' or Python 'tarfile'**
+### **5. TAR wrapping with CLI 'tar'**
 
 Great, so we now have our "bag", but what do we do with it?
 
-Generally speaking most archives will then "wrap the bag". 
+Generally speaking many archives will then "wrap the bag". 
 TAR is a very old option (back to 1979) and widely supported means of wrapping files for storage or transport.
 
 
-As you have now heard many times, we can eaither create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
+As you have now heard many times, we can either create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
+
+```sh
+tar cfv archive.tar bag_test/
+```
+
+
+---
+class: contentpage
+
+### **5. TAR wrapping with Python 'tarfile'**
+
+
 
 Python has an inbuilt `tarfile` library!
 
+```python
+import pathlib
+import tarfile
 
+with tarfile.open(pathlib.Path.cwd() / 'archive.tar', "w") as tar_file:
+    bag_files = pathlib.Path.cwd() / 'bag_test'
+    for file in bag_files.iterdir():
+        tar_file.add(file)
 
-
-
-
-Practical: TAR wrap bagit
-
-Practical: untar
-
-
+```
 
 
 
@@ -602,23 +674,97 @@ Practical: untar
 ---
 class: contentpage
 
-### **6. Perceptual hashing, visual similarity matching**
+### **6. OAIS**
 
-perceuptuial hashing has a different purpose, and worth introducing as a concept
-while checksum hashing for file validation is ubiqisuot, hashing for content similarity is more unusal and only a few institutions are doing (eg?)
+Now is probably a good moment to raise the concept of OAIS, or Open Archival Information System.
 
-do in Python?
+This is a standard (although, importantly, conceptual standard) around how archives should store their material. 
 
-example similar strings return similar hashes
+I would recommend the DPC introduction to OAIS if you are interested: https://www.dpconline.org/docs/technology-watch-reports/1359-dpctw14-02/file.
 
-example simialr images return similar hashes
+OAIS describes three stages in the archival objects lifecycle:
+- The Submission Information Package (aka SIP), the package entering archival control.
+- The Archival Information Package (aka AIP), the package in archival control.
+- The Dissemination Information Package (aka DIP), the package leaving archival control.
 
-where would this be useful for an archive, similarity detection
 
-say someone gives you digital material, it is useful to be able to check if it is already in your collection, but any slight change precludes you from checking
+Because this is a conceptual or reference model there is some flexibility to interprete what an implementation should look like, but generally understood to mean that files should be stored in a state of assured fixity, with sufficent metadata to assess format conformance and playbility.
 
-perceptual hashes allow to find where the is content overlap, even if the file itself is slightly different
+---
+class: contentpage
 
+### **7. PREMIS**
+
+PREMIS is another concept originating from Library of Congress, which defines an expected model for expressing information around preservation activity. This includes defining the entities of those invoved in preservatoon activity: Objects, Events, Agents and Rights.
+
+These entities also have expected properties, instigating the collection of the sort of metadata required to properly contexulaise digital preservation activity.
+
+If you were so inspired you could literally express this using their XML or OWL schemas, otherwise it could be a good reference to understand what data you should be considering for collection: who created this file, when? Was the filename changed?
+
+
+https://www.loc.gov/standards/premis/v3/index.html
+
+
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+
+
+Perceptual hashing has a different goal and is worth introducing as a concept. While checksum hashing for file validation is ubiquitous, hashing for content similarity is more unusual, and only a few institutions are currently doing so, to my knowledge.
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+
+```python
+import imagehash, pathlib, random, subprocess, tqdm
+from PIL import Image
+
+frames = pathlib.Path.cwd() / 'media' / 'dpx'
+for dpx_frame in frames.iterdir():
+    jpg_frame = dpx_frame.with_suffix('.jpg')
+    if not jpg_frame.exists():
+        subprocess.call(['ffmpeg', '-i', str(dpx_frame), str(jpg_frame)])
+
+jpeg_files = [x for x in frames.iterdir() if x.suffix == '.jpg']
+random_jpg = random.choice(jpeg_files)
+random_jpg_phash = imagehash.average_hash(Image.open(str(random_jpg)))
+
+print(random_jpg, random_jpg_phash)
+
+result = []
+for jpg in tqdm.tqdm(jpeg_files):
+    compare_hash = imagehash.average_hash(Image.open(str(jpg)))
+    result.append([random_jpg_phash - compare_hash, jpg])
+
+result = sorted(result, key=lambda x: x[0])
+
+print('most closest file', result[1])
+print('most distant file', result[-1])
+
+```
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+Where would this be useful for an archive?
+
+Say someone gives you digital material, it is useful to be able to check if it is already in your collection. Hashing processes like MD5 will tell you if you already have *exactly* the same file, but this will tell you if you have something which is just very similar.
+
+I am also personally very interested in its use in determining where visual work has been sampled or featured in other works.
+
+
+
+---
+class: center, middle, titlepage
+### End of Day Two.
 
 
     </textarea>

@@ -1,92 +1,368 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: WED03</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
 
+
+
+
 class: center, middle, titlepage
 ### WED03: *Extracting content metadata.*
 
----
-class: contentpage
-### **Agenda**
 
-1. Pre-LLMs ( < 2023)    
-1.1 Speech to text.    
-1.2 OCR.    
-1.3 Image analysis.    
-1.4 Experimental
-
-2. Post-LLMs ( > 2023)    
-2.1 ~~Speech to text~~ Whisper    
-2.2 ~~OCR~~ Llama   
-2.3 ~~Image analysis.~~ Llama  
-2.4 ~~Experimental~~ Llama
-
----
-class: contentpage
-### **1. Pre-LLMs ( < 2023)**
 
 
 ---
 class: contentpage
-### **1.1 Speech to text**
+### **Content Metadata**
 
----
-class: contentpage
-### **1.2 OCR **
+We have looked a bit at extracting technical metadata from media, but now we are going to look at something else - extracting metadata around the content of the media.
 
-
----
-class: contentpage
-### **1.3 Image analysis **
+This is an area which is being revolutionised by Large Language Models aka Machine Learning aka AI (like ChatGPT).
 
 
 ---
 class: contentpage
-### **1.4 Experimental **
+### **Content Metadata**
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+
+Speech to text.    
+OCR.    
+Image analysis.    
+Experimental/Other.
+
+---
+class: contentpage
+### **Content Metadata**
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+
+~~Speech to text.~~ now -> Whisper    
+~~OCR.~~ now -> LLM        
+~~Image analysis.~~ now -> LLM     
+~~Experimental/Other.~~ now -> LLM   
+
 
 
 ---
 class: contentpage
-### **2. Post-LLMs ( > 2023) **
+### **Machine Learning**
+
+These systems all have in common the idea of an artifical neural network, an idea which has been around since the 1940s, but has only achieved reccent widespread use due to computational oiwer and innovative strategies.
+
+An artifical neural network very roughly approximates the way our own brains work, in that they comprise many many many very simple "nodes", which develop to behave in certain ways, and complexity arises out of many many nodes communicating with many many other nodes.
 
 
 ---
 class: contentpage
-### **2.1 ~~Speech to text~~ Whisper  **
+### **Machine Learning**
 
-Developed by OpenAI and released in 2022, it is now completely ubiquitous. It returns speech-to-text "cooked", with punctuation and disfluences removed. As with all neural network models it comes in a variety of "sizes" dependant on complexity, which generally correlate to quality of results.
+A traditional artifical neural network has three components, "inputs", "hidden layers", and "outputs".
 
-Install using pip
+- The inputs could be numbers, letters, pixels, audio samples, as long as the expressed as numbers.
 
-> `pip install -U openai-whisper`
+- The hidden layers sit inbetween. These are sequential layers of nodes which are all inteerconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
 
-Run as a CLI tool
 
-> `whisper`
+- The outputs could be as simple as a "yes" or "no" answer to the question, "is this a spanish word?"
 
-Run as Python library
+The power of artifical neural networks are that they can applied to almost any subject or dsicipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot exaplin how a certain trained neural net (or "model") is producing a certain reuslt.
 
-> `import whisper`
+Depending on source material we can also see undesired biases replicated. 
 
----
-class: contentpage
-### **2.2 ~~OCR~~ Llama  **
+
 
 
 ---
 class: contentpage
-### **2.3 ~~Image analysis.~~ Llama    **
+### **Whisper**
+
+With this context we can now start to look at Whisper from OpenAI. 
+
+Whisper is now so ubitious it has almost completely replaced all other copetitors and all other speech to text systems.
+
+It returns speech-to-text "cooked", with punctuation and disfluences removed. As with all neural network models it comes in a variety of "sizes" dependant on complexity, which generally correlate to quality of results.
+
 
 
 ---
 class: contentpage
-### **2.4 ~~Experimental~~ Llama    **
+### **Whisper**
+
+A minimum viable command for whisper is 
+
+```sh
+whisper media/audio.wav
+```
+
+which will use default values for the "model" (neural network discussed before) the language and the output format.
+
+
+
+
+---
+class: contentpage
+### **Whisper**
+
+The first flag we might want to feed whisper is the language, otherwise it will take a sample of the first 30 seconds and automtcally detect.
+
+As an aside, I have noticed that anytime Whisper cannot detect a langugae if seems to think it is "welsh".
+
+```sh
+whisper --language en media/audio.wav
+```
+
+
+
+---
+class: contentpage
+### **Whisper**
+
+output_dir lets us specify an output directory 
+
+```sh
+whisper --language en --output_dir whisper_test/ media/audio.wav
+```
+
+
+
+---
+class: contentpage
+### **Whisper**
+
+while we are at it we may also want to pick an output format.
+
+SRTs and VTTs are subtitle tracks with timestamps, which you should be able to drop straight into VLC or DCPs you are creating.
+
+JSON and TSV are useful as strcutured data, using formats which are common for storing machine readable data.
+
+We are are for now going to use the simplest - a TXT file.
+
+
+```sh
+whisper --language en --output_dir whisper_test/ --output_format txt media/audio.wav
+```
+
+
+
+
+
+---
+class: contentpage
+### **Whisper**
+
+As mentioned before we can also set the size of the model which is used: base, small, medium, large.
+
+It is worth doing some tests to see what effect the bigger the model has, it will use more diskspace and take longer to process, so worth checking the results to see if they are significant enough to justofy this.
+
+
+Matt Miller at Library of Congress has done something similar.
+https://thisismattmiller.com/post/lomax-whisper/
+
+
+```sh
+whisper --language en --output_dir whisper_test/ --output_format txt --model large-v2 media/audio.wav
+```
+
+PRACTICAL: compare results of base and large-v2 side by side.
+
+Also, there is nothing restricting you to only using the models providided by OpenAI.
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+Now to shift focus to other tools using similar technology, LLMs or Large language Models.
+
+The most famous of these is undoubtely ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
+
+We might begin by looking at different things we can do with these models, and then different ways to access them.
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+We are going to dive right in with a multi-modal model called LLaVA, which allows us to do image analysis. Note that we are now about to discover how powerful (or not) our computers are.
+
+Ollama is a cross-platform command line application which us lets run machine learning models very easily from our own machines.
+
+https://ollama.com/
+
+There is a wide selection of models on offer, and as with whisper they range in size, with the expectation that bigger the model better the results (apparently not always true)!
+
+https://ollama.com/library/gemma2
+
+---
+class: contentpage
+### **LLMs**
+
+Once we have ollama installed we can easily call our required model using the following command.
+
+```sh
+ollama run llava:7b
+```
+
+Bigger models may have systems requriements beyond what our computer can handle, in which case we will get an error message to inform us of this.
+
+
+---
+class: contentpage
+### **LLMs**
+
+
+
+Back in time if you wanted to do OCR, object detection, or other visual analysis, this would have required dedicated processes. LLMs are a bit different, they are capable of doing it all, we just need to ask the right questions.
+
+---
+class: contentpage
+### **LLMs**
+
+
+
+General description example
+
+```sh
+can your describe image '/home/paulduchesne/Desktop/summer-school-2024/media/0087679.jpg'
+```
+
+---
+class: contentpage
+### **LLMs**
+
+OCR example
+
+
+```sh
+what text is there in this image '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+```
+
+For anyone who remembers using tesseract, mind-blowingly we can ask for specific interpreted text.
+
+```sh
+What is the name of the boat in image '/home/paulduchesne/Desktop/summer-school-2024/media/0087024.jpg'
+```
+
+---
+class: contentpage
+### **LLMs**
+
+Object Detection
+
+
+```sh
+What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/media/0087280.jpg'
+```
+
+
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+
+Image characteristics
+
+
+```sh
+Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+```
+
+
+
+```sh
+What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+```
+
+
+
+
+```sh
+What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+```
+
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+So far we have been returning text, which is great, but as we want to integrate with databases and automated systems we want a machine readable output - LLMs can do this as well.
+
+```sh
+Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+``
+
+
+`
+
+---
+class: contentpage
+### **LLMs**
+
+
+Now the only piece missing is automating this - copying and pasting lines of text into the terminal is not going to scale if we want to inspect hundreds, thousands or millions of images.
+
+
+```
+import requests
+
+url = 'http://localhost:11434/api/generate'
+data = {
+    "model": "llava:7b", 
+    "prompt": "What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'",
+    "stream": False 
+}
+
+response = requests.post(url, json=data)
+print(response.text)
+
+```
+
+
+WORKING CODE
+
+import ollama
+import sys
+
+
+def query_the_image(query: str, image_list: list[str]) -> ollama.chat:
+    try:
+        res = ollama.chat(
+            model=selected_model,
+            messages=[
+                {
+                'role': 'user',
+                'content': query,
+                'images': image_list,
+                }
+            ]
+        )
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    return res['message']['content']
+
+
+def print_out_the_response(query_message: str, image_list: list[str]) -> None:
+    response = query_the_image(query_message, image_list)
+    if response:
+        print(response)
+        sys.stdout.flush()
+        sys.stdout.write("\n")
+
+
 
 
 
