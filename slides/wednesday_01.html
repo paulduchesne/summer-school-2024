@@ -684,9 +684,9 @@ class: contentpage
 class: contentpage
 ### **3. QC Tools**
 
-There's excellent documentation for [QCTools](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf) including some helpful graphics:
+The preview window can display 1, 2 or 4 different filter views, here showing a manually damaged MP4 video on the left with broadcast range pixel and right oscilloscope:
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-04 at 20.32.03.png" width="800">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-16 at 15.56.02.png" width="1000">]
 
 ---
 class: contentpage
@@ -701,11 +701,13 @@ class: contentpage
 ### **3. QC Tools**
 
 ```sh
-ffmpeg -i input.mov -bsf noise=60 -map 0 -c copy output_noise.mov
+ffmpeg -i input.mov -bsf noise=60 output_noise.mp4
 ```
 
 <font color="orange">Practise:</font> Use FFmpeg to add random bits to a new version of a file to create artificial noise then analyse both in QC Tools with help of the following resources:  
 - [MediaArea QCTools](https://mediaarea.net/QCTools)  
+- [MediaArea QCTools filter descriptions](https://mediaarea.net/QCTools/Filter_Descriptions)
+- [MediaArea QCTools playback filter descriptions](https://mediaarea.net/QCTools/Playback_Filters)
 - [QCTools documentation](https://sustainableheritagenetwork.org/system/files/atoms/file/QCTools%20Manual%20%28Printable%20Version%29.pdf)  
 - [AV Artifacts Atlas](https://www.avartifactatlas.com/)
 

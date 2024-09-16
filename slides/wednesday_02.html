@@ -16,10 +16,10 @@ class: contentpage
 
 1. RAWcooked for Preservation
 > 1.1 RAWcooked commands  
-> 1.2 Logs, errors and warning  
+> 1.2 Logs, errors and warnings  
 > 1.3 Problem solving    
-> 1.4 Testing the software  
-> 1.5 Patches and snapshots  
+> 1.4 Patches and snapshots 
+> 1.5 Testing the software   
 > 1.6 BFI workflow overview   
 
 2. DCPs (Paul)
@@ -36,18 +36,6 @@ class: contentpage
 - FFV1 slice level CRCs for granular file verification  
 - Video files can be integrated into media asset management systems for viewing
 
-???
-From Media Area, initally released 2018
-Licensed flavours enable funding for the developer team
-Sponsorship for new flavours and developments is supported
-Made by archivists for archivists
- - Previous TAR, ZIP or Bagit files with no real storage savings
-FLAC - Free Lossless Audio Codec, FFV1, Matroska all OPEN STANDARDS
-FFmpeg and Rawcooked open-source softwares
-
-Images from BFI 3PB prervation project launched in 2019, saved us roughly 1.4PB and saved ~ £45,000 is magnetic tape storage alone. Stanley Foreman collection - Socialism on Film.
-Love seeing optical audio, usually cut from the finished edit but valuable for preservation review / beautiful
-- Disclaimer! We've been rawcooked encoding since 2018. DPX sequences collated from many UK archives and different technologies. Saved to LTO, and retrieved again. LOTS OF VARIABILITY IN THE FILES 'WILD WEST DPX', which is why I'm sharing some of our findings with you.
 ---
 class: contentpage
 ### **1.1 RAWcooked commands**
@@ -59,7 +47,7 @@ man rawcooked
 ```
 Adding license information to your software  
 ```sh
---store-license <temp license>
+--store-license 00608C86C03E74F628B1159A78B9368BA3CFBF5F9DEC81
 ```
 Show which 'flavours' are available to your new license
 ```sh
@@ -119,7 +107,7 @@ rawcooked --all --no-accept-gaps -d -s 5242880 INPUT -o OUTPUT.mkv --framemd5
 <font color="orange">Practise:</font> Try printing an FFmpeg command output for your dpx sample
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.42.30.png" width="700">]
 
@@ -133,7 +121,7 @@ Why capturing logs is important:
 - Future RAWcooked developments may rely on preserved logs for encoding detail  
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 Logs start with RAWcooked analysis of the DPX sequence:  
 
@@ -141,7 +129,7 @@ Logs start with RAWcooked analysis of the DPX sequence:
 
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 Then they confirm contents of the package for encoding, and the FFmpeg process starts:  
 
@@ -149,7 +137,7 @@ Then they confirm contents of the package for encoding, and the FFmpeg process s
 
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 FFmpeg confirms the input file path, duration, stream metadata and how it will map to the FFV1
 
@@ -157,7 +145,7 @@ FFmpeg confirms the input file path, duration, stream metadata and how it will m
 
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 The frame encoding indicates frame being encoded, the encoding FPS, size, bitrate and speed. When FFmpeg completes the RAWcooked post-encoding analysis begins which confirms the FFV1 is a bit perfect copy  
 
@@ -165,7 +153,7 @@ The frame encoding indicates frame being encoded, the encoding FPS, size, bitrat
 
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 When analysis completes logs confirms the version type, that hashes are present and that the file is reversible  
 
@@ -174,39 +162,33 @@ When analysis completes logs confirms the version type, that hashes are present 
 Spellings can sometimes change between version releases. 'Reversability' later became 'Reversibility'.
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 Errors raised by RAWcooked generally stop encoding from continuing:  
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.19.10.png" width="800">]
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.14.25.png" width="600">]
-???
-First is an attachment that's too large for default attachment size 1MB in RAWcooked
-Second error is found part way through assessing DPX (2.9% in) and a DPX file is missing data and smaller in size. Likely a copy error. This stops encoding. 
+
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 But not when they're in the FFmpeg encoding logs: 
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.12.19.png" width="800">]
 
-???
-This passed through fine as the error is an FFmpeg error. Unsure of cause, but the file CRC encoding checks passed and the FFV1 is in our storage.
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 Warning messages don't stop encoding, but serve to let you know something isn't ideal in your sequence
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.24.10.png" width="900">]
 
-???
-This Ditto key warning is because metadata in the DPX for ditto key is '0' which indicates a DPX is same as previous frame, but header data is different. 
 ---
 class: contentpage
-### **1.2 Logs, errors and warning**
+### **1.2 Logs, errors and warnings**
 
 Sometimes you get errors and warnings. The warnings again advisory but the errors ultimately prevent encoding
 
@@ -223,8 +205,6 @@ class: contentpage
 ```sh
 --accept-gaps
 ```
-???
-Missing DPX in sequence - some exited and failed, some encoded with multiple video streams. --accept-gaps flag created to create concat list of all files and encode into one video stream
 
 ---
 class: contentpage
@@ -237,10 +217,6 @@ class: contentpage
 ```sh
 -framerate 24
 ```
-
-???
-Frame rates of 2.5fps, caused by FFmpeg bug which Jerome built a patch for so the software could encode. -framerate flag introduced, defaults to 24 fps.
-
 ---
 class: contentpage
 ### **1.3 Problem solving**
@@ -249,8 +225,6 @@ class: contentpage
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.56.11.png" width="700">]
 
-???
-FFmpeg not returning exit status correctly, so RAWcooked wasn't noticing when an encoding was truncated. Duration check in FFV1 added to ensure encoding completes in these cases.
 
 ---
 class: contentpage
@@ -263,8 +237,6 @@ class: contentpage
 ```sh
 --output-version 2
 ```
-???
-Non-zero padding. 64KB of data written in to every DPX header where zero padding should be found. 64KB x 40,000 is 2.5GB of data to store in attachment for reversibility data. This breaks FFmpeg causing 'Kills', between 1Gb-2Gb no error, over 2Gb error raised. Okay under 1Gb.
 
 ---
 class: contentpage
@@ -274,9 +246,6 @@ class: contentpage
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.01.09.png" width="700">]
 
-???
-Highest divisble whole number of the file height, for 1798 that's 2. And slices are allocated 2 high x 2 wide, so 4 slices only. 1730 gave us 25 slices! 
-
 ---
 class: contentpage
 ### **1.3 Problem solving**
@@ -284,9 +253,6 @@ class: contentpage
 - Extra image element
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.04.26.png" width="700">]
-
-???
-BFI have no alpha channel licenses. But one type of alpha channel hasno support in FFmpeg. DPX has 10bits RGB and separate 1bits alpha channel. FFmpeg can't handle this and discards the data in the 1bit element.Breaks reversibility.
 
 ---
 class: contentpage
@@ -324,10 +290,20 @@ head -c 1048576 file.dpx > header_dump.dpx
 Compile these details and you can contact the RAWcooked team to raise your issue.
 
 ---
-class: contentpage
-### **1.4 Testing the software**
 
-<font color="orange">Create safe environments for testing, away from your preservation workflows. Make and use copies of DPX preservation sequences not the real thing.</font>
+class: contentpage
+### **1.4 Patches and snapshots**
+
+If you find a bug or need a patch to fix DPX metadata then you might get sent a snapshot version to test:
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 23.12.04.png" width="800">]
+
+
+---
+class: contentpage
+### **1.5 Testing the software**
+
+<font color="orange">Create safe environments for testing, away from your preservation workflows using copies of DPX preservation sequences not the real thing.</font>
 
 Reversibility testing a few sequences when RAWcooked or FFmpeg software is updated:
 
@@ -345,49 +321,31 @@ diff -s original_dpx_md5s.txt duplicate_dpx_md5s.txt
 <font color="orange">Practise:</font> Using your FFV1 Matroska create a duplicate DPX sequence, make MD5 manifests for both and compare the two manifests to ensure they are identical.
 ---
 class: contentpage
-### **1.4 Testing the software**
+### **1.5 Testing the software**
   
 You can use the SMPTE DPX documentation, and a hex editor, to interrogate your DPX file at a granular level. Looking at your offset figure for the image filename, 36:
   
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 22.40.43.png" width="800">]
   
-???
-SMPTE ST 268 is available online. The official SMPTE documentation for DPX files. It provides header data information as shown here.
 ---
 class: contentpage
-### **1.4 Testing the software**
+### **1.5 Testing the software**
 
 You can match this to the binary data in a hex editor, using the 36 from the offset column to find where the data is exactly located in the DPX:
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 22.49.59.png" width="800">]
 
-???
-So using a document like S268M you can navigate an entire DPX sequence and understand what each block of data should represent. Image name has 100 length, so the next item — creation date — begins at 136.
-In this way, and with careful editing and backing up of original DPX images, you can make changes to a DPX sequence and run some spot tests on your RAWcooked workflows. There’s no reason why every user can’t be a tester, and in this way you will have lots of amazing conversations on the Issue tracker and hopefully improve the product for us all.
-
-Recently I used this approach to test the --check function. Setting encodings running, then altering single DPX image data with the hex editor and seeing if that change in the image failed the --check run at the end of the encoding.
-Similarly, editing image sequence data within the Matroska files and seeing if the code notices when reversibility testing.
-Pass all my hack attempts, so I know that the checksum verification works, and the software is making viable preservation files, bit perfect copies of original. 
-
 ---
 class: contentpage
-### **1.5 Patches and snapshots**
+### **1.5 Testing the software**
 
-If you find a bug or need a patch to fix DPX metadata then you might get sent a snapshot version to test:
+<font color="orange">Practise:</font> Use a hex editor to edit some of the image data in a copy of your RAWcooked FFV1 Matroska file then run the `--check` function against the file to see if it notices the break between the FFV1 CRC and the CRC stored in the reversibility data.
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 23.12.04.png" width="800">]
+```sh
+rawcooked --check hacked_encoding.mkv
+```
 
-???
-But if do find a problem, with a new DPX metadata weirdness, and you have to raise the issue - what happens?
-When the patch has been implemented a new version of RAWcooked will be released and this amended version of RAWcooked
-(the full software but with the addition of the patch) can be tested and used by the user, until the patch is implemented 
-in a future release. These releases are called ‘snapshots’ and are not to be downloaded or used by new users unless experienced.
-
-Inside each of the snapshot folders you’ll find the binary packages which are releases for supported operating systems, identified by the name.
-The can be downloaded and installed to your server for testing. Installation will be unique to your operating system, but you can find lots of
-guides online if you search for the extension (eg rpm), your operating system and a term like ‘package installer’. 
-Linux Ubuntu uses ‘dpkg’ a Debian package installer, and requires a .deb package to be downloaded. Avoid downloading any snapshots with dbg
- or debug in the title, these are just for developers that need extra levels of debugging information and won’t run as the software should.
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-16 at 22.34.31.png" width="950">]
 ---
 class: contentpage
 ### **1.6 BFI workflow overview**
@@ -396,16 +354,6 @@ class: contentpage
 
 BFI workflows use Bash shell scripts, MediaConch and MediaInfo for validation of DPX and Matroskas.  
 The open source [DPX workflow scripts](https://github.com/bfidatadigipres/dpx_encoding) can be viewed in full on the BFI GitHub.
-???
-1. (Start top left) DPX sequences moved into dpx_to_cook folder
-2. MediaInfo extracts metadata and makes sidecar files/Mediaconch policy checks DPX sequences
-3. Failed policy sees DPX moved to dpx_to_review / Passed policy sees DPX moved to rawcook folder
-4. RAWcook scripts processes files in 'rawcook' folder, FFv1 matroska encoded to mkv_cooked
-5. Logs of encoding placed alongside MKV and checked by post rawcook script for success/failure messages
-6. Successful encoded MKVs are checked against MKV Matroska policy
-7. Passed MKV files are moved to the check script / DPX moved to dpx_cooked
-8. Failed MKVs are moved to review folder / DPX left in place for reattempt
-9. RAWcooked --check script runs test against MKV, if pass DPX seqence is deleted and MKV moves to DPI ingest / else fail and retry
 ---
 
 class: contentpage
@@ -435,10 +383,6 @@ find "${PATH}" -maxdepth 1 -mindepth 1 -type d -mmin +30 | while IFS= read -r fd
   fi
 done
 ```
-???
-Find loops pipes results to while loop.
-`IFS= read -r` tells the while loop to read each line passed to it one at a time, and for the line to be stored into 'fdr' variable
-Semicolon breaks the command and start the do COMMAND block. 
 ---
 class: contentpage
 ### **1.6 BFI workflow overview**
@@ -449,8 +393,8 @@ RAWCOOK_PATH="/path_to_folder/rawcook/"
 TAR_PATH="/path_to_folder/tar_preservation/"
 
 # Move files outside of while loop
-cat "${RAWCOOK_LIST}" | parallel --jobs 3 mv "{}" "${RAWCOOK_PATH}"
-cat "${TAR_LIST}" | parallel --jobs 3 mv "{}" "${TAR_PATH}"
+grep "/mnt/" "${RAWCOOK_LIST}" | parallel --jobs 3 mv "{}" "${RAWCOOK_PATH}"
+grep "/mnt/" "${TAR_LIST}" | parallel --jobs 3 mv "{}" "${TAR_PATH}"
 
 # Refresh lists
 echo "" > "${RAWCOOK_LIST}"
@@ -459,13 +403,11 @@ echo "" > "${TAR_LIST}"
 
 DPX sequences that do not match MediaConch policy requirements are TAR wrapped.  
 
-Our metadata requirements include:
-- Compression is Raw / Lossless
+Our RAWcooked license requirements include:
 - RGB Bitdepth is 8-bit LE / 10-bit BE or LE / 12-bit BE / 16-bit BE or LE
 - Y Luma is 10-bit BE / 16-bit BE
 - No alpha channels are present, RGBA, RGB/A
-???
-I don't place `mv` commands in a if block. They generally fail when I've tried so I tend to use the list of paths to mame t
+
 ---
 class: contentpage
 ### **1.6 BFI workflow overview**
@@ -491,29 +433,20 @@ done
 ```
 Use the `list.txt` to begin parallel encoding of DPX sequences
 ```sh
-cat "${RPATH}list.txt" | parallel --jobs 3 
+grep ^N "${RPATH}list.txt" | parallel --jobs 3 
    "rawcooked -y --all --no-accept-gaps ${RPATH}{} -o ${MPATH}{}.mkv &>> ${MPATH}{}.mkv.txt"
 ```
-???
-encoding.log is created in a later script to monitor DPX sequences being processed - this stops duplicate encodings
-The DPX sequence encoding moves directly to the mkv-cooked path so no moves are necessary in this script
-Lists used are reset at end of code
+
 ---
 class: contentpage
 ### **1.6 BFI workflow overview**
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 22.46.28.png" width="500">]
 
-The encoding log has three stages:
- - RAWcooked analysis of the DPX sequence, reporting of any issues  
- - FFmpeg encoding of the sequence to FFV1 / Matroska  
- - RAWcooked post encoding check of the encoded file, reporting of encoding success 
-
 This phrase is key to identifying a success RAWcooked encoding:
 ```
 Reversibility was checked, no issues detected.
 ```
-
 ---
 class: contentpage
 ### **1.6 BFI workflow overview**
@@ -570,10 +503,6 @@ grep '/mnt/' "${MKV_PATH}mkv_list.txt" | while IFS= read -r log_list; do
   fi
 done
 ```
-???
-Build a list of MKV files in check folder and write to list
-Use that list to launch parallel check runs of all the MKVs and output to log.
-Use that log to check again for the confirmation statement that all is well, then write DPX to list for automatied deletion, and write MKV naem to success_mkv_list so that the MKV is moved out of DPX workflows and into ingest workflows.
 
 ---
 class: contentpage
