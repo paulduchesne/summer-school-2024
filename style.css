@@ -10,6 +10,26 @@ h1, h2, h3 {
     font-family: 'Raleway';
 }
 
+a:link {
+    color: #508CA4;
+    text-decoration: None;
+}
+
+a:visited {
+    color: #508CA4;
+    text-decoration: None;
+}
+
+a:hover {
+    color: #508CA4;
+    text-decoration: None;
+}
+
+a:active {
+    color: #508CA4;
+    text-decoration: None;
+}
+
 .titlepage {background-color:darkcyan;color: white;}
 .contentpage {background-color:white;color: darkcyan;} 
 .tangentpage {background-color:orange;color: white;} 
