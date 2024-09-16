@@ -11,24 +11,586 @@
 
 
 class: center, middle, titlepage
-### WED02: *RAWcooked and DCPs.*
+
+### WED02: *RAWcooked for preservation and DCP creation*
 
 ---
 class: contentpage
 ### **Agenda**
 
-1. RAWcooked for Preservation (Jo)
+1. RAWcooked for Preservation
+> 1.1 RAWcooked commands  
+> 1.2 Logs, errors and warning  
+> 1.3 Problem solving    
+> 1.4 Testing the software  
+> 1.5 Patches and snapshots  
+> 1.6 BFI workflow overview   
+
 2. DCPs     
 2.1 Introduction to DCPs     
 2.2 Creating DCPs with DCP-o-matic     
 2.3 DCP validation with ClairMeta
 
-      
 ---
 class: contentpage
+### **1. RAWcooked for preservation**
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 20.18.42.png" width="1000">]
+- RAWcooked encodes DPX, TIFF and EXR image sequences or AVI into a lossless FFV1 video stream  
+- Any PCM audio supplied with a sequence is converted to a lossless FLAC audio stream 
+- RAWcooked reversibility data ensures bit perfect restoration  
+- All are muxed in a Matroska wrapper by FFmpeg, including sidecar files  
+- Lossless compression reduces sequence sizes by between one and two thirds
+- FFV1 slice level CRCs for granular file verification  
+- Video files can be integrated into media asset management systems for viewing
+
+???
+From Media Area, initally released 2018
+Licensed flavours enable funding for the developer team
+Sponsorship for new flavours and developments is supported
+Made by archivists for archivists
+ - Previous TAR, ZIP or Bagit files with no real storage savings
+FLAC - Free Lossless Audio Codec, FFV1, Matroska all OPEN STANDARDS
+FFmpeg and Rawcooked open-source softwares
+
+Images from BFI 3PB prervation project launched in 2019, saved us roughly 1.4PB and saved ~ £45,000 is magnetic tape storage alone. Stanley Foreman collection - Socialism on Film.
+Love seeing optical audio, usually cut from the finished edit but valuable for preservation review / beautiful
+- Disclaimer! We've been rawcooked encoding since 2018. DPX sequences collated from many UK archives and different technologies. Saved to LTO, and retrieved again. LOTS OF VARIABILITY IN THE FILES 'WILD WEST DPX', which is why I'm sharing some of our findings with you.
+---
+class: contentpage
+### **1.1 RAWcooked commands**
+
+Help pages:
+```sh
+rawcooked -h
+man rawcooked
+```
+Adding license information to your software  
+```sh
+--store-license <temp license>
+```
+Show which 'flavours' are available to your new license
+```sh
+--show-license
+```
+If you purchase a sublicense you can create your own license values
+```sh
+--sublicense <value>
+```
+And you can set the duration that the license will run for for x months, end date is last day of month 
+```sh
+--sublicense-dur 3
+```
+---
+class: contentpage
+### **1.1 RAWcooked commands**
+
+The basic RAWcooked command that allows for good preservation practise:  
+```sh
+rawcooked --all --no-accept-gaps INPUT -o OUTPUT.mkv &>> OUTPUT.mkv.txt
+```
+
+The `--all` contains these RAWcooked commands:  
+```sh
+Command            | Description                                                              
+-------------------|---------------------------------------------------------------------  
+--encode/decode    | The correct option is selected automatically                             
+--info             | Prints information about the files                                       
+--conch            | Conformance checks the format supplied                                   
+--hash             | Computes hashes for each DPX or audiovisual file                         
+--coherency        | Checks coherency of all files in the sequence                            
+--check-padding    | Looks for non-zero padding in DPX, issue warning  if found               
+--check            | Runs post-encode checks that file decodes safely                         
+--accept-gaps      | Forces FFmpeg to encode gaps by creating concatenated list of images
+```
+Setting a larger attachment size value, default is 1048576 bytes (1MB)
+```sh
+rawcooked --all --no-accept-gaps -s 5242880 INPUT -o OUTPUT.mkv
+```
+---
+class: contentpage
+### **1.1 RAWcooked commands**
+
+You can tell RAWcooked to answer No or Yes to questions asked during automated encoding by adding to your RAWcooked command
+```sh
+rawcooked --all --no-accept-gaps -n (or) -y -s 5242880 INPUT -o OUTPUT.mkv
+```
+Create a FrameMD5 of input frames and store as a sidecar file, with and without audio streams, by adding to your RAWcooked command
+```sh
+rawcooked --all --no-accept-gaps -y -s 5242880 INPUT -o OUTPUT.mkv --framemd5
+rawcooked --all --no-accept-gaps -y -s 5242880 INPUT -o OUTPUT.mkv --framemd5-an
+```
+Ask RAWcooked to print the FFmpeg command and not run the encoding using '-d'
+```sh
+rawcooked --all --no-accept-gaps -d -s 5242880 INPUT -o OUTPUT.mkv --framemd5
+```
+<font color="orange">Practise:</font> Try printing an FFmpeg command output for your dpx sample
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.42.30.png" width="700">]
+
+Why capturing logs is important:
+- They give you clear feedback about encoding successes and failures  
+- RAWcooked warnings and errors inform you of problems you may encounter with supplied files  
+- Important encoding detail from FFmpeg is captured with DPX to MKV stream mapping and metadata  
+- Versions of the software being used is captured for long-term event tracking  
+- Capturing them efficiently is the key to automating steps in your workflow  
+- Log reversibility confirmation is critical for moving to the next stage of a workflow  
+- Future RAWcooked developments may rely on preserved logs for encoding detail  
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+Logs start with RAWcooked analysis of the DPX sequence:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.41.08.png" width="400">]
+
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+Then they confirm contents of the package for encoding, and the FFmpeg process starts:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.41.41.png" width="1000">]
+
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+FFmpeg confirms the input file path, duration, stream metadata and how it will map to the FFV1
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.42.13.png" width="800">]
+
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+The frame encoding indicates frame being encoded, the encoding FPS, size, bitrate and speed. When FFmpeg completes the RAWcooked post-encoding analysis begins which confirms the FFV1 is a bit perfect copy  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.42.30.png" width="800">]
+
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+When analysis completes logs confirms the version type, that hashes are present and that the file is reversible  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.42.38.png" width="800">]
+
+Spellings can sometimes change between version releases. 'Reversability' later became 'Reversibility'.
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+Errors raised by RAWcooked generally stop encoding from continuing:  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.19.10.png" width="800">]
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.14.25.png" width="600">]
+???
+First is an attachment that's too large for default attachment size 1MB in RAWcooked
+Second error is found part way through assessing DPX (2.9% in) and a DPX file is missing data and smaller in size. Likely a copy error. This stops encoding. 
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+But not when they're in the FFmpeg encoding logs: 
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.12.19.png" width="800">]
+
+???
+This passed through fine as the error is an FFmpeg error. Unsure of cause, but the file CRC encoding checks passed and the FFV1 is in our storage.
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+Warning messages don't stop encoding, but serve to let you know something isn't ideal in your sequence
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.24.10.png" width="900">]
+
+???
+This Ditto key warning is because metadata in the DPX for ditto key is '0' which indicates a DPX is same as previous frame, but header data is different. 
+---
+class: contentpage
+### **1.2 Logs, errors and warning**
+
+Sometimes you get errors and warnings. The warnings again advisory but the errors ultimately prevent encoding
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 17.21.42.png" width="900">]
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Missing DPX in sequence
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.50.44.png" width="600">]
+
+```sh
+--accept-gaps
+```
+???
+Missing DPX in sequence - some exited and failed, some encoded with multiple video streams. --accept-gaps flag created to create concat list of all files and encode into one video stream
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Framerate irregularities
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.54.10.png" width="600">]
+
+```sh
+-framerate 24
+```
+
+???
+Frame rates of 2.5fps, caused by FFmpeg bug which Jerome built a patch for so the software could encode. -framerate flag introduced, defaults to 24 fps.
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Out of memory kills
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.56.11.png" width="700">]
+
+???
+FFmpeg not returning exit status correctly, so RAWcooked wasn't noticing when an encoding was truncated. Duration check in FFV1 added to ensure encoding completes in these cases.
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Non-zero padding  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 21.00.08.png" width="600">]
+
+```sh
+--output-version 2
+```
+???
+Non-zero padding. 64KB of data written in to every DPX header where zero padding should be found. 64KB x 40,000 is 2.5GB of data to store in attachment for reversibility data. This breaks FFmpeg causing 'Kills', between 1Gb-2Gb no error, over 2Gb error raised. Okay under 1Gb.
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- FFV1 slice count miscalculations  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.01.09.png" width="700">]
+
+???
+Highest divisble whole number of the file height, for 1798 that's 2. And slices are allocated 2 high x 2 wide, so 4 slices only. 1730 gave us 25 slices! 
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+- Extra image element
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 20.04.26.png" width="700">]
+
+???
+BFI have no alpha channel licenses. But one type of alpha channel hasno support in FFmpeg. DPX has 10bits RGB and separate 1bits alpha channel. FFmpeg can't handle this and discards the data in the 1bit element.Breaks reversibility.
+
+---
+class: contentpage
+### **1.3 Problem solving**
+
+Copy error or warning messages and search in the RAWcooked issue tracker
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 19.29.56.png" width="900">]
 
 
 ---
+class: contentpage
+### **1.3 Problem solving**
+
+If your issue isn't listed you'll want to compile some details like capturing the FFmpeg command using `-d` flag. This command also creates the reversibilty data:
+
+
+```sh
+ffmpeg -xerror -r 24.000000 -r 24.000000 -f concat -safe 0 -c:v dpx 
+-i "dpx.rawcooked_reversibility_data.0.FileList.txt" -c:a flac -c:v ffv1 
+-coder 1 -context 1 -f matroska -g 1 -level 3 -slicecrc 1 -slices 64 
+-attach "dpx.rawcooked_reversibility_data" -metadata:s:1 mimetype=application/octet-stream
+-metadata:s:1 "filename=RAWcooked reversibility data"  -f matroska "OUTPUT.mkv"
+```
+
+
+
+Capture the exit status of the RAWcooked command after failure to pass on in your issue:  
+```sh
+echo $?
+```
+
+Trim the first 1MB of a DPX file to send to RAWcooked developers for analysis:
+```sh
+head -c 1048576 file.dpx > header_dump.dpx
+```
+
+Compile these details and you can contact the RAWcooked team to raise your issue.
+
+---
+class: contentpage
+### **1.4 Testing the software**
+
+<font color="orange">Create safe environments for testing, away from your preservation workflows. Make and use copies of DPX preservation sequences not the real thing.</font>
+
+Reversibility testing a few sequences when RAWcooked or FFmpeg software is updated:
+
+- RAWcook a test DPX sequence with `--all`, then use `--all` to unwrap it again creating a duplicate DPX sequence  
+- Create whole file MD5 checksum manifests of the original sequence and the unwrapped DPX sequences  
+- Compare the first and second manifests to ensure they're identical   
+
+```sh
+find original_dpx/ -name '*.dpx' -exec md5sum {} \; | sort > original_dpx_md5s.txt
+find duplicate_dpx/ -name '*.dpx' -exec md5sum {} \; | sort > duplicate_dpx_md5s.txt
+
+diff -s original_dpx_md5s.txt duplicate_dpx_md5s.txt
+```
+
+<font color="orange">Practise:</font> Using your FFV1 Matroska create a duplicate DPX sequence, make MD5 manifests for both and compare the two manifests to ensure they are identical.
+---
+class: contentpage
+### **1.4 Testing the software**
+  
+You can use the SMPTE DPX documentation, and a hex editor, to interrogate your DPX file at a granular level. Looking at your offset figure for the image filename, 36:
+  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 22.40.43.png" width="800">]
+  
+???
+SMPTE ST 268 is available online. The official SMPTE documentation for DPX files. It provides header data information as shown here.
+---
+class: contentpage
+### **1.4 Testing the software**
+
+You can match this to the binary data in a hex editor, using the 36 from the offset column to find where the data is exactly located in the DPX:
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 22.49.59.png" width="800">]
+
+???
+So using a document like S268M you can navigate an entire DPX sequence and understand what each block of data should represent. Image name has 100 length, so the next item — creation date — begins at 136.
+In this way, and with careful editing and backing up of original DPX images, you can make changes to a DPX sequence and run some spot tests on your RAWcooked workflows. There’s no reason why every user can’t be a tester, and in this way you will have lots of amazing conversations on the Issue tracker and hopefully improve the product for us all.
+
+Recently I used this approach to test the --check function. Setting encodings running, then altering single DPX image data with the hex editor and seeing if that change in the image failed the --check run at the end of the encoding.
+Similarly, editing image sequence data within the Matroska files and seeing if the code notices when reversibility testing.
+Pass all my hack attempts, so I know that the checksum verification works, and the software is making viable preservation files, bit perfect copies of original. 
+
+---
+class: contentpage
+### **1.5 Patches and snapshots**
+
+If you find a bug or need a patch to fix DPX metadata then you might get sent a snapshot version to test:
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-11 at 23.12.04.png" width="800">]
+
+???
+But if do find a problem, with a new DPX metadata weirdness, and you have to raise the issue - what happens?
+When the patch has been implemented a new version of RAWcooked will be released and this amended version of RAWcooked
+(the full software but with the addition of the patch) can be tested and used by the user, until the patch is implemented 
+in a future release. These releases are called ‘snapshots’ and are not to be downloaded or used by new users unless experienced.
+
+Inside each of the snapshot folders you’ll find the binary packages which are releases for supported operating systems, identified by the name.
+The can be downloaded and installed to your server for testing. Installation will be unique to your operating system, but you can find lots of
+guides online if you search for the extension (eg rpm), your operating system and a term like ‘package installer’. 
+Linux Ubuntu uses ‘dpkg’ a Debian package installer, and requires a .deb package to be downloaded. Avoid downloading any snapshots with dbg
+ or debug in the title, these are just for developers that need extra levels of debugging information and won’t run as the software should.
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 21.15.39.png" width="950">]
+
+BFI workflows use Bash shell scripts, MediaConch and MediaInfo for validation of DPX and Matroskas.  
+The open source [DPX workflow scripts](https://github.com/bfidatadigipres/dpx_encoding) can be viewed in full on the BFI GitHub.
+???
+1. (Start top left) DPX sequences moved into dpx_to_cook folder
+2. MediaInfo extracts metadata and makes sidecar files/Mediaconch policy checks DPX sequences
+3. Failed policy sees DPX moved to dpx_to_review / Passed policy sees DPX moved to rawcook folder
+4. RAWcook scripts processes files in 'rawcook' folder, FFv1 matroska encoded to mkv_cooked
+5. Logs of encoding placed alongside MKV and checked by post rawcook script for success/failure messages
+6. Successful encoded MKVs are checked against MKV Matroska policy
+7. Passed MKV files are moved to the check script / DPX moved to dpx_cooked
+8. Failed MKVs are moved to review folder / DPX left in place for reattempt
+9. RAWcooked --check script runs test against MKV, if pass DPX seqence is deleted and MKV moves to DPI ingest / else fail and retry
+---
+
+class: contentpage
+### **1.6 BFI workflow overview**
+
+Shell script that iterates through subfolders in PATH checking each first DPX against a mediaconch policy
+
+```sh
+#!/bin/bash -x
+DPATH="/path_to_folder/dpx_to_cook/"
+POLICY="path_to_dpx_mediaconch_policy"
+TAR_LIST="/path_to_tar_list/"
+RAWCOOK_LIST="/path_to_rawcook_list/"
+
+find "${PATH}" -maxdepth 1 -mindepth 1 -type d -mmin +30 | while IFS= read -r fdr; do
+  # Find first DPX of sequence
+  dpx=$(ls "$folder" | head -1)
+  # Check first DPX against DPX policy
+  check=$(mediaconch -p "$POLICY" "${DPATH}/${fdr}/${dpx}" | grep "pass! ${DPATH}/${fdr}/${dpx}")
+  if [ -z "$check" ]
+    then
+      # DPX failed policy, file for TAR wrap
+      echo "${DPATH}/${folder}" >> "$TAR_LIST"
+    else
+      # DPX passed policy, file for RAWcook
+      echo "${DPATH}/${folder}" >> "$RAWCOOK_LIST"
+  fi
+done
+```
+???
+Find loops pipes results to while loop.
+`IFS= read -r` tells the while loop to read each line passed to it one at a time, and for the line to be stored into 'fdr' variable
+Semicolon breaks the command and start the do COMMAND block. 
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+Placing move commands within loops can be problematic, regularly failing. The lists of successful and failed Mediaconch passes are used here to move the sequences in batches to their new folders for processing.  
+```sh
+RAWCOOK_PATH="/path_to_folder/rawcook/"
+TAR_PATH="/path_to_folder/tar_preservation/"
+
+# Move files outside of while loop
+cat "${RAWCOOK_LIST}" | parallel --jobs 3 mv "{}" "${RAWCOOK_PATH}"
+cat "${TAR_LIST}" | parallel --jobs 3 mv "{}" "${TAR_PATH}"
+
+# Refresh lists
+echo "" > "${RAWCOOK_LIST}"
+echo "" > "${TAR_LIST}"
+```
+
+DPX sequences that do not match MediaConch policy requirements are TAR wrapped.  
+
+Our metadata requirements include:
+- Compression is Raw / Lossless
+- RGB Bitdepth is 8-bit LE / 10-bit BE or LE / 12-bit BE / 16-bit BE or LE
+- Y Luma is 10-bit BE / 16-bit BE
+- No alpha channels are present, RGBA, RGB/A
+???
+I don't place `mv` commands in a if block. They generally fail when I've tried so I tend to use the list of paths to mame t
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+```sh
+#!/bin/bash -x
+RPATH="/path_to_folder/rawcook/"
+MPATH="path_to_folder/mkv_cooked/"
+TAR_LIST="/path_to_tar_list/"
+RAWCOOK_LIST="/path_to_rawcook_list/"
+
+# Ensure looping RAWcooked encoding doesn't process file already running
+find "${RPATH}" -maxdepth 1 -mindepth 1 -type d -name "N_*" | while IFS= read -r folders; do
+  folder_clean=$(basename "$folders")
+  encoding=$(grep -c "$folder_clean" "${MPATH}encoding.log")
+  if [ "$encoding" -eq 0 ]
+    then
+      echo "$folder_clean" >> "${RPATH}list.txt"
+    else
+      echo "File already encoding."
+  fi
+done
+```
+Use the `list.txt` to begin parallel encoding of DPX sequences
+```sh
+cat "${RPATH}list.txt" | parallel --jobs 3 
+   "rawcooked -y --all --no-accept-gaps ${RPATH}{} -o ${MPATH}{}.mkv &>> ${MPATH}{}.mkv.txt"
+```
+???
+encoding.log is created in a later script to monitor DPX sequences being processed - this stops duplicate encodings
+The DPX sequence encoding moves directly to the mkv-cooked path so no moves are necessary in this script
+Lists used are reset at end of code
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-05 at 22.46.28.png" width="500">]
+
+The encoding log has three stages:
+ - RAWcooked analysis of the DPX sequence, reporting of any issues  
+ - FFmpeg encoding of the sequence to FFV1 / Matroska  
+ - RAWcooked post encoding check of the encoded file, reporting of encoding success 
+
+This phrase is key to identifying a success RAWcooked encoding:
+```
+Reversibility was checked, no issues detected.
+```
+
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+The post encoding check script searches within the mkv_cooked/ path for log files that completed over 30 minutes ago:  
+```sh
+#!/bin/bash -x
+MPATH="path_to_folder/mkv_cooked/"
+
+find "${MPATH}" -name "*.mkv.txt" -mmin +30 | while IFS= read -r fname; do
+  success_check=$(grep 'Reversibility was checked, no issue detected.' "$fname")
+  # Fetch MKV file name by cutting '.txt' from end of path
+  mkv_filename=$(basename "$fname" | rev | cut -c 5- | rev )
+  # Fetch DPX folder name by cutting '.mkv.txt' from end of path
+  dpx_success_path=$(echo "$fname" | rev | cut -c 9- | rev )
+
+  if [ -z "$success_check" ];
+    then
+      log "SKIP: Matroska $mkv_filename has not completed, or has errors detected"
+    else
+      echo "$dpx_success_path" >> "${MPATH}rawcooked_success.log"
+      echo "$mkv_filename" >> "${MPATH}successful_mkv_list.txt"
+  fi
+done
+```
+The `rawcooked_success.log` tracks complete encodings and `successful_mkv_list.txt` is used to move MKVs to MediaConch check and if pass, on to the `check` folder
+---
+class: contentpage
+### **1.6 BFI workflow overview**
+
+Build a list of all MKV in the `check` folder then run the `rawcooked --check` command
+```sh
+#!/bin/bash -x
+CPATH="path_to_folder/check/"
+
+find "$MPATH" -name '*.mkv' -mmin +30 | sort > "${MPATH}mkv_list.txt"
+grep ^N "${MPATH}mkv_list.txt" | parallel --jobs 5
+   "rawcooked --check ${MPATH}{} &>> ${MPATH}{}.txt"
+```
+```sh
+# Search for .txt files for success message
+grep '/mnt/' "${MKV_PATH}mkv_list.txt" | while IFS= read -r log_list; do
+  success_check=$(grep 'Reversibility was checked, no issue detected.' "${log_list}.txt")
+  mkv_file=$(basename "$log_list")
+  dpx_seq=$(echo "$mkv_file" | rev | cut -c 5- | rev )
+  if [ -z "$success_check" ];
+    then
+      echo "FAILED: Matroska $mkv_file has errors detected."
+      echo "$mkv_file" >> "${MKV_PATH}failure_mkv_list.txt"
+    else
+      echo "PASSED: RAWcooked MKV $mkv_file passed --check successfully and will be moved to DPI ingest"
+      echo "$dpx_seq" >> "${DPX_PATH}dpx_deletion_list.txt"
+      echo "$mkv_file" >> "${MKV_PATH}successful_mkv_list.txt"
+  fi
+done
+```
+???
+Build a list of MKV files in check folder and write to list
+Use that list to launch parallel check runs of all the MKVs and output to log.
+Use that log to check again for the confirmation statement that all is well, then write DPX to list for automatied deletion, and write MKV naem to success_mkv_list so that the MKV is moved out of DPX workflows and into ingest workflows.
+
+---
+class: contentpage
+### **2. Creating DPCs**
+
+      
+      ---
 class: contentpage
 ### **2. DCPs**
 
@@ -173,8 +735,9 @@ Manual verification would be tedious, and take a great deal of time, but with th
 We will explore this concept in more detail tomorrow.
 
 
-
-    </textarea>
+      
+      
+</textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">

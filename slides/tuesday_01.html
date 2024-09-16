@@ -148,22 +148,22 @@ class: contentpage
 ### **2. Command Line Interface (CLI)**
  
 A command is an instruction telling the computer how to act, like asking which FFmpeg version is installed  
-```Bash
-ffmpeg -version
+```sh
+ffmpeg -version (Unix / Windows)
 ```
 
 A CLI has a command interpreter (or shell) running within it converting our typed command lines into a language the computer can understand  
   
-As you type in a command (echo) with arguments ($SHELL) the shell interpreter reads and executes them  
-```Bash
-echo $SHELL
+As you type in a command (echo) with arguments ('Hello World') the shell interpreter reads and executes them  
+```sh
+echo 'Hello World' (Unix)
 ```
 
 The CLI displays the command you type as well as the result of the command shown below
-```Bash
-/bin/bash
+```sh
+echo $0 (Unix)
 ```
-This example is asking the computer to print out which version of shell is being used by the CLI - eg Bash  
+This example of echo is asking the CLI to print out which version of shell is being used, - eg `bash` or `/bin/bash`  
 ---
 class: contentpage
 ### **2. Command Line Interface (CLI)**
@@ -179,29 +179,29 @@ curl parrot.live
 - To install and run open source software   
 - To use open source software projects that have limited or no graphical user interface  
 - To run CPU intensive processes in the background while still running day to day software  
-- To work remotely with servers or virtual machies over networks or in data centres  
+- To work remotely with servers or virtual machines over networks or in data centres  
 - To build automated processes and operate more efficiently 👀  
 
 ---
 class: contentpage
 ### **2.1 Linux and MacOS Terminal (Unix)**
 
-Macintosh and Linux have the same operating system (OS) - Unix. There are many different Linux OS and all are open source, whereas MacOS is proprietary software developed by Apple.
-  
-UNIX operating systems all use a CLI called Terminal. To launch the Terminal in MacOS press the command and spacebar keys together then type Terminal into the search bar and a CLI windows will immediately launch.  
+Macintosh and Linux have the same operating system (OS) - Unix. Unix operating systems all use the Terminal CLI.
+
+To launch Terminal in Mac OS:
 ```Bash
-Cmd + Space
+Cmd + Space  (and search 'Terminal')
 ``` 
-To launch a Terminal CLI window in Linux OS press control, alt and the letter t at the same time.  
+To launch a Terminal in Linux OS:
 ```Bash
 Ctl + Alt + T
 ```
-If you've checked what shell you're using and you want to change to Bash use the `chsh` command with the `-s` shell flag, followed by the argument `/bin/bash/`.  
+Use the `chsh` command with the `-s` shell flag, followed by the argument `/bin/bash/` to change to Bash:  
 ```Bash
 chsh -s /bin/bash
 ```
-To check what version of Bash you are running you can use this command (the latest stable version is 5.2.32):  
 
+To check what version of Bash you are running you can use this command:  
 ```Bash
 bash --version
 ```
@@ -210,137 +210,159 @@ bash --version
 class: contentpage
 ### **2.2 Windows Terminal, Command Prompt or PowerShell**
 
-To launch a CLI in Windows Console click `Start`, and in the search type the name of the CLI you want to use and hit enter. The CLI will launch.
+To launch a CLI in Windows Console click `Start`, and in the search:
 ```Powershell
 cmd (Command Prompt)   Powershell   Windows Terminal
 ```  
 **Command Prompt (cmd or cmd.exe)**  
- The default CLI for older Windows Systems but includes Windows 9x and Windows NT. Generally Command Prompt only has a small variety of tools available to it.
-
+ The default CLI for older Windows Systems, including Windows 9x and Windows NT  
+  
 **Powershell**  
-Powershell is an automated command-line shell and also has all the features & functionalities of CMD. It has many more tools available and more advanced abilities for automation.  
-
+Powershell is an automated command-line shell with Command Prompt features.  
+  
 **Windows Terminal**  
 Windows 10 launched the Windows Terminal in 2019, which provides a choice of interpreters including:  
-- `cmd.exe`  
+- `Command Prompt - cmd.exe`  
 - `Powershell`  
 - `Windows Subsystem for Linux (WSL)`  
 
-[Comparison of Command Shells](https://en.wikipedia.org/wiki/Comparison_of_command_shells) provides excellent comparisons of all the shells in use.  
+[Comparison of Command Shells](https://en.wikipedia.org/wiki/Comparison_of_command_shells) 
 ---
 class: contentpage
 ### **2.3 Unix tools on Windows**
 
-Window Subsystem for Linux (WSL) v1 is supported in Windows 10, 11 and Windows Server 2016, 2019 and 2022. It does not allow access to all Unix tools, only those 'emulated' by the environment.  
+Window Subsystem for Linux (WSL) v1 is supported in Windows 10, 11 and Windows Server 2016, 2019 and 2022.
+WSL v2 has a full Linux kernel and is available in Windows 10 via the [Windows Insider Programme](https://learn.microsoft.com/en-us/shows/one-dev-minute/learn-how-to-install-wsl-2).  
 
-WSL v2 allows installation of a full Linux distribution, eg Ubuntu, and so has all the same tools you'd find with a Linux OS. It is available in Windows 10 via the [Windows Insider Programme](https://learn.microsoft.com/en-us/shows/one-dev-minute/learn-how-to-install-wsl-2).  
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-09-12 at 14.25.39.png" width="400">]
+[Ubuntu on WSL](https://ubuntu.com/desktop/wsl)
 
-If you are working on a Windows machine that doesn't have access to WSL then you can install and run two projects that provide CLI tools with similar functionality:
+For Windows machine that don't have WSL:
 
-- [Cygwin](https://www.cygwin.com/) has a large collection of GNU and open source software tools that provide Unix like tools for Windows. It's compatible with x86_64 versions of Windows, from Windows 8.1 onward.
-
-- [GNU On Windows (GOW)](https://github.com/bmatzelle/gow/wiki) is billed as a lightweight alternative to Cygwin, it contains over 100 'extremely useful open source UNIX applications' compiled as native win32 binaries. The package is just 18 MB in size, so useful if you have limited spaece.
-
+- [Cygwin](https://www.cygwin.com/) has a large collection of open source software tools described as 'Unix like'
+  
+- [GNU On Windows (GOW)](https://github.com/bmatzelle/gow/wiki) contains over 100 'extremely useful open source Unix applications'
 ---
 class: contentpage
 ### **2.4 Useful commands and tools (Unix and Windows)**
 
-Press the control button with the letters above to perform shell functions  
-```Bash
+<font color="black">Short cut!</font> Press the control button with the letters above to perform shell functions: 
+```sh
 Ctl+C | Ctl+A                 | Ctl+E               | Ctl+B                 | Ctl+F         | Ctl+H              | Ctl+D
 Break | Move to start of line | Move to end of line | Backspace (no delete) | Forward space | Backspace (delete) | Log out of shell
 ```  
-Start typing a path of file anem and use the tab button to autocomplete (supported in some shells including Bash)  
-```Bash
+<font color="black">Short cut!</font> Press the tab button can autocomplete a path or command: 
+```sh
 Tab
 ```
-Prints the name of the parent working directory to console  
-```Bash
-pwd (Unix) chdir (Windows)
+<font color="black">Command:</font> Print parent working directory to console  
+```sh
+pwd (Unix) ch chdir (Windows)
 ```  
-List the contents of the current directory you are in
-```Bash
+<font color="black">Command:</font> List the contents of the current directory  
+```sh
 ls (Unix) dir (Windows)
 ```
-Change directory by entering the name of a directory or using two dots to navigate up a directory  
-```Bash
-cd (Unix/Windows)
+<font color="black">Command:</font> Make a new directory  
+```sh
+mkdir <new_directory_name> (Unix/Windows)
 ```
+---
+class: tangentpage
+### **Tangent: Absolute and relative paths**
+
+Absolute paths always contain the full path to a file or folder from a hard drive:
+```sh
+/mnt/qnap/folder1/subfolder2/file.txt
+C:\Users\User\Documents\file.txt
+```
+Relative paths are relative to the current working directory of the CLI (pwd/ch is folder1):
+```sh
+./subfolder2/file.txt
+../
+~
+```  
+When naming folders avoid using spaces or special characters:  
+```sh
+FolderForTest (CamelCase example)
+folder_for_test (snake_case example)
+```
+Spaces in paths can break commands, and like special characters are illegal filename characters. Keep it simple! 
 ---
 class: contentpage
 ### **2.4 Useful commands and tools (Unix and Windows)**
 
-Create a new directory situated within the current parent directory 
-```Bash
-mkdir (Unix/Windows)
+<font color="black">Command:</font> Change the current directory you are in  
+```sh
+cd <new_directory_name> (Unix/Windows)
 ```
-Create a `new_file.txt` situated with the current parent directory
-```Bash
+<font color="black">Command:</font> Create a `new_file.txt` situated with the current parent directory
+```sh
 touch new_file.txt (Unix) type nul > new_file.txt (Windows)
 ```
-Move a file or rename it by moving to a different name within the same path
-```Bash
+<font color="black">Command:</font> Move a file or rename it by moving to a different name within the same path
+```sh
 mv new_file.txt old_file.txt (Unix) move new_file.txt \path\new_file.txt (Windows)
 ```
-Copy a file from one location to another relative or absolute path. You may be able to drag and drop a new folder location from your desktop to the CLI  
-```Bash
+<font color="black">Command:</font> Copy a file from one location to another:
+```sh
 cp new_file.txt /path/new_file.txt (Unix) copy new_file.txt \path\new_file.txt (Windows)
 ``` 
-Clear the screen of previous command executions  
-```Bash
+<font color="black">Command:</font> Clear the screen of previous command executions  
+```sh
 clear (Unix) cls (Windows)
 ``` 
 ---
 class: contentpage
 ### **2.4 Useful commands and tools (Unix)**
 
-Echo will print a string, or variable contents to the CLI
-```bash
-echo "Hello World!"
+<font color="black">Command:</font> Echo will print arguments to console or to files
+```sh
+echo "Hello World!" > new_file.txt
 ```
-Cat prints the contents of new_file.txt to the console  
-```bash
+<font color="black">Command:</font> Cat prints the contents of new_file.txt to the console  
+```sh
 cat new_file.txt
 ```  
-Grep searches a given input file printing to the console any lines that match the supplied pattern, eg 'Search'  
-```bash
+<font color="black">Command:</font> Grep search specific phrases within your new_file.txt  
+```sh
 grep "Search" new_file.txt
 ```
-List the first ten lines only of the supplied file  
-```Bash
+<font color="black">Command:</font> Head can list the first x number lines of a file  
+```sh
 head -10 new_file.txt
 ```
-Works like head, but using the `-f` flag prints each new line out as it is written to the log
-```Bash
+<font color="black">Command:</font> Tail reads from botton of a file, but using the `-f` flag follows a file as it extends
+```sh
 tail -f script.log
 ```  
 ---
 class: contentpage
 ### **2.4 Useful commands and tools (Unix) **
 
-Basename, extracts the basename of a supplied path string whether it's a file or a directory  
-```Bash
+<font color="black">Command:</font> Basename, extracts the basename of a supplied path string whether it's a file or a directory  
+```sh
 basename /mnt/path_to_file/folder  (returns folder)
 basename /mnt/path_to_file/file.txt  (returns file.txt)
 ```
-Dirname, extracts the directories in the path, except the last item whether it's a file or a directory  
-```Bash
+<font color="black">Command:</font> Dirname, extracts the directories in the path, except the last item whether it's a file or a directory  
+```sh
 dirname /mnt/path_to_file/folder  (returns /mnt/path_to_file)
 dirname /mnt/path_to_file/file.txt  (returns /mnt/path_to_file)
 ```
-To retrieve the date now from your operating system you can use the date command below. You can format it to your preference using as shown here which returns YYYY-MM-DD - HH.MM.SS  
-```bash
+<font color="black">Command:</font> Date retrieves the date and time from your operating system 
+```sh
 date "+%Y-%m-%d - %H.%M.%S"
 ```
-rsync is a powerful program that copies files to/from a remote host, or locally. It uses remote-update protocol that just updates differences between two sets of files with an efficient checksum-search algorithm
-```Bash
+<font color="black">Command:</font> Rsync is a powerful tool to copy files to/from a remote host, or local drives.
+```sh
 rsync -avh /path_one/file.txt path_two/file.txt
 ```
 ---
 class: contentpage
 ### **2.4 Useful commands and tools (Unix) **
 
-Manuals are available to help you better understand all these tools. To exit just press the letter `q` for quit  
+Manuals are available to help you better understand all these tools. Exit using 'q' 
 ```Bash
 man basename
 ```
@@ -350,96 +372,99 @@ man basename
 class: contentpage
 ### **2. Bash shell scripting**
 
-A shell script is just a text file, with an extension .sh that contains the commands and tools you've already started using. When you place these commands into a shell script you can build more complex sequences of commands that follow a line by line sequence of execution from start to finish.
-
-The Born Again SHell (Bash) succeeded the Born shell (sh) and is still the mostly widely used shell in use, particularly in Linux. Bash is very powerful as it can make certain complex operations run with ease, operations that would be impossible to complete with a GUI.
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Shell_example.png" width="800">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Shell_example.png" width="1200">]
 ---
 class: contentpage
 ### **2.5 Special characters and comparisons**
 
-Comments can be added anywhere, the hash symbol tells the interpreter not to read what follows
-```Bash
+Comments can be added anywhere using the hash symbol
+```sh
 #  -  #Comments here
 ```
-Used to prefix variables to indicate to a script the value of that variable. `echo $?` returns the exit status   
-```Bash
-$  -  $var, echo $?
+Dollar symbol prefixed names to indicate that there is a value attached and stored in that name  
+```sh
+$  -  $name, echo $0
 ```
 Indicates a placeholder used in a search command, or for concatenating variables in strings when prefixed with $   
-```Bash
+```sh
 {}  -  ${PATH}
 ```
-Tests are expressed between these square brackets. The double bracket is more flexible than the single bracket test. Single square brackets are also used for an array element (a large group of variables) 
-```Bash
-[] or [[]]  -  if [ -z "$var" ]
+Tests are expressed between square brackets and return boolean reponses 'true' or 'false'  
+```sh
+[] or [[]]  -  if [ -z "$name" ]
 ``` 
 A semicolon allows you to concatenate two or more commands into one line completing each in turn  
-```Bash
+```sh
 ;  -  echo "Hello";  echo "lovely";  echo 'Archivists!'
 ```
 ---
 class: contentpage
 ### **2.5 Special characters and comparisons**
 
-The asterisk character serves as a 'wild card' and used on its own it matches all filenames in a given directory  
-```Bash
+Asterisks serves as a 'wild card' and used on its own it matches all filenames in a given directory  
+```sh
 *  -  find /path/folder/ -name '*.mkv'
 ```
 The pipe `|` passes the standard output of a previous command, such as `echo` to the input of the next  
-```Bash
+```sh
 |  -  echo "filename.txt" | rev | cut -c 5-  | rev
 ```
-Two pipes together form the OR operator. This tries the first command and only if it receives a failure exit code will it try the next. The `&&` AND operator needs an exit code 0 (success) to continue processing commands in the chain        
-```bash
+The `||` OR operator will keep trying commands in a line until one succeeds. The `&&` AND operator will only continue processing commands if they succeed  
+```sh
 ||  &&   -  false || echo 'Hello World!'    false && echo "Hello World"
 ```
-Single quotes `'` preserves all special characters in a string, but `"` quotes only preserve some of them. When quoting a variable `"$var"` always use double quotes which allow the variable to expand and reveal their content    
-```Bash
+Single quotes `'` preserves all special characters in a string, but always use double quotes `"` for quoting paths  
+```sh
 "string" or 'string!'
 ```
-Redirections are used to redirect the standard output (stdout) and standard errors (stderr) of a script into a file  
-```Bash
->  &>  >>  &>>  -  echo 'Hello lovely Archivists!' >> test.log
+Redirects the standard output (stdout) and standard errors (stderr) of a script into a file  
+```sh
+>  >>  &>  &>> -  echo 'Hello lovely Archivists!' >> test.log
 ```
 ---
 class: contentpage
 ### **2.5 Special characters and comparisons**
-These characters basically allow for arithmetic plus, minus and divide. % is the modulo, which returns the remainder of an arithmetic devision. Equals can be used in many ways, shown below  
-```Bash
+Arithmetic characters plus, minus, divide. Equals can be used in many ways
+```sh
 +  -  %  =
 ```
-Single equals symbol below is being used to populate the `a` and `b` variables with strings. And in the `if` test two equals are used to check if variables `a` and `b` are the same. To check if two variables do not match, you would use the `is not equal` pair  
-```Bash
+Equals symbol can be used to populate variables with content, or compare variables match in an `if` test  
+```sh
 a='string1'
 b='string2'
 if [ "$a" == "$b" ]
-if [ "$a" != "$b" ]
 ```
-To check if a numerical value is larger than another you can use the greater than `-gt >`,  or less than characters `-lt <` in a similar way. You would need to escape the arrow characters in single square brackets (they have another function to redirect outputs), so use double or opt for the `-gt` option instead.   
-```bash
->  -gt    <  -lt    =  -eq
-if [[ "$x" > "$y" ]]
-if [ "$x" -gt "$y" ]
+String comparisons vs mathematic comparisons:
+```sh
+string | comparison               | math  
+-------|--------------------------|--------
+==     | is equal to              | -eq    
+!=     | is not equal to          | -ne
+<      | is less than             | -lt
+>      | is greater than          | -gt
+<=     | less than or equal to    | -le
+>=     | greater than or equal to | -ge
+-n     | string is not empty      | 
+-z     | string is empty          |
 ```
+
 ---
 class: contentpage
 ### **2.6 Loops and conditional statements**
 
-The find search has many arguments that help filter the results. When used with the `-exec` call it can loop through results performing the command that follows it. The escaped semicolon signals the end of the command
-```Bash
+The `find` search and `-exec` argument can loop through results performing the same command repeatedly  
+```sh
 find /mnt/path/folder -type f -name 'N_*' -exec mv {} /mnt/new_path/folder/{} \;
 ```
-For loops will find files in the parent folder, using do and done to control the start and end of a loop.  Like the find loop, this example moves each found file '$f' to the relative path supplied until all have been processed  
-```bash
+For loops will find files in the parent folder, using do and done to control the start and end of a loop  
+```sh
 for file in *.mov; do mv "$file" "/mnt/new_path/folder/${file}"; done
 ```
-While loops will keep completing a set of tasks until the condition of the loop is no longer met. This example takes the $counter variable and while the number is `> 0` the command keeps minusing  `1`, (()) are integer expansions  
-```bash
+While loops will keep completing a set of tasks until the condition of the loop is no longer met
+```sh
 while [[ "$counter" > 0 ]]; do echo "${counter}"; counter=$(( counter - 1 )); done
 ```
-If, elif, else, and fi make up a conditional construct. Ase we saw earlier, the if can execute execute a test, like is x greater than y. Depending on the exit code result the next command is decided. The `fi` signals that the conditional construct is complete  
+Arguments of a conditional construct. Depending on the result of `if` the next is selected
 ```bash
 if  elif   else   fi   then
 ```
@@ -447,46 +472,50 @@ if  elif   else   fi   then
 class: contentpage
 ### **2.6 Loops and conditional statements**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Shell_example.png" width="1200">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Shell_example.png" width="1400">]
 ---
 class: contentpage
 ### **2.7 Shebang and script formation**
 
-You can create a new shell script simply by making a file with the extension `.sh`
+Create a new shell script simply by making a file with the extension `.sh`
 
-```Bash
+```sh
 touch new_script.sh
 ```
 
-Then you can open that new file and type your script into it. To do this you can use several different tools, like `nano` `vim` or open it and edit in notepad or similar  
+Ensure the permissions of the file will allow you to user to read, write and later execute it 
 ```bash
+chmod u+x new_script.sh
+```
+Use `-l` to view the permissions of your file before and afeter
+```sh
+ls -l
+```
+Open that new file and begin writing your script, there are many editing options including
+```sh
 nano new_script.sh  (Ctl+X to exit)
 vi new_script.sh    (Type :q to exit)
 open new_script.sh  (Launches file in GUI)
 ```
-
-Before you try to edit, save and run the script you need to ensure that the permissions of the file will allow you to edit, and later execute it. The chmod command modified file permissions  
-```bash
-chmod u+x new_script.sh
-```
-chmod u+x modifies the existing rights of a file for the user to read, write and execute. You can use `ls -l` to view the permissions of files in a folder  
+  
 ---
 class: contentpage
 ### **2.7 Shebang and script formation**
 
-The shebang provides the path to the bash shell, and should be the first line of code so the shell knows to execute the script in bash shell. We found the shell path earlier using `echo $SHELL`    
-```Bash
+A shebang as your first line provides the shell path for execution
+```sh
 #! /bin/bash
 
 # Note to say what script does
 # Script to check if files in folder and print log to console and $LOG
 
 # Create a variable for the path you want to search
-PATH_TO_CHECK="/Users/Joanna/Desktop"
+PATH_TO_CHECK="/Users/Joanna/Desktop/test_folder/"
 
 # Create a log variable and use touch to make the file
-LOG="${PATH_TO_CHECK}/new_log.txt"
-touch "${LOG}"
+LOG="${PATH_TO_CHECK}new_log.txt"
+touch "$LOG"
+cd "$PATH_TO_CHECK"
 
 # Start the for loop searching for any file with an extension use the wild card
 # Complete two commands for each file found, print 'Item found: name' to CLI and 
@@ -503,23 +532,22 @@ class: contentpage
 ### **2.7 Shebang and script formation**
 
 The same results but this time using the find loop, with a maxdepth setting of 1 to stop it searching in subfolders  
-```Bash
+```sh
 #! /bin/bash
 
 # Note to say what script does
 # Script to check if files in folder and print log to console and $LOG
 
 # Create a variable for the path you want to search
-PATH_TO_CHECK="/home/usr/whitej/Desktop/folder"
+PATH_TO_CHECK="/Users/Joanna/Desktop/test_folder/"
 
 # Create a log variable and use touch to make the file
-LOG="${PATH_TO_CHECK}/new_log.txt"
+LOG="${PATH_TO_CHECK}new_log.txt"
 touch "${LOG}"
 
 # Start a for loop searching for any file with an extension use the wild card
 # Set maxdepth to 1 to stop the search looking in subfolders and only find -type 'f', file
 find "${PATH_TO_CHECK}" -maxdepth 1 -type f -name '*.*' -exec echo {} >> "${LOG}" \;  
-
 ```
 
 [Shellcheck.net](https://shellcheck.net) is an excellent resource for testing your shell script is correctly formed before running it live 
@@ -527,21 +555,23 @@ find "${PATH_TO_CHECK}" -maxdepth 1 -type f -name '*.*' -exec echo {} >> "${LOG}
 class: contentpage
 ### **2.8 Running and testing code**
 
-Make sure you have your permissions set to run the code, then just call it like the example below. This will launch the loop and print all the contents of your folder into a log file  
-```Bash
+Navigate into the same folder as your script. Call the script prefaced with `./` 
+```sh
+cd script_directory
 ./new_script.sh
 ```
-To get better reporting on your file runs you can use some test commands that are placed into the script, right behind the shebang. `-x` uses Bash xtrace to print a trace of commands before and after they are executed within the script, `-v` increases verbosity of your script printing each line as written before executing  
+To get traces of each line as it's executed and verbose reporting on script runs use `-x` and `-v` after the shebang  
 ```bash
 #! /bin/bash -x -v
 ```
-You can also use the `test` command which has lots of options for testing your bash commands. Full list of commands are available to view in the `man test`. This example is testing the command for return of a non-zero length string. The output of the test can be found using `echo $?`  
+You can also use the `test` command which has lots of options for testing your bash commands  
 ```bash
 test -n "$(find "/User/Joanna/Desktop" -maxdepth 1 -type f -name '*.*' -exec echo {} \;)"
+echo $?
 man test
 ```
-
-POSIX is a standard that ensures shell scripts are portable between different Unix operating systems. If you think your code will need to be portable then it's worth reading more on POSIX bash compatibility:  
+  
+Using POSIX standard ensures your shell scripts are portable between different Unix systems:  
 [GNU.org Bash-POSIX-Mode](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Bash-POSIX-Mode)
 
 ---
@@ -551,171 +581,80 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda 3**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
-
 Introduction to FFmpeg  
-> 3.1 The FFmpeg libraries  
-> 3.2 The basic FFmpeg command  
-> 3.3 Useful audiovisual flags  
-> 3.4 Encoding defaults    
-> 3.5 FFprobe and FFplay  
-> 3.6 Guides and help pages    
+> 3.1 The basic FFmpeg command  
+> 3.2 Format defaults    
+> 3.3 FFprobe and FFplay  
+> 3.4 Guides and help pages   
+> 3.5 FFmpeg's FFV1 codec   
 
 ---
 class: contentpage
-### **Introduction to FFmpeg**
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/FFmpeg_Logo_new.svg" width="600">]
+### **3 Introduction to FFmpeg**
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.13.26.png" width="650">]
 
 - FFmpeg encodes, decodes, muxes and demuxes audiovisual file formats at speed  
-
 - It has an extensive list of supported codecs and file formats  
-
 - It's open source software and makes projects like VLC, YouTube and iTunes possible  
-
 - Hundreds of filters that visualise and analyse complex audiovisual data  
-
 - FFmpeg comes with a metadata analysis and extraction tool FFprobe  
-
 - Playback of all FFmpeg formats and codecs and live streams is possible with FFplay  
-
 - It can be used via the CLI, with third party GUIs or via their own API  
----
 
-class: contentpage
-### **3.1 The FFmpeg libraries**
-
-- **libavutil**  
-A library containing functions for simplifying programming, including random number generators, data structures, mathematic routines, core multimedia utilities and much more.  
-
-- **libavcodec**  
-A library containing decoders and encoders for audio and video codecs  
-
-- **libavformat**  
-A library containing demuxers and muxers for multimedia container formats  
-
-- **libavdevice**  
-A library containing input and output devices for grabbing from and rendering to many common multimedia software frameworks  
-
-- **libavfilter**  
-A Library containing many media filters  
-
-- **libswscale**  
-A library performing highly optimised image scaling and colour space / pixel format conversion  
-
-- **libswresample**  
-A library preforming optimised audio resampling, rematrixing and sample format conversions  
 ---
 class: contentpage
-### **3.2 The basic FFmpeg command**
+### **3.1 The basic FFmpeg command**
 
-This basic FFmpeg encoding command begins with calling the installed software `ffmpeg`. Following this you use the `-i` input flag followed by the path to your file.  Finally supply the path and filename of your new encoded file. If you have a file called `input.mov` this would convert it into an `mp4` version  
-```bash
+This basic FFmpeg video encoding command:
+```sh
 ffmpeg -i input.mov output.mp4
 ```
-This is also the same for audio files, and image files  
-```bash
+This is also the same for audio files, and image files:  
+```sh
 ffmpeg -i input.wav output.mp3
 ffmpeg -i input.tif output.jpg
 ```
-To select a video or audio stream to change to a different encoding you can use the following flags. The first selects the video stream and indicates a ProRes codec, and the second selects the audio stream and uses the `copy` command so the audio remains the same  
-```bash
-ffmpeg -i input.mkv -c:v prores_ks output.mov
-ffmpeg -i input.mkv -c:a copy output.mov
+To select a video or audio stream to select a codec use the following flags:
+```sh
+ffmpeg -i input.mkv -c:v prores_ks -c:a copy output.mov
 ```
-The input.mkv video will be re-encoded to ProRes in the first command, and the audio will be unchanged in the second command. But what happens to their other streams?  
+The input.mkv video will be re-encoded to ProRes and the audio codec will be unchanged in the second command. The wrapper will change from Matroska to MOV.  
 ---
 class: contentpage
-### **3.3 Encoding defaults**
+### **3.2 Format defaults**
 
-It's important to know that if you do not select codec parameters carefully that FFmpeg will fall back to its default codec settings which are determined by the extension of the output file, so our previous examples will have audio changed to aac, and video to H.264!  
+FFmpeg has default codec selections for audio and video if not specified in a command:  
 
-> **.avi**  default video mpeg4 - default audio mp3  
-
-> **.mkv**  default video H.264 - default audio ac3    
-
-> **.mov**  default video H.264 - default audio AAC   
-
-> **.mp4**  default video H.264 - default audio AAC  
-
-> **.mpg**  default video mpeg1video - default audio mp2   
-
-> **.mxf**  default video mpeg2video - default audio pcm_s16le   
-
-> **.wav**  default audio pcm_s16le (16 bit PCM)  
-
-
-It's very important to specify exactly what codecs are wanted in the finished file  
-```bash
-ffmpeg -i input.mkv -c:v prores_ks -c:a pcm_s16le output.mov
 ```
+Format     | Default video   | Default audio  
+-----------|-----------------|----------------
+avi        | mpeg4           | mp3  
+mkv        | H.264           | ac3  
+mov        | H.264           | aac  
+mp4        | H.264           | aac  
+mpg        | mpeg1video      | mp2  
+mxf        | mpeg2video      | pcm_s16le  
+wav        | -               | pcm_s16le  
+```
+  
+Credit: [FFmprovisr Codec Defaults for FFmpeg.](https://amiaopensource.github.io/ffmprovisr/index.html#codec-defaults)
+  
+It's important to specify exactly what codecs are wanted in the finished file:  
+
+```bash
+ffmpeg -i input.mkv -c:v v210 -c:a pcm_s16le output.mov
+```
+
 ---
 class: contentpage
-### **3.4 Useful audiovisual flags**
+### **3.3 FFprobe**
 
-These commands always have a flag and an argument, and usually sit between the input file and the output file  
-
-```bash
-| flag / argument        | Description                                                     |  
-|------------------------|-----------------------------------------------------------------|  
-| -c:v codec_codec       | select video codec                                              |  
-| -c:a audio_codec       | select audio codec                                              |  
-| -map stream_choice     | maps specified streams to new file                              |  
-| -vf video_filter       | select video filter                                             |  
-| -af audio_filter       | select audio filter                                             |  
-| -filter_complex        | selects filter for multiple inputs or outputs                   |  
-| -pix_fmt yuv420p       | specifies chromasubsampling preferred for output                |  
-| -crf 23                | numerical value for constant rate factor, lower = better, 0-51  |  
-| -b:v 128k              | numerical value sets the bitrate of the output file             |  
-| -f 25                  | sets the frames per second of the output file                   |  
-| -aspect 4:3            | set the display aspect ratio                                    |  
-| -colorspace bt709      | tags video with the specific colourspace                        |  
-| -ss / -to 00:00:00.000 | set start/end timecode for editing duration of an output file   |  
-| -flags +ildct          | use interlace aware discrete coside transform for interlacing   |
-```
-
-If you want to try an FFmpeg command in a for or while loop, you will want to add the `-nostdin` flag at the beginning, which blocks FFmpeg's default behaviour of receiving and acting on standard inputs
-```bash
-ffmpeg -nostdin -i input.mov...
-```
----
-class: contentpage
-### **3.4 Useful audiovisual flags**
-
-To run some experiments lets make a 10 second audiovisual file using FFmpeg lavfi filters as your inputs  
-```basg
-ffmpeg -f lavfi -i testsrc=size=1920x1080 -f lavfi -i "sine=frequency=1000:sample_rate=48000" -t 10 input.mov
-```
-You can trim video down to specific time code start and stops, and encode the output  
-```bash
-ffmpeg -ss 00:00:10.000 -i input.mov -to 00:00:25.000 -c:v libx264 -c:a aac output.mp4
-```
-You can export one thumbnails every frame between 1 and 2 seconds and save them as `png` files  
-```bash
-ffmpeg -i input.mov -vf select=`between(t,1,5)` -vsync 0 output_images%d.png 
-```
-Mute audio in a video file, between two time codes  
-```bash
-ffmpeg -i input.mov -c:v copy -af “volume=enable=‘between(t,3,5)':volume=0" input_muted.mov
-```
-Convert an image sequence, such as your DPX sequence into a lossy ProRes 4:4:4 MOV file with framerate 25 fps 
-```bash
-cd <dpx_folder>
-ffmpeg -f image2 -pattern_type glob -i “*.dpx” -c:v prores_ks -profile:v 4 -pix_fmt yuv444p10le -r 25 your_dpx_file.mov
-```
----
-class: contentpage
-### **3.5 FFprobe**
-
-To extract metadata from a video file you can use FFprobe to retrieve it. This basic command will return your file's available technical metadata. The first gives you all the FFmpeg programme information but the second represses this information  
+To extract metadata from a video file you can use these commands:
 ```bash
 ffprobe input.mov
 ffprobe -hide_banner input.mov
 ```
-You can generate a much more specific command that allows you to just look at the file's video bitrate for example   
-```bash
-ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 input.mov
-```
-You can access lots of different data from your streams. To view all the metadata for a specific video stream (v:0 the first stream) you can use the -show_streams, -show_format flag, etc.    
+You can access lots of different data from your streams using different `show` flags:  
 ```bash
 -show_streams
 -show_format
@@ -723,33 +662,39 @@ You can access lots of different data from your streams. To view all the metadat
 -show_frames
 ffprobe -v error -select_streams v:0 -show_streams input.mov
 ```
+
+A command to look at the file's video bitrate for example:   
+```bash
+ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate 
+-of default=noprint_wrappers=1 input.mov
+```
 ---
 class: contentpage
-### **3.5 FFplay**
+### **3.3 FFplay**
 
-When an FFmpeg command allows you to save a video, FFplay allows you to stream it to a GUI windows and view the output. This uses the FFmpeg lavfi filter which can generate visual and audio contents to create test files  
+Most FFmpeg commands can be easily modified and run through FFplay: 
 ```bash
 ffmpeg -f lavfi -i testsrc=size=1024x576 -t 10 output.mov
 ffplay -f lavfi -i testsrc=size=1024x576
 ```
-You can play any file created by FFmpeg in FFplay, even when other players won't be able to. This is thanks FFplay using the same libraries used by FFmpeg to encode the file  
+FFplay using the same libraries used by FFmpeg and can play many formats: 
 ```bash
 ffplay input.mov
 ffplay input.jpg
 ffplay input.wav
 ```
-It is possible to use FFplay to preview video with overlaid filters that reveal certain information, like whether any of the pixels of the video are outside of broadcast safety levels  
+FFplay can also preview video with overlaid filters:  
 ```bash
 ffplay -f lavfi "movie='input.mov', signalstats=out=brng:color=cyan[out]"
 ```
 ---
 class: contentpage
-### **3.6 Guides and help pages**
+### **3.4 Guides and help pages**
 
-To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
+<font color="orange">Practise:</font> To find out more about FFmpeg look no further than their own manual (q to exit), help pages and their extensive lists of available codecs, formats, encoders, muxers, fitlers, etc.  
 ```bash
 man ffmpeg
-ffmpeg -h (long / full)
+ffmpeg -h long / full
 ffmpeg -version
 ffmpeg -codecs
 ffmpeg -formats
@@ -769,6 +714,39 @@ ffmpeg -filters
 [FFmpeg Cookbook for archivists](https://avpres.net/FFmpeg/) by Reto Kromer  
 [Introduction to Audiovisual Transcoding, Editing, and Color Analysis with FFmpeg](https://programminghistorian.org/en/lessons/introduction-to-ffmpeg) by Dave Rodriguez    
 
+---
+class: contentpage
+### **3.5 FFmpeg's FFV1 codec**
+
+FFV1 is a lossless video codec that was initially created by the FFmpeg community 21 years ago. Since 2009 it has been used for preservation and funding has been found for its development.  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-26 at 18.15.17.png" width="670">]
+
+---
+class: contentpage
+### **3.5 FFmpeg's FFV1 codec**
+
+Key FFV1 encoding parameters for preservation use:  
+```
+| Argument      | Value  | Description                                                        |  
+|---------------|--------|--------------------------------------------------------------------|  
+| -c:v          | ffv1   | Select FFmpeg's FFV1 codec for the output file                     |  
+| -level        | 1,3    | Select FFV1 version (always 3 for slicecrc/multithreading)         |  
+| -g            | >=1    | Reuse context model with group of frames to improve compression    |  
+| -slices       | 16, 24 | The amount of slices affects multithreading performance, file size |  
+|               | 64 +   | and CRCs embedded. Increasing slices speeds encoding               |  
+| -slicecrc     | 0,1    | Activates error detections check of CRCs in bitstream. 0=off, 1=on |  
+```
+  
+```sh
+ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 
+ -c:a copy output.mkv
+```  
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-09-03 at 16.17.55.png" width="240">]
+
+The FFV1 codec is most frequently paired with the Matroska wrapper.  [Matroska](https://www.matroska.org/index.html) is an open source project designed to create container formats able to hold unlimited numbers of video, audio, picture or subtitle tracks in one file. The Matroska project have several containers:
+- MKV for video, MKA for audio, MKS for subtitles and MK3D for stereoscopic video.
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
