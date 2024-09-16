@@ -2,14 +2,6 @@
 
 Syllabus for Filmuniversität Babelsberg Digital Archiving Summer School 2024.
 
-### Slides
-
-Slides can be deployed locally using Python from within the repository.
-
-```sh
-python3 -m http.server 8822
-```
-
 ### Schedule
 
 **Monday 2024-09-23**
@@ -66,3 +58,23 @@ python3 -m http.server 8822
 |  | Coffee Break | | | 
 | 11:30 - 13:00 | Community and resources | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/friday_02.html) | 
 |  | Lunch | | | 
+
+### Media
+
+The primary media used for the course is a film scan provided from the Bundesarchiv. This should placed within this repo as so:
+
+```sh
+/media/audio.wav
+/media/0086400.dpx
+/media/0086401.dpx
+/media/0086402.dpx
+...
+```
+
+### Slides
+
+Slides can be deployed locally using Python from within the repository.
+
+```sh
+python3 -m http.server 8822
+```
