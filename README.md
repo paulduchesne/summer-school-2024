@@ -38,7 +38,7 @@ python3 -m http.server 8822
 
 | Session | Description | Tutor | Slides |
 | --- | --- | --- | --- |
-| 09:00 - 10:30 | FFmpeg Video Encoding, Filters and QC Tools | [@digitensions](https://github.com/digitensions) | | 
+| 09:00 - 10:30 | FFmpeg Video Encoding, Filters and QC Tools | [@digitensions](https://github.com/digitensions) | [slides](slides/wednesday_01.html) | 
 |  | Coffee Break | | | 
 | 11:00 - 12:30 | RAWcooked and DCPs | [@digitensions](https://github.com/digitensions), [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/wednesday_02.html)| 
 |  | Lunch | | | 
@@ -52,7 +52,7 @@ python3 -m http.server 8822
 | --- | --- | --- | --- |
 | 09:00 - 10:30 | Python automation | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/thursday_01.html)| 
 |  | Coffee Break | | | 
-| 11:00 - 12:30 | FFmpeg filter output | [@digitensions](https://github.com/digitensions) | | 
+| 11:00 - 12:30 | FFmpeg filter output | [@digitensions](https://github.com/digitensions) | [slides](slides/thursday_02.html) | 
 |  | Lunch | | | 
 | 13:30 - 15:00 | Scaling Python | [@digitensions](https://github.com/digitensions) | [slides](slides/thursday_03.html)| 
 |  | Coffee Break | | |
