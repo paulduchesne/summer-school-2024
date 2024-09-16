@@ -1,15 +1,15 @@
-
-
-
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: TUE03</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
+
+
+
+
 
 class: center, middle, titlepage
 ### TUE03: *Validating files.*
@@ -20,11 +20,11 @@ class: contentpage
 
 1. RAWcook the files  
       
-2. Intro to Metadata (Paul)
+2. Intro to Metadata
 
-3. embARC (Paul)
+3. embARC 
 
-4. FFprobe (Paul)
+4. FFprobe
 
 5. MediaInfo  
 
@@ -68,21 +68,89 @@ The command contains several others, all essential for long-term preservation:
 class: contentpage
 ### **2. Intro to Metadata**
 
-File metadata (metadata literally meaning "data about data") are all the attributes of a file which are not the file themselves.
+File metadata (metadata literally meaning "data about data") are all the attributes of a file which are not the file content/media itself (or "payload"), but are stored in the file.
 
-These can be things like the filename, the creation and modification timestamps. 
+These can be things like video framerate, audio channels, creation and modification timestamps. 
 
-For audiovisual archiving this can get significantly more involved as certain formats (e.g. DPX) allow the capture of a full range of information about the file which we may wish to view, validate, or edit.
-
-Practical: Open tiny RGB DPX in a hex editor.
-
-TODO what even is a file?
-
-TODO, what is the difference between text and binary data
-a text file can be opened on any computer and is stored in a manner which is decodable - ASCII editor
-binary data is a file which requires a specific application to open
+For audiovisual archiving this can get significantly more involved as certain formats (e.g. DPX) allow the capture of an extensive range of information about the file which we may wish to view, validate, or edit.
 
 
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+When we talk about "files", we are really talking about two different things.
+
+
+For this section it would be useful to have a hex editor to be able to open the file in an objective way, and see what is inside. 
+
+https://hexed.it is an good online resource, although will presumably be unhappy if you try any files which are too big.
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+
+On the one hand we have text documents, like "txt" (or "py"!) which are just text. There is no additional data in the file. Also note how the same letters result in the same binary encodings.
+
+.left[<img src="../img/hex_text.png" width="700">]
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+When we open up a wav file from the Bundesarchiv film scan, we see something different.
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+
+.left[<img src="../img/hex_wav.png" width="700">]
+
+A guide to what we are seeing! The first four letters are called the "magic number" (no joke) which tells the application what type the file is ("RIFF"). Underneath we can see text which tell us interesting "context" (metadata) on the file. These seem randomly placed, but they are in very specific locations, and these are defined in the file specification. https://en.wikipedia.org/wiki/WAV
+
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+Underneath is the audio expressed as "binary data", which allows us the flexibilty for the expression of any file: sound, video, 3d models etc etc. 
+
+
+.left[<img src="../img/hex_wav2.png" width="700">]
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+
+We are not really able to engage with the media directly like this, however a staple of the "glitch art" toolbox would be to open files like this and then do "find replace" functions.
+
+https://en.wikipedia.org/wiki/Glitch_art
+
+https://en.wikipedia.org/wiki/Databending
+
+---
+class: tangentpage
+### **Tanget: What is a file!!**
+
+
+But if we have a lossless file, we can sometimes see where the nature of the encoded information forms appreciable patterns.
+
+
+.left[<img src="../img/hex_sine.png" width="700">]
+
+This is a very low frequency sinewave, it is literally encoded in the file as values which go up, then down, then up.
+
+
+
+---
+class: tangentpage
+### **Tanget: What is a file!**
+
+TODO: one pixel dpx
 
 ---
 class: contentpage
@@ -92,8 +160,34 @@ embARC is from the Library of Congress/FADGI and is the result of concentrated w
 
 https://www.digitizationguidelines.gov/guidelines/digitize-DPXembedding.html
 
-Practical: Open tiny RGB DPX in embARC. 
+It is a tool to work specifically with DPX metadata.
 
+
+---
+class: contentpage
+### **3. embARC**
+
+Download the 'embARC Java Jar' file here: https://www.digitizationguidelines.gov/guidelines/embARC.html
+
+
+Note that embARC is a java application which we run as a "jar". This can also be thought of as a similar paradigm as with Python: Python interpreter runs a Python script, Java interpreter runs a Jar file.
+
+
+```sh
+java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx
+```
+
+
+
+
+`-print` will simply print out the existing metadata. There are a lot of fields in DPX files!
+
+
+```sh
+java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx -print
+```
+
+embARC also has the capacity for conformance checks, where we define what fields need to be populated and embARC ensures they are present.
 
 
 ---
@@ -103,13 +197,21 @@ class: contentpage
 FFprobe is a sibling tool of FFmpeg and also allows the extraction of metadata of audiovisual material. This can either be printed to the terminal
 
 ```sh
-ffprobe example
+ffprobe media/dpx/0088860.dpx
 ```
+.left[<img src="../img/ffprobe.png" width="700">]
 
-or exported as JSON, which is an explicitly machine readable format for data storage.
+
+---
+class: contentpage
+### **4. FFprobe**
+
+
+
+We can also extract metadata as JSON, which is an explicitly machine readable format for data storage.
 
 ```sh
-ffprobe json example
+ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx
 ```
 
 
@@ -330,9 +432,6 @@ Here is an example of a rule written in a MediaConch XML policy that uses MediaT
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/mms_example.png" width="1040">]
 
----
-class: center, middle, titlepage
-### TUE03: *Validating files.*
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">

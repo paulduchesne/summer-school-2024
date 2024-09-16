@@ -1,66 +1,228 @@
-
-
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: Tuesday Morning</title>
+    <title>Digital Summer School 2024: TUE02</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
 
+
+
+
+
+
+
 class: center, middle, titlepage
-### TUE02: *Intro to Python, Git.*
+### TUE02: *Intro to Git, Python.*
 
 ---
 class: contentpage
 ### **Agenda**
 
-1. Python    
-    1.1 Why Python?    
-    1.2 How Python?    
-    1.3 Basics: Print    
-    1.4 Basics: Strings     
-    1.5 Basics: Variables     
-    1.6 Basics: Types    
-    1.7 Basics: Lists    
-    1.8 Basics: For Loops    
-    1.9 Basics: Libraries  
-    1.10 Basics: If statements
-    1.11 Basics: Subprocess
-2. IDEs         
-    2.1 Anaconda    
-    2.2 Jupyter   
-3. Git
-4. GitHub
+1. IDEs         
+    1.1 Jupyter     
+2. Git
+3. GitHub
+4. Python    
+    4.1 Why Python?    
+    4.2 How Python?    
+    4.3 Types of Python    
+    4.4 Basics: Print    
+    4.5 Basics: Strings     
+    4.6 Basics: Variables     
+    4.7 Basics: Types    
+    4.8 Basics: Lists    
+    4.9 Basics: For Loops    
+    4.10 Basics: Libraries  
+    4.11 Basics: If statements          
+    4.12 Basics: Subprocess    
+    4.13 Basics: Exceptions
+
 5. Practical 🏋️
+
+
+
+
+
+
 
 ---
 class: contentpage
-### **1. Python**
+### **1. IDEs**
+
+Before we start writing any Python scripts, we need to set up a DEVELOPER ENVIROMENT!!
+
+
+---
+class: contentpage
+### **1. IDEs**
+
+
+An IDE is an environment in which we write (and sometimes can also run!) code. We **could** write a script using a basic text editor (Notepad!), but it is not much fun, and we will make loads of mistakes. 
+
+IDEs generally come with tools to help us code better.
+
+The most popular options for Python are Visual Studio Code, PyCharm, Sublime Text... there are heaps and heaps of these.
+
+If you are looking for one to start with, I would recommend Visual Studio Code. It is easy to install and has a good balance of tools and extensibility.
+
+https://code.visualstudio.com/
+
+If you are concerned about telemetry, there is a fork called VS Codium which has removed this component.
+
+https://vscodium.com/
+
+
+---
+class: contentpage
+### **1.1 Jupyter**
+
+When looking at coding in Python, you might come across mentions of Jupyter and Jupyter notebooks. A Jupyter notebook is a document which comprises various blocks of text and code which can be run in any order, or executed directly.
+
+Jupyter is open source, so there are plenty of platforms which have "borrowed" the same concept: Google Colaboratory, Netflix Nteract, Microsoft Fabric notebooks. Visual Studio Code can also run Jupyter notebooks.
+
+The ability to integrate explanatory text, graphics, code and even interactive widgets is a reason why it is quite popular in science and academic contexts.
+
+Because our focus of this course is more on functional and operational processes, we won't really be looking at Jupyter any further, but keep it in mind if you want to do data analysis, fancy reports or just have a more interactive experience with Python.
+
+
+---
+class: contentpage
+### **2. Git**
+
+What is Git? 
+
+
+
+---
+class: contentpage
+### **2. Git**
+
+
+Git is one of these things which is completely ubiquitous in its domain, like Photoshop or Google.
+
+Git is a software management command line application written by Linus Torvalds, who was also responsible for creating Linux.
+
+It is primarily a code version-management system, which can be used to keep track of our code, allow management of different variants as they are developed, and collaboration between multiple programmers.
+
+Git itself is a command line application, but there are many options for graphical interfaces. It is also built-in to most modern IDEs (including Visual Studio Code).
+
+
+---
+class: contentpage
+### **2. Git**
+
+Turn your FOLDER into a REPOSITORY. WOW!
+
+```sh
+git init
+```
+
+There is now a hidden folder called `.git` which will handle version management.
+
+---
+class: contentpage
+### **2. Git**
+
+
+We can update the file changes in the main folder space using `git add`
+
+```sh
+git add *
+```
+
+Git commit lets us label this snapshot, a good opportunity to provide some context to what work was undertaken.
+
+
+```sh
+git commit -m 'starting here'
+```
+
+Do a few of these, and then we can see the logs!
+
+```sh
+git log
+```
+
+Knowing a bit about working with the Git CLI is not a bad idea, especially if you need to resolve a complex version/merge problem, but generally speaking you could mostly get by with a graphical IDE integration and GitHub.
+
+```sh
+git --help
+```
+
+
+
+
+---
+class: contentpage
+### **3. GitHub**
+
+GitHub is to Git what Facebook is to Faces.
+
+GitHub is a website which allows developers to host their software projects using Git, with a lot of other useful features to help with keeping track of projects.
+
+In the previous example we were just storing work on our own computer, GitHub lets us host it online, with benefits for collaboration between different coders.
+
+It is owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform which has some superior features, but GitHub still has much more traffic.
+
+
+
+---
+class: contentpage
+### **3. GitHub**
+
+Practical: 
+
+- Login to GitHub
+- Make a "respository"
+- Add a file
+- Clone to your computer
+
+TODO: discuss SSH authentication, and setting commit author?
+
+
+
+
+
+---
+class: contentpage
+### **3. GitHub**
+
+Now you can "fork" the summer-school repository. 
+
+https://github.com/paulduchesne/summer-school-2024
+
+Forking is when you copy all of my code into your own space (like "copy" "paste"). You are now free to modify it as much as you like. 
+
+If you do something cool and want to merge it back in to the original project, you can make a "pull request", which we will discuss a bit later.
+
+
+---
+class: contentpage
+### **4. Python**
 
 Python is a general purpose programming language from the 1980s, which is amongst one of the most popular in the world. It can be used to create all sorts of interesting things across the disciplines of data science, web development, machine learning... and digital archiving.
 
 
 ---
 class: contentpage
-### **1.1 Why Python?**
+### **4.1 Why Python?**
 
 
-While the command-line can be handy for simple processes, we will want to switch to a programming language to create more complex systems.
+While the command-line can be handy for simple processes, we will likely want to switch to a programming language to create more complex systems.
 
 
 
 ---
 class: contentpage
-### **1.2 How Python?**
+### **4.2 How Python?**
 
-The act of writing a Python script and executing are distinct. A Python script can be written in any text editor, but we will require the Python Interpreter for it to do anything.
+The act of writing a Python script and executing the script are distinct. A Python script can be written in any text editor or IDE, but we will require the Python Interpreter for it to do anything.
 
 In practise this will look like: 
 
-Use a text editor to write your script.
+Use a text editor/IDE to write your script.
 
 ```python
 hello = "hi"
@@ -68,15 +230,56 @@ hello = "hi"
 
 save as -> `myscript.py`
 
-In the command line using the Python Interpreter to execute the code
+In the command line use the Python Interpreter to execute the code
 
 ```sh
 python myscript.py
 ```
 
+Depending on your install you may need to specifically call `python3`.
+
+
+
 ---
 class: contentpage
-### **1.3 Basics: Print**
+### **4.3 Types of Python**
+
+Like most software there are many different versions of Python, with version 3.12 being the current version.
+
+There was a significant change in code between Python2 and Python3 which required a lot of script rewriting.
+
+Be careful if you are on macOS as Python2.7 is still installed by default, so just calling `python my_script.py` might have unexpcted results.
+
+Good idea to check your version of Python with
+
+```sh
+python --version
+```
+
+or 
+
+
+```sh
+python3 --version
+```
+
+On Unix systems (macOS and Linux) you can also see what exactly what Python interpretor is running with `which python`. 
+
+
+---
+class: contentpage
+### **4.3 Types of Python**
+
+
+
+Anaconda is a distribution of Python which comes with its own package management system for external libraries. 
+
+It seems to be most popular with data science and machine learning projects, where managing different versions of different libraries can become tricky. I wouldn't really recommend using it unless this becomes a problem for you.
+
+
+---
+class: contentpage
+### **4.4 Basics: Print**
 
 The simplest Python action is to print something:
 
@@ -87,7 +290,7 @@ This is the Python equivalent of `echo` which we saw in the last session.
 
 ---
 class: contentpage
-### **1.4 Basics: Strings**
+### **4.5 Basics: Strings**
 
 A "string" in Python is a line of text (emojis allowed!) which Python identifies by using quotations marks (double or single are fine at this stage).
 
@@ -106,9 +309,11 @@ print(greeting)
 
 The code here is actually 'legal,' but we have inadvertently created what is called a 'variable' which we have not defined.
 
+Python doesn't know what `greeting` (without quotations) means.
+
 ---
 class: contentpage
-### **1.5 Basics: Variables**
+### **4.6 Basics: Variables**
 
 Text-without-quotations is what is known as a "variable", and is a placeholder for some other value.
 
@@ -132,7 +337,7 @@ print(a_number)
 a_number = a_number+a_number
 print(a_number)
 ```
-or when we have an unknown value we are collecting (eg, perform an action on all files in a folder).
+or when we have an unknown values we are working with (eg, perform an action on all files in a folder).
 
 
 
@@ -141,7 +346,7 @@ or when we have an unknown value we are collecting (eg, perform an action on all
 
 ---
 class: contentpage
-### **1.6 Basics: Types**
+### **4.7 Basics: Types**
 
 In Python, there is the concept of different data types, of which we have seen two: *strings* and *numbers*.
 
@@ -173,7 +378,7 @@ print(a_string+a_string, a_string / 2)
 
 ---
 class: contentpage
-### **1.7 Basics: Lists**
+### **4.8 Basics: Lists**
 
 A very important concept in Python is a list or an "array". 
 
@@ -181,7 +386,7 @@ A very important concept in Python is a list or an "array".
 some_people = ['paul', 'david', 'bethany', 'shana']
 ```
 
-These can contain a mix of types.
+Lists can contain a mix of types.
 
 ```python
 mixed_types = ['hello', 27, 3.1415]
@@ -191,9 +396,9 @@ mixed_types = ['hello', 27, 3.1415]
 
 ---
 class: contentpage
-### **1.8 Basics: For Loops**
+### **4.9 Basics: For Loops**
 
-Another key concept is the "for loop", which lets us work through a list, and apply an action to each list elements
+Another key concept is the "for loop", which lets us work through a list, and apply an action to each list elements. This is exactly the same concept we saw earlier during the command line session.
 
 ```python
 for a_number in [17, 27, 37, 47]:
@@ -206,14 +411,14 @@ for a_number in [17, 27, 37, 47]:
     print(a_number + 4)
 ```
 
-We can use this pattern to start to perform file operations, but first we will need to find a library to help us work with files!
+We can use this pattern to start to perform interesting file operations, but first we will need to find a library to help us work with filepaths!
 
 
 
 
 ---
 class: contentpage
-### **1.9 Basics: Libraries**
+### **4.10 Basics: Libraries**
 
 Libraries are just chunks of Python code which other people wrote, and save us having to build everything from scratch.
 Many useful libraries come pre-included with Python by default, but you can install others to do highly specific, or write your own!
@@ -222,25 +427,26 @@ For now, we are going to use a very useful library called Pathlib.
 
 ```python
 import pathlib
-for filename in ['test.wav', 'test.jpg', 'test.txt']:
-    print(type(filename))
-    pathlib_filename = pathlib.Path.cwd() / filename
-    print(type(pathlib_filename))
-    print(pathlib_filename, pathlib_filename.exists())
+for filename in ['0086400.dpx', 'not_a_file.dpx']:
+    print(filename, type(filename))
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    print(pathlib_filename, type(pathlib_filename))
+    print(pathlib_filename.exists())
+
 ```
 
 Note the `.exists()` method at the end of the `pathlib_filename`? 
 
-This is a "method" to check if the file exists at that location or not, and returns True or False. Different types have different methods (ie things you can do with them). This is also where documentation becomes very useful. 
+This is a "method" to check if the file exists at that location or not, and returns True or False. Different types have different methods (ie things you can do with them). This is also where documentation becomes very useful, to know what methods are available to use.
 
 https://docs.python.org/3/library/pathlib.html
 
 
 ---
 class: contentpage
-### **1.10 Basics: If statements**
+### **4.11 Basics: If statements**
 
-If statements let us route operations depending on an assessment on whether something is true or false.
+`If statements` let us route operations depending on an assessment on whether something is true or not.
 
 ```python
 a_number = 37
@@ -256,7 +462,7 @@ else:
 
 Typical symbols here are '<' something is less than something else, '>' greater than, '==' equals, and '!=' not equals.
 
-Worth paying attention to '=' means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
+Worth paying attention the difference between '=' which means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
 
 Also you can use these checks outside of if statements.
 
@@ -266,31 +472,32 @@ print(900 == 700)
 
 ---
 class: contentpage
-### **1.10 Basics: If statements**
+### **4.11 Basics: If statements**
 
 We can also use "if statements" inside "for loops", or "for loops" inside "if statements", and on and on. This is where we can introduce complex logic (also known as "decision trees").
 
 ```python
 import pathlib
-for filename in ['test.wav', 'test.jpg', 'test.txt']:
-    print(type(filename))
-    pathlib_filename = pathlib.Path.cwd() / filename
+for filename in ['0086400.dpx', 'not_a_file.dpx']:
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
     if pathlib_filename.exists():
-        print('THE FILE EXISTS, HOORAY')
+        print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
-        print('WHERE IS THAT FILE?')
+        print(pathlib_filename, 'WHERE IS THAT FILE?')
+    
+print('done.')
 ```
 
 
 ---
 class: contentpage
-### **1.11 Basics: Subprocess**
+### **4.12 Basics: Subprocess**
 
 
 The last thing I wanted to introduce was the `subprocess` library. Subprocess is cool because we can call command line applications from within Python!
 
 
-This can be useful if you want to orchestrate tools sequentially (video to MediaInfo, then FFmpeg, then result to FFprobe).
+This can be useful if you want to orchestrate tools sequentially (extract video metadata with MediaInfo, transcode using FFmpeg, make a checksum).
 
 
 
@@ -301,88 +508,37 @@ subprocess.call(['ffmpeg', '-version'])
 ```
 
 
-Good news is that we can have processes defined which work inside or outside of Python (eg a specific FFmpeg command to convert video files).
+Good part of this is that we can have processes defined which work inside or outside of Python (eg a specific FFmpeg command to convert video files).
 
-Bad news is that this can make our scripts OS dependant (eg "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run OS-agnostic.
+Bad news is that this can make our scripts OS dependant (eg "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run the same scripts OS-agnostic.
 
-You will also notice subprocess needs the command expressed as an array.
-
-
-
-
----
-class: contentpage, middle
-
-This has been a very brief introduction to Python!
+You will also notice `subprocess` needs the command expressed as an array of strings.
 
 
 
 ---
 class: contentpage
-### **2. IDEs**
+### **4.13 Basics: Exceptions**
+
+A very important feature of your code is what is called "exception handling". This is where something unexpected or undesired happens and you want to stop your script and say, "SOMETHING HAS GONE WRONG".
 
 
-An IDE is an environment in which we write (and sometimes can also run!) code. We **could** write a script using a basic text editor (Notepad!), but it is not much fun, and we will make loads of mistakes. 
 
-IDEs generally come with tools to help us code better.
+```python
+import pathlib
+for filename in ['0086400.dpx', 'not_a_file.dpx']:
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    if pathlib_filename.exists():
+        print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
+    else:
+        raise Exception('WHERE IS FILE', pathlib_filename)
 
-The most popular options for Python are Visual Studio Code, PyCharm, Sublime Text... but there are heaps and heaps of these.
-
-If you are looking for one to start with, I would recommend Visual Studio Code. It is easy to install and has a good balance of tools and extensibility.
-
-If you are concerned about telemetry, there is a fork called VS Codium which has removed this component.
-
-
----
-class: contentpage
-### **2.1 Anaconda**
-
-Anaconda is a distribution of Python which comes with its own package management system for external libraries. 
-
-It seems to be most popular with data science and machine learning projects, where managing different versions of different libraries can become tricky. I wouldn't really recommend using it unless this becomes a problem for you.
-
----
-class: contentpage
-### **2.2 Jupyter**
-
-When looking at coding in Python, you might come across mention of Jupyter and Jupyter notebooks. A Jupyter notebook is a document which comprises various blocks of text and code which can be run in any order, and executed directly.
-
-Jupyter is open source, so there are plenty of platforms which have "borrowed" the same concept: Google Colaboratory, Netflix Nteract, Microsoft Fabric notebooks. Visual Studio Code can also run Jupyter notebooks.
-
-The ability to integrate explanatory text, graphics, code and even interactive widgets is a reason why it is quite popular in science and academic contexts.
-
-Because our focus of this course is more on functional and operational processes, we won't really be looking at Jupyter any further, but keep it in mind if you want to do data analysis, fancy reports or just have a more interactive experience with Python.
-
----
-class: contentpage
-### **3. Git**
-
-What is Git? 
-
-Git is one of those things which is completely ubiquitous in its domain, like Photoshop or Google.
-
-Git is a software management system written by Linus Torvalds, who was also responsible for Linux.
-
-It is primarily a code version-management system, which can be used to keep track of our code, allow management of different variants as they are developed, and collaboration between multiple programmers.
-
-Git itself is a command line application, but there are many options for graphical interfaces. It is also built-in to most modern IDEs (including Visual Studio Code).
+print('done.')
 
 
----
-class: contentpage
-### **3. Git**
+```
 
-TO DO: basic git, make a directory a repo, change a file, make a commit.
-
-Working with the Git CLI is good to know, especially if you need to resolve a version/merge problem, but generally speaking you could mostly get by with a graphical IDE integration and GitHub.
-
----
-class: contentpage
-### **4. GitHub**
-
-GitHub is a website which allows developers to host their software projects via Git, with a lot of other useful features to help with keeping track of project work.
-
-It is owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform which has some superior features, but GitHub still has much more traffic.
+Note that if we run this and the file is not found, it does not progress past the raised exception. We never get to the "done" print statement.
 
 
 ---
@@ -397,11 +553,16 @@ We are going to:
 
 - Clone it to your computer to work on locally.
 
-- Write a script in your favourite IDE to check filesizes on our scan files.
+- Write a script in your favourite IDE to check filesizes on our scan files, and raise an exception if a certain condition is not met.
 
 - Use Git to commit changes back to GitHub (CLI and IDE).
 
-- Look at GitHub issues, version control and branches.
+- Quick tour of GitHub issues, version control and branches.
+
+---
+class: contentpage, middle
+
+This has been an introduction to Python!
 
 
 
