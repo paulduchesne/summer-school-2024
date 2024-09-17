@@ -8,52 +8,67 @@
     <textarea id="source">
 
 
+class: center, middle, titlepage
+### THU04: *Multiprocessing, Logging, Containerisation, Orchestration.*
+
+
+
 
 Note to Paul, write out the whole doc as markdown before worrying about segmenting and agenda, do this last.
 
 
+~
+
+This afternoon we are going to look at some more advanced Python topics, specifically Mutliprocessing and Logging.
+
+We are then going to look at running Python in some different enviroments, and finally conatinerisation and orcheestration.
+
+
+Multiprocessing refers to the fact that Python generally runs on a single processor, and if we are trying to do a lot of processing we want to use all of the computational power at our disposal.
+
+To illusatrate this we can open up our activity monitor and observe activity.
+
+Worth noting that most laptops have limited resources, so a possible pathway is to refine a process on your own machine and then trasnfer to serious multicore desktop machine.
+
+The goal here is that if a process takes a certain period of time, if you can effitenly multiprocess on a 64-core machine, the proceess will run 64 times faster.
+
+There is a big difference between 1 day and 64 days, or 1 year and 64 years!!!
+
+MULTIPROCESSING examples.
 
 
 
 
+~
+
+Logging is an important feature when we build a complex pipeline and something goes wrong, or we even want to check up on where systems are at.
+
+Python has an inbuilt logging feature which is quite similar to the "print" statements, but intended to report activity. Another difference is they are written to disk, whereas print statements are "ephemeral".
+
+Logging is extremely useful if you ever get asked the questions: when did you exactly transcode that file? How long did it take? What was the output?
+
+LOGGING examples.
 
 
 
+~
+
+Containerisation refers to the process of encapusltaing an enviroment to ensure that systems run predictably. Why would you do this? Quite simply because every computer in the world, once it has been used for a sginicant period of time, becomes its own enviroemnt, Files sit in different locations, applications are installed or removed, etc. There are also inherent differences we have seen on different applications.
+
+Docker is uniqiiouts in this space, but Podman also has some benefits around security considerations.
+
+CONATINER example.
 
 
+~
 
-class: center, middle, titlepage
-### THU04: *Multiprocessing, Jupyter, Orchestration.*
+The last topic for today is orchestration. We have covered writing and scheduling individual tasks, which is fine if you are running one or two handfuls of processes. Once you scale up to fifty or a hundred distinct processes this can be hard to manage.
 
-multiprocessing
+What we need then is a system to manage all of our processes, which is generally called an orchestrator. 
 
-Python logging
+This is an ineteresing subject as I believe Joanna and I are both at the point where our own processes have only recently reached this moment, so these tools are new for us as well.
 
-introdution to jupyter and altair
-
-docker container, containerisation example with a python script to do something
-
-Airflow and orchestration
-
-
-
-
-
-
-1. Jupyter/Altair viz (Paul)
-2. Docker containers/dockerisation (Paul)
-3. Airflow (Paul)
-      
-
-      
----
-class: contentpage
-### **Agenda**
-
-1.    
-1.1 
----
-class: contentpage
+ORCH examples
 
 
 
