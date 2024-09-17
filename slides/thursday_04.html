@@ -34,8 +34,51 @@ The goal here is that if a process takes a certain period of time, if you can ef
 
 There is a big difference between 1 day and 64 days, or 1 year and 64 years!!!
 
-MULTIPROCESSING examples.
+Python has a handy multiprocessing library called "multiprocessing".
 
+The first thing we would want to do is so how many processors our computer has to give some idea of how we allocate resources.
+
+```python
+import multiprocessing
+multiprocessing.cpu_count() 
+```
+
+We can now define a task in Python, and then organise for it to run in batches,
+
+The Pool method makes allocating tasks in batches quite easy, but note that all results will be returns when the longest finishes.
+
+```python
+import multiprocessing
+import time
+
+def my_process(file_name):
+    print(f"{file_name} has started.")
+    time.sleep(10) 
+    print(f"{file_name} has ended.")
+
+if __name__ == "__main__":
+
+    files = ['file_01', 'file_02', 'file_03', 'file_04']
+    
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+    print("All processes have finished.")
+```
+
+There a few new components we can see here!
+
+The def name() constructoon in Python is what we can a function, which is common way to group a block of code we want to reuse to do the same thing over and over, often with different inputs.
+
+This is perfect for multiprocessing where we want to define a single block of code which gets executed in different processes at the same time.
+
+The `if __name__ == "__main__":` part is a way of making sure that the python script is being executed directly, and not being imported into other code.
+
+The behaviour we will observe here is that four processes are actioned simultaneously, which are to "sleep" (do nothing) for ten seconds, and the results are all returned at the same time.
+
+
+Multiprocessing is extremely useful if you have "expensive" operations (like file operations, eg hashing) which are causing you to wait for your script to execute. It does however introduce extra complexity to your scripts so should only be used if requried.
 
 
 
