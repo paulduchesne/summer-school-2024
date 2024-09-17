@@ -14,19 +14,135 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Calling FFmpeg in Python with subprocess
-2. Running tests of commands from metadata sources
-3. Multithreading, bash parallelisation GNU parallels  
+1. Using FFmpeg in Python  
+  1.1 PyPi packages: ffmpeg-python  
+  1.2 FFmpeg with subprocess  
+  1.3 Metadata FFmpeg decision making
+  
+2. FFmpeg multithreading and parallelisation   
+  2.1 Multithreading  
+  2.2 Multiprocessing  
+  2.3 GNU Parallel multiprocessing  
+  2.4 Python multiprocessing  
+
+ 
+---
+class: contentpage
+### **1. Using FFmpeg in Python**
 
 
 ---
-Add section in here that shows how you call FFmpeg commands from Python.
-Building on Paul's examples of metadata being captures.
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
 
-FFmpeg command broken up into list components and selected in a function so ffmpeg commands are adaptable.
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/pypi_ffmpeg.png" width="1000">]
 
-Then move onto capturing console outputs - specifically the blackdetect time codes, convert to dictionary
-and use the dictionary to guide/avoid timecodes.
+
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+Configure your Python environment for safe pip installation, and load up a Python REPL  
+```sh
+pip install ffmpeg-python
+python3
+```
+Use the software to run a horizontal flip of a File
+```sh
+import ffmpeg
+stream = ffmpeg.input('input.mp4')
+stream = ffmpeg.hflip(stream)
+stream = ffmpeg.output(stream, 'output.mp4')
+ffmpeg.run(stream)
+```
+
+Or put together the command:
+```sh
+(
+    ffmpeg
+    .input('input.mp4')
+    .hflip()
+    .output('output.mp4')
+    .run()
+)
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+Using the example from the official [FFmpeg Python Github](https://github.com/kkroening/ffmpeg-python) for this package you can see it's possible to build some sophisticated commands:
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 22.18.12.png" width="800">]
+
+The FFmpeg command for this:
+
+```sh
+ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_frame=20[v0];\
+    [0]trim=start_frame=30:end_frame=40[v1];[v0][v1]concat=n=2[v2];[1]hflip[v3];\
+    [v2][v3]overlay=eof_action=repeat[v4];[v4]drawbox=50:50:120:120:red:t=5[v5]"\
+    -map [v5] output.mp4
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+The complex FFmpeg layout becomes more clear to read in a Pythonic way.
+
+```sh
+import ffmpeg
+
+in_file = ffmpeg.input('input.mp4')
+overlay_file = ffmpeg.input('overlay.png')
+(
+    ffmpeg
+    .concat(
+        in_file.trim(start_frame=10, end_frame=20),
+        in_file.trim(start_frame=30, end_frame=40),
+    )
+    .overlay(overlay_file.hflip())
+    .drawbox(50, 50, 120, 120, color='red', thickness=5)
+    .output('out.mp4')
+    .run()
+)
+```
+
+```sh
+ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_frame=20[v0];\
+    [0]trim=start_frame=30:end_frame=40[v1];[v0][v1]concat=n=2[v2];[1]hflip[v3];\
+    [v2][v3]overlay=eof_action=repeat[v4];[v4]drawbox=50:50:120:120:red:t=5[v5]"\
+    -map [v5] output.mp4
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+There's also great reporting using this package to retrieve file metadata:
+```sh
+result = ffmpeg.probe('input.mov')
+print(result)
+```
+You are returned with a formatted Python dictionary containing all your metadata. To get this data for, say the duration of the file:
+
+```sh
+duration = result.get('format', {}).get('duration', None)
+print(duration)
+```
+
+The response returns 'streams' and 'format' dictionary keys, containing stream metadata for the video and audio, and format information that along with 'duration' includes:
+- filename
+- format_name
+- start_time
+- size
+- bit_rate
+- probe_score
+- tags
+
+---
+class: contentpage
+### **1.2 FFmpeg with subprocess**
+
+Up to here
+---
 
 </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
