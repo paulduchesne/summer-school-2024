@@ -20,14 +20,16 @@ def create(fullpath, output_path, height, width, dar, par) -> list:
     PAR examples '1.000', ''
     '''
 
-    if os.path.exists(fullpath) and os.path.exists(output_path):
+    if not os.path.exists(fullpath):
+        return f"Path not recognised:\n{fullpath}"
+    if not os.path.isfile(output_path):
         filename = os.path.split(fullpath)[-1]
         fname = f"{os.path.splitext(filename)[0]}.mp4"
-        outpath = os.path.join(output_path, fname)
-        print(f"Fullpath {fullpath} - Output path {outpath}")
-        print(f"Received DAR {dar} PAR {par} H {height} W {width}")
+        outpath = os.path.join(output_path, f"transcode_{fname}")
     else:
-        return f"Paths not recognised:\n{fullpath}\n{output_path}"
+        outpath = output_path
+    print(f"Fullpath {fullpath} - Output path {outpath}")
+    print(f"Received DAR {dar} PAR {par} H {height} W {width}")
 
     ffmpeg_call = [
         "ffmpeg",
@@ -189,7 +191,7 @@ def run(ffmpeg_command) -> str:
     shell=False because you're inputting a list
     '''
     try:
-        data = subprocess.run(ffmpeg_command, shell=False, check=True, universal_newlines=True, stderr=subprocess.PIPE).stderr
+        data = subprocess.run(ffmpeg_command, shell=False, capture_output=True, text=True)
         return data
     except subprocess.CalledProcessError as err:
         print(f"Subprocess failed to process command:\n{err}")
@@ -220,6 +222,8 @@ def seconds_clash(time_ranges, seconds) -> bool:
     Create range and check for seconds within
     if clash found return True
     '''
+    if not isinstance(seconds, int):
+        seconds = int(seconds)
 
     for item in time_ranges:
         start, end = item.split(" - ")
@@ -229,3 +233,31 @@ def seconds_clash(time_ranges, seconds) -> bool:
             print(f"Clash {seconds}: {item}")
             return True
 
+
+def validate_transcode(fpath) -> str:
+    '''
+    Supply full file path for validating
+    '''
+    if not os.path.exists(fpath):
+        return f"File path does not exists, please check and retry."
+
+    # Check FFprobe can read file
+    cmd = ['ffprobe', '-i', fpath, '-loglevel', '-8']
+    check = subprocess.run(cmd, shell=False)
+    if check.returncode != 0:
+        return f"Error! File could not be read by FFprobe."
+
+    # Check the transcode completed, not truncated    
+    cmd = ['mediainfo', '--Output=General;%Duration%', fpath]
+    check = subprocess.run(cmd, shell=False, capture_output=True, text=True)
+    if len(check.stderr) == 0:
+        return f"Error! File duration is absent. File possibly truncated."
+
+    # Check the transcode passes the MediaConch policy    
+    cmd = ['mediaconch', '-p', 'basic_mp4_policy.xml', fpath]
+    pass_fail = subprocess.run(cmd, shell=False, capture_output=True, text=True)
+    if pass_fail.stdout.startswith(f'pass! {fpath}'):
+        return f"File passed FFrobe check, file is whole and MediaConch policy:\n{pass_fail.stdout}"
+    else:
+        return f"File passed FFprobe check, but failed Mediaconch policy:\n{pass_fail.stdout}"
+    

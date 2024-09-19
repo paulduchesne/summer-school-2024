@@ -346,9 +346,13 @@ Software `Meld` allow comparison of FrameMD5s, highlighting where differences oc
 
 FFmpeg also provide a FrameCRC tool which is similar to FrameMD5.  
 
-The BFI had problems with our lossless FrameMD5 verification recently for V210 movs being transcoded from FFV1 Matroska files. We had to call on some help from Dave Rice and the problem and solution is detailed in my blog entry [The Case of the Failing FrameMD5](https://digitensions.home.blog/2021/06/08/python-ffv1-to-v210-transcoding-script-using-ffmpeg/)
-???
-tldr, V210 movs captured with Black Magic technology were not respecting the Apple spec that no data is written to borders around the video image. Transcode to FFV1 preserved this lossless data, but reconversion back to V210 meant FFmpeg correctly compressed these regions in line with Apple spec, so the FrameMD5 was failing between lossy edges of V210 and lossless edges of FFV1. Solution, LUT cropping of the frames of both files to only supply the central section of image for framemd5 comparison.
+---
+class: contentpage
+### **2.5 FFmpeg framemd5**
+
+The BFI had problems with our lossless FrameMD5 verification for V210 movs being transcoded from FFV1 Matroska files. We had to call on some help from Dave Rice and the problem and solution is detailed in my blog entry [The Case of the Failing FrameMD5](https://digitensions.home.blog/2021/06/08/python-ffv1-to-v210-transcoding-script-using-ffmpeg/)
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-17 at 19.48.33.png" width="1030">]
 
 ---
 class: contentpage

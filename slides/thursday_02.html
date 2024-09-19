@@ -16,26 +16,399 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Calling FFmpeg in Python with subprocess
-2. Running tests of commands from metadata sources
-3. Multithreading, bash parallelisation GNU parallels  
+1. Building FFmpeg workflows in Python  
+  1.1 PyPi packages: ffmpeg-python  
+  1.2 Subprocess module  
+  1.3 Metadata triggers for FFmpeg commands  
+  1.4 Validating your files  
+  1.5 Capturing and using filter data  
+  
+2. FFmpeg multithreading and parallelisation   
+  2.1 Multithreading  
+  2.2 Multiprocessing  
+  2.3 GNU Parallel multiprocessing  
+  2.4 Python multiprocessing  
+
+ 
+---
+class: contentpage
+### **1. Building FFmpeg workflows in Python**
+
+Combining Python and FFmpeg is merging two of the most powerful tool available to AV digital preservation  
+
+.centre[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/logos_combined.png" width="1000">]
+
+With great power come great responsibility!
+
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/pypi_ffmpeg.png" width="840">]
 
 
 ---
-Add section in here that shows how you call FFmpeg commands from Python.
-Building on Paul's examples of metadata being captures.
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
 
-FFmpeg command broken up into list components and selected in a function so ffmpeg commands are adaptable.
+Configure your Python environment for safe pip installation, and load up a Python REPL  
+```sh
+pip install ffmpeg-python
+python3
+```
+Use the software to run a horizontal flip of a File
+```python3
+import ffmpeg
+stream = ffmpeg.input('input.mp4')
+stream = ffmpeg.hflip(stream)
+stream = ffmpeg.output(stream, 'output.mp4')
+ffmpeg.run(stream)
+```
 
-Then move onto capturing console outputs - specifically the blackdetect time codes, convert to dictionary
-and use the dictionary to guide/avoid timecodes.
+Or put together the command:
+```python3
+(
+    ffmpeg
+    .input('input.mp4')
+    .hflip()
+    .output('output.mp4')
+    .run()
+)
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+Using the example from the official [FFmpeg Python Github](https://github.com/kkroening/ffmpeg-python) for this package you can see it's possible to build some sophisticated commands:
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 22.18.12.png" width="800">]
+
+The FFmpeg command for this:
+
+```sh
+ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_frame=20[v0];\
+    [0]trim=start_frame=30:end_frame=40[v1];[v0][v1]concat=n=2[v2];[1]hflip[v3];\
+    [v2][v3]overlay=eof_action=repeat[v4];[v4]drawbox=50:50:120:120:red:t=5[v5]"\
+    -map [v5] output.mp4
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+The complex FFmpeg layout becomes more clear to read in a Pythonic way.
+
+```python3
+import ffmpeg
+
+in_file = ffmpeg.input('input.mp4')
+overlay_file = ffmpeg.input('overlay.png')
+(
+    ffmpeg
+    .concat(
+        in_file.trim(start_frame=10, end_frame=20),
+        in_file.trim(start_frame=30, end_frame=40),
+    )
+    .overlay(overlay_file.hflip())
+    .drawbox(50, 50, 120, 120, color='red', thickness=5)
+    .output('out.mp4')
+    .run()
+)
+```
+
+```sh
+ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_frame=20[v0];\
+    [0]trim=start_frame=30:end_frame=40[v1];[v0][v1]concat=n=2[v2];[1]hflip[v3];\
+    [v2][v3]overlay=eof_action=repeat[v4];[v4]drawbox=50:50:120:120:red:t=5[v5]"\
+    -map [v5] output.mp4
+```
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+There's also great reporting using this package to retrieve file metadata:
+```python3
+result = ffmpeg.probe('input.mov')
+print(result)
+```
+You are returned with a formatted Python dictionary containing all your metadata. To get this data for, say the duration of the file:
+
+```python3
+duration = result.get('format', {}).get('duration', None)
+print(duration)
+```
+
+The response returns 'streams' and 'format' dictionary keys, containing stream metadata for the video and audio, and format information that along with 'duration' includes:
+- filename
+- format_name
+- start_time
+- size
+- bit_rate
+- probe_score
+- tags
+
+---
+class: contentpage
+### **1.2 Subprocess module**
+
+Python's subprocess module allows you to spawn new processes and connect with the stdin, stdout and strerr pipes. Where possible it's suggested you shuold use the `run()` function. The accepted arguments include:    
+
+```python3
+subprocess.run(args, *, stdin=None, input=None, stdout=None, stderr=None,\
+                capture_output=False, shell=False, cwd=None, timeout=None, check=False,\
+                encoding=None, errors=None, text=None, env=None, universal_newlines=None,\
+                **other_popen_kwargs)
+```
+
+When you run this code `subprocess` will carry out the `args` as your command. If this is a list, you will need to include `shell=False`. But if you supply a string of your ffmpeg command you can set `shell=True`
+
+```python3
+result = subprocess.run('ffmpeg -i input.mov output.mp4', shell=True)
+result = subprocess.run(['ffmpeg', '-i', 'input.mov', 'output.mp4'], shell=False)
+```
+
+<font color="red">Warning!</font> It is not recommended to use `shell=True`, as code can be vulnerable to [shell injection threats](https://docs.python.org/3/library/subprocess.html#security-considerations). If the command includes user inputs then users may inject commands to run that could compromise a system. 
+
+---
+class: contentpage
+### **1.2 Subprocess module**
+
+`subprocess.run()` can also be used to capture results of FFprobe metadata queries
+```python3
+response = subprocess.run(
+  [
+    'ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
+    'stream=bit_rate', '-of', 'default=noprint_wrappers=1', 'input.mov'
+  ],
+  shell=False,
+  capture_output=True,
+  text=True
+)
+```
+The FFrobe command is supplied as a list of strings, follow by subprocess argument `shell=False`, `capture_output=True` to ensure the response is captured and `text=True` ensures it's formatted as text and not bytes. It returns a 'CompletedProcess' class that allows the data to be viewed with these commands:
+
+```python3
+response.args
+response.stdout
+response.stderr
+response.returncode
+```
+---
+class: contentpage
+### **1.2 Subprocess module**
+
+Subprocess works for any open-source tool you call from the command line, like MediaInfo:
+
+```python
+duration = subprocess.run(
+  [
+    'mediainfo', '-i', '--Output=Video;%Format%', 'input.mkv'
+  ],
+  shell=False,
+  capture_output=True,
+  text=True
+)
+```
+When you isolate specific metadata like width and height, you can start using it in the code to calculate display aspect ratios:
+
+```python3
+width = subprocess.run(['mediainfo', '-i', '--Output=Video;%Width%', 'input.mkv'], shell=False, capture_output=True, text=True)
+height = subprocess.run(['mediainfo', '-i', '--Output=Video;%Height%', 'input.mkv'], shell=False, capture_output=True, text=True)
+
+if "1.777" in str(int(width.stdout) / int(height.stdout)):
+    aspect = '16x9'
+```
+
+---
+class: contentpage
+### **1.3 Metadata triggers for FFmpeg commands**
+
+Using `ffmpeg-python` package we can retrieve colour information for a lossless video transcode and map into the FFmpeg command:
+
+```python3
+import ffmpeg
+
+metadata = ffmpeg.probe('input.mkv')
+cspace = metadata['streams'][0].get('color_space', '')
+ctransfer = metadata['streams'][0].get('color_transfer', '')
+cprimaries = metadata['streams'][0].get('color_primaries', '')
+pformat = metadata['streams'][0].get('pix_fmt', '')
+
+command = [
+  'ffmpeg', '-i', 'input.mkv', '-c:v', 'v210', '-pix_fmt', pformat,
+  '-color_primaries', cprimaries, '-color_trc', ctransfer,
+  '-colorspace', cspace, '-c:a', 'copy', '-map', '0', 'output.mov'
+]
+
+encode = subprocess.run(command, shell=False, capture_output=True, text=True)
+if encode.returncode != 0:
+    # Problem encoding file
+    print(encode.stderr)
+```
+---
+class: contentpage
+### **1.3 Metadata triggers for FFmpeg commands**
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-18 at 20.18.58.png" width="710">]
+
+---
+class: contentpage
+### **1.3 Metadata triggers for FFmpeg commands**
+
+<font color="orange">Practise:</font> Open a Python REPL in your repository folder `thursday_scripts`. Import command_builder.py and run functions below. You will need a input file path and output folder or file path to test the encoding command.
+```python
+python3
+import command_builder as cb
+
+# Experiment with width, height, DAR, PAR possibilities to see the commands that are returned
+command = cb.create('input.mov', 'output.mov', '1920', '1080', '16x9', '16x9')
+print(command)
+```
+Use the `command` variable and paste into the next function:
+```python
+success = cb.run(command)
+print(success)
+```
+
+Hang on to this `success` variable for our next practise
+---
+class: contentpage
+### **1.4 Validating your files!**
+
+You can call MediaConch to validate a transcode file straight after encoding to check the file is healthy:
+```python
+cmd = ['mediaconch', '-p', 'ffv1_policy.xml', 'input.mkv']
+validated = subprocess.run(cmd, shell=False, capture_output=True, text=True)
+if validated.stdout.startswith('pass!'):
+    # passed!
+```
+
+FFrobe will give a very basic true/false response for an AV file's health:
+```python
+cmd = ['ffprobe', '-i', fpath, '-loglevel', '-8']
+check = subprocess.run(cmd, shell=False)
+if check.returncode != 0:
+    # Problem reading file
+```
+
+Sometimes a file can seem fine but the transcode was interrupted and no duration exists:
+```python
+cmd = ['mediainfo', '--Output=General;%Duration%', fpath]
+check = subprocess.run(cmd, shell=False, capture_output=True, text=True)
+if len(check.stderr) == 0:
+    # File may be truncated!
+```
+---
+class: contentpage
+### **1.4 Validating your files!**
+
+The basic MediaConch polocy 
+
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-19 at 17.21.35.png" width="1000">]
+
+<font color="orange">Practise:</font> Check the transcode from your last encoding against this policy in the `validate_transcode` function of `command_builder.py`. The function returns a success or error string
+
+```python3
+success = cb.validate_transcode(outpath)
+print(success)
+```
 
 
 
 
+---
+class: contentpage
+### **1.5 Capturing and using filter data**
 
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/blackdetect.gif" width="1000">]
 
+The console logs show the blackdetect filter data captured as and when encountered in the encoding:
 
+```sh
+[blackdetect @ 0x13a808be0] black_start:196.24 black_end:207.28 black_duration:11.04
+[blackdetect @ 0x13a808be0] black_start:369.84 black_end:374.84 black_duration:5 
+[blackdetect @ 0x13a808be0] black_start:493.2 black_end:498.08 black_duration:4.88
+```
+
+---
+class: contentpage
+### **1.5 Capturing and using filter data**
+
+This function converts the blackdetect data into a useable list of seconds:  
+
+```python3
+def get_blackspace_list(data) -> list:
+    '''
+    Return a list of start-end timings
+    '''
+    data_list = data.splitlines()
+    time_range = []
+    for line in data_list:
+        if 'black_start' in line:
+            split_line = line.split(":")
+            split_start = split_line[1].split('.')[0]
+            start = re.sub("[^0-9]", "", split_start)
+            split_end = split_line[2].split('.')[0]
+            end = re.sub("[^0-9]", "", split_end)
+            end = str(int(end) + 1)
+            time_range.append(f"{start} - {end}")
+    return time_range
+```
+`[blackdetect @ 0x13a808be0] black_start:196.24 black_end:207.28 black_duration:11.04`  
+`['196 - 208', '369 - 375', '493 - 499']`
+
+---
+class: contentpage
+### **1.5 Capturing and using filter data**
+
+The time_range list can now be checked for clashes with potential thumbnail frames:
+
+```python3
+def seconds_clash(time_ranges, second) -> bool:
+    '''
+    Create range and check for second within
+    if clash found return True
+    '''
+    if not isinstance(second, int):
+        second = int(second)
+
+    for item in time_ranges:
+        start, end = item.split(" - ")
+        st = int(start) - 1
+        ed = int(end) + 1
+        if second in range(st, ed):
+            print(f"Clash {second}: {item}")
+            return True
+```
+
+The seconds argument needs to be supplied as an integer for use with `range()` but the `isinstance()` can ensure this is fixed if a string is passed. A True bool is returned if a match is made, otherwise the function will return a False.
+
+---
+class: contentpage
+### **1.5 Capturing and using filter data**
+
+<font color="orange">Practise:</font> Return to your REPL and using your `success` variable call `cb.get_black_space` to create your  `time_list`. Then pass time_list into `cb.seconds_clash` and see if you receive a True or False
+```python
+import command_builder as cb
+
+# Experiment with width, height, DAR, PAR possibilities to see the commands that are returned
+time_list = cb.get_blackspace_list(success.stdout)
+print(time_list)
+clash = cb.seconds_clash(time_list, '200')
+print(f"Does this clash? {clash}")
+```
+
+NOTE: Check your `success` output is in the `stdout` argument returned from `subprocess.CompletedProcess`, sometimes I find it in `stderr` even though the `returncode` is 0
+---
+class: contentpage
+### **1.5 Capturing and using filter data**
+
+In case you are interested in making animated GIFs from your videos, here's the command I used:
+```sh
+ffmpeg -ss 2 -t 12 -i 'input.mov'
+-vf "fps=10,scale=1000:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" 
+-loop 0 trimmed_animated.gif
+```
+---
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
     <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
