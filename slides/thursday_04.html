@@ -298,36 +298,357 @@ It does however introduce extra complexity to your scripts, so should only be us
 
 ---
 class: contentpage
-### **1. Multiprocessing with Python**
+### **2. Logging with Python**
+
+
+
+Logging is an important feature when we build a complex pipeline and something goes wrong, or if we want to check up on where a process is up to!
+
+Python has an inbuilt `logging` library! 
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+Logging is quite similar to "print" statements, but intended to report activity that can be consulted later, whereas print statements are ephemeral.
+
+It is also extremely useful if you ever get asked the questions: when did you exactly transcode that file? How long did it take? What was the output?
 
 
 
 
 
-~
-
-Logging is an important feature when we build a complex pipeline and something goes wrong, or we even want to check up on where systems are at.
-
-Python has an inbuilt logging feature which is quite similar to the "print" statements, but intended to report activity. Another difference is they are written to disk, whereas print statements are "ephemeral".
-
-Logging is extremely useful if you ever get asked the questions: when did you exactly transcode that file? How long did it take? What was the output?
-
-LOGGING examples.
 
 
+---
+class: contentpage
+### **2. Logging with Python**
 
-TODO small logging example
+We can do all kinds of experiments with logging, but for now we are just going to apply it to our multiprocessing hashing example.
 
-TODO then add logging to previous example
+Note that logging has a built-in five levels of severity: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+
+An example of debug logs would be "this variable equaled this value", while an error would be something like the `raise Exceptions` we saw earlier.
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+The simplest example of logging is something like:
+
+```python
+import logging
+
+logging.info('hello')
+```
+
+Note this will not print anything.
 
 
-~
+---
+class: contentpage
+### **2. Logging with Python**
 
-Containerisation refers to the process of encapusltaing an enviroment to ensure that systems run predictably. Why would you do this? Quite simply because every computer in the world, once it has been used for a sginicant period of time, becomes its own enviroemnt, Files sit in different locations, applications are installed or removed, etc. There are also inherent differences we have seen on different applications.
+We can configure to write to a file, and formatting the logs like this
 
-Docker is uniqiiouts in this space, but Podman also has some benefits around security considerations.
+```python
+import logging
 
-CONATINER example.
+logger = logging.getLogger()
+file_handler = logging.FileHandler('app3.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+logger.error("There is an error!")
+```
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+
+Now for our practical, can we add this to our previous hashing example!
+
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+Solution!
+
+```python
+import hashlib
+import logging
+import multiprocessing
+import pathlib
+import time
+
+def my_process(file_name):
+    logging.info(f'{file_name} started.')
+    with open(file_name, 'rb') as f:  
+        file_content = f.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+    logging.info(f'{file_name} finished.')
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('xxx2.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+if __name__ == "__main__":
+    files = pathlib.Path.cwd() / 'media'
+    files = [x for x in files.iterdir()]
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+```
+
+
+---
+class: tangentpage
+### **Tangent: F-Strings**
+
+In the previous example you may have noticed that I was embedding variables into strings like this `f'{file} started'`.
+
+f-string are a relatively new addition to make embedding variables into string easier, around since Python 3.6.
+
+Older methods would have been:
+
+```python
+apple_colour = "green"
+print('I like', apple_colour, 'apples a lot.')
+```
+
+
+```python
+apple_colour = "green"
+print('I like %s apples a lot.' % apple_colour)
+```
+
+But the new amazing recommended way is 
+
+```python
+apple_colour = "green"
+print(f'I like {apple_colour} apples a lot.')
+```
+
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+Containerisation refers to the process of encapsulating an environment to ensure that systems run predictably. 
+
+Why would you do this? Quite simply because every computer in the world, once it has been used for a significant period of time, becomes its own environment. 
+Files sit in different locations, applications are installed or removed, etc. 
+There are also inherent differences we have seen in different software versions, different operating systems, differences, differences, differences.
+
+Containerisation is about building a fully predictable computing environment. 
+On our own computers. 
+Amazing!
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+Containerisation is also useful if you want a build a system which requires installing a lot of smaller applciations, and configuration (as we have done in this course) and you want it to deploy predictably.
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+Docker is ubiquitous in this space. 
+
+Podman has some benefits around security considerations, so may be more attractive to your IT team.
+
+Test docker is installed.
+
+```sh
+docker --version
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+Then we need to create a cool script. This doesn't have to be Python, but we have been doing so much work with Python so far seems good to stick with.
+
+Here is a simple script which calls the NFSA collection API and prints out a JSON file.
+
+```python
+import requests
+result = requests.get('https://api.collection.nfsa.gov.au/title/331321')
+print(result.status_code)
+print(result.text)
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+
+A core component of working with Docker is the idea of the Dockerfile. 
+
+We can think of this exactly the same as a cooking recipe.
+
+Here is an example - don't worry if it looks unfamiliar, this is special docker syntax!
+
+```docker
+FROM python:3.11
+
+ADD nfsa_api_script.py .
+
+RUN pip install requests
+
+CMD python ./nfsa_api_script.py
+```
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+We now `build` the container. This means that all the setup required from the Dockerfile is run, but the process itself is not.
+
+What we are doing here is essentially "cooking" a custom computer which is based on a "python" image.
+
+```sh
+docker build -t my_python_container -f dockerfile .
+```
+
+This will take a bit!
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+Once completed you can run 
+
+```sh
+docker images
+```
+
+And you will see all of the "docker images". Note these are not running, they are frozen state computational enviroments.
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+If we want to actually run the image, ie boot up the computer we have created, we run
+
+```sh
+docker run my_python_container
+``
+
+And we should see API output.
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+Okay, but so what? What have we gained from running it locally as a Python script?
+
+Well, this is where it gets cool!
+
+Run
+
+```sh
+docker run -e MYSQL_ROOT_PASSWORD=mypass -p 3306:3306 mariadb
+```
+
+You are now running the popular MariaDB database on your computer without having to go through any manual steps.
+
+---
+class: contentpage
+### **3. Containerisation**
+
+If you open a different window (nto closing the first) you can run
+
+```sh
+docker ps
+```
+
+and you will see the maria db container running.
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+You can also log into it, and have a look around!
+
+```
+docker exec -it mariadbtest /bin/bash
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+One last example, say we can also install whole operating systems through doccker, and then install tools on top
+
+Here is a new docker file which uses Ubuntu, popular Linux distro, and installs FFmpeg
+
+
+```docker
+FROM ubuntu:22.04
+
+RUN apt update  
+
+RUN apt-get install -y ffmpeg
+```
+
+
+docker build -t ffmpeg_docker -f dockerfile . 
+
+docker images
+
+docker run -t -d ffmpeg_docker
+
+docker ps
+
+docker exec -it ffmpeg_docker /bin/bash
+
+
+
+There is loads of cool things you can do with Docker, hopefully this has been inspiring!
+
+
+
 
 
 ~
