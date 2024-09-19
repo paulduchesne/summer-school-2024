@@ -93,7 +93,7 @@ Organises the data for synchronised playback | Can reduce stream size while main
 class: contentpage
 ### **1 FFmpeg video encoding**
 
-FFmpeg commands generally consist of a '-flag' and a following value. They usually, but not alwasy, are placed between the input file and the output file in the command line  
+FFmpeg commands generally consist of a '-flag' and a following value. They usually, but not always, are placed between the input file and the output file in the command line  
 
 ```
  flag / argument        | Description                                                      
@@ -132,7 +132,7 @@ The opening contents of a FFmpeg Log:
 The `demux - decoding - encoding - mux` order can be useful when reading the second section of logs:
 - To find errors fast don't read from the top-down, read from the bottom-upward!
 - Look for the word 'Error'. 'Warnings' generally don't break a process but indicate something isn't ideal  
-- The logs are colour coded and errors tend to show up in red  
+- The logs are colour coded and errors tend to show up in <font color="red">red</font>  
 - Check the syntax in your command first as errors are mostly caused by us (eg, missing '-i')
 - Search for difficult error messages online or with LLMs - most problems have already been discussed on 
   sites like `Stackoverflow` or the `FFmpeg user forum` and solutions are waiting for you there!

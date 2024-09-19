@@ -40,7 +40,7 @@ def create(fpath) -> str:
         ]
 
         try:
-            data = subprocess.run(ffmpeg_call, shell=False, check=True, universal_newlines=True, stderr=subprocess.PIPE).stderr
+            data = subprocess.run(ffmpeg_call, shell=False, capture_output=True, text=True)
             return data
         except subprocess.CalledProcessError as err:
             return f"Subprocess failed to process command:\n{err}"
@@ -68,7 +68,7 @@ def main():
 
     with Pool() as p:
         response = p.map(create, file_list)
-        print(response)
+        print(f"Response code for encoding: {response.returncode}")
         p.close()
 
 
