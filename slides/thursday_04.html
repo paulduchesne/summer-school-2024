@@ -221,7 +221,7 @@ print(datetime.datetime.now())
 class: contentpage
 ### **1. Multiprocessing with Python**
 
-Solutions!
+PAGE INTENTIONALLY BLANK
 
 
 
@@ -292,7 +292,7 @@ class: contentpage
 
 
 Multiprocessing is extremely useful if you have "expensive" operations (like hashing!) which are causing you to wait for your script to finish. 
-It does however introduce extra complexity to your scripts, so should only be used if requried.
+It does however introduce extra complexity to your scripts, so should only be used if required.
 
 
 
@@ -330,7 +330,7 @@ We can do all kinds of experiments with logging, but for now we are just going t
 
 Note that logging has a built-in five levels of severity: DEBUG, INFO, WARNING, ERROR, CRITICAL.
 
-An example of debug logs would be "this variable equaled this value", while an error would be something like the `raise Exceptions` we saw earlier.
+An example of debug logs would be "this variable equalled this value", while an error would be something like the `raise Exceptions` we saw earlier.
 
 ---
 class: contentpage
@@ -344,7 +344,7 @@ import logging
 logging.info('hello')
 ```
 
-Note this will not print anything.
+Note that this will not print anything.
 
 
 ---
@@ -467,7 +467,7 @@ Amazing!
 class: contentpage
 ### **3. Containerisation**
 
-Containerisation is also useful if you want a build a system which requires installing a lot of smaller applciations, and configuration (as we have done in this course) and you want it to deploy predictably.
+Containerisation is also useful if you want a build a system which requires installing a lot of smaller applications, and configuration (as we have done in this course) and you want it to deploy predictably.
 
 
 ---
@@ -480,7 +480,7 @@ Docker is ubiquitous in this space.
 
 Podman has some benefits around security considerations, so may be more attractive to your IT team.
 
-Test docker is installed.
+Test Docker is installed.
 
 ```sh
 docker --version
@@ -533,7 +533,7 @@ class: contentpage
 ### **3. Containerisation**
 
 
-We now `build` the container. This means that all the setup required from the Dockerfile is run, but the process itself is not.
+We can now `build` the container. This means that all the setup required from the Dockerfile is run, but the process itself is not.
 
 What we are doing here is essentially "cooking" a custom computer which is based on a "python" image.
 
@@ -555,7 +555,9 @@ Once completed you can run
 docker images
 ```
 
-And you will see all of the "docker images". Note these are not running, they are frozen state computational enviroments.
+
+And you will see all the "docker images". Note these are not running, they are frozen state computational environments.
+
 
 
 
@@ -563,7 +565,7 @@ And you will see all of the "docker images". Note these are not running, they ar
 class: contentpage
 ### **3. Containerisation**
 
-If we want to actually run the image, ie boot up the computer we have created, we run
+If we want to actually run the image, i.e. boot up the computer we have created, we run
 
 ```sh
 docker run my_python_container
@@ -594,14 +596,13 @@ You are now running the popular MariaDB database on your computer without having
 class: contentpage
 ### **3. Containerisation**
 
-If you open a different window (nto closing the first) you can run
+If you open a different window (not closing the first) you can run
 
 ```sh
 docker ps
 ```
 
-and you will see the maria db container running.
-
+And you will see the MariaDB container running.
 
 
 ---
@@ -619,9 +620,9 @@ docker exec -it mariadbtest /bin/bash
 class: contentpage
 ### **3. Containerisation**
 
-One last example, say we can also install whole operating systems through doccker, and then install tools on top
+One last example, say we can also install whole operating systems through Docker, and then install tools on top
 
-Here is a new docker file which uses Ubuntu, a popular Linux distro, and installs FFmpeg
+Here is a new Dockerfile which uses Ubuntu, a popular Linux distro, and installs FFmpeg
 
 
 ```docker
@@ -642,7 +643,7 @@ We now build a new docker image using this docker file
 docker build -t ffmpeg_docker -f dockerfile . 
 ```
 
-Once this is complete we can see the new image available to us.
+Once this is complete, we can see the new image available to us.
 
 
 ```sh
@@ -659,17 +660,16 @@ See it running
 docker ps
 ```
 
-And log into it and run ffmpeg commands
+And log into it and run FFmpeg commands
 ```sh
 docker exec -it ffmpeg_docker /bin/bash
 ```
 
 
-There is loads of cool things you can do with Docker, hopefully this has been inspiring!
 
-Docker is useful if you want to deploy complex applications (say you are trying to deploy a system which needs a database, an API and a user interface), if you want to ensure that systems behave predicatbly, or if you want to deploy other people's systems with minimal manual install steps.
+There are loads of cool things you can do with Docker, hopefully this has been inspiring!
 
-
+Docker is useful if you want to deploy complex applications (say you are trying to deploy a system which needs a database, an API and a user interface), if you want to ensure that systems behave predictably, or if you want to deploy systems with minimal manual installation steps.
 
 
 
@@ -687,7 +687,9 @@ Once you scale up to fifty or a hundred distinct processes this can be hard to m
 
 What we need then is a system to manage all of our processes, which is generally called an "orchestrator". 
 
-This is an ineteresing subject as I believe Joanna and I are both at the point where our own processes have only recently reached this moment, so these tools are new for us as well.
+
+This is an interesting subject, as I believe Joanna and I are both at the point where our own processes have only recently reached this moment, so these tools are new for us as well.
+
 
 ---
 class: contentpage
@@ -695,9 +697,9 @@ class: contentpage
 
 The most popular of these tools is Apache Airflow, a complex system which we are going to use Docker to set up quickly!
 
-Lets curl the "docker compose" file. What is docker compose? 
+Let's `curl` the "docker compose" file. What is docker compose? 
 
-In the last example we were building and deploying single containers, docker compose lets us define mulitple containers in one configuration document.
+In the last example we were building and deploying single containers, docker compose lets us define multiple containers in one configuration document.
 
 ```sh
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.1/docker-compose.yaml'
@@ -727,17 +729,19 @@ Start the system
 docker compose up
 ```
 
+
 This should now be running and accessible through the browser.
 
 Before we have a look at the user interface, worth considering what is actually happening here.
 
-Docker containers are running a moderatly complex of services which ultimatley run processes or workflows defined in Python.
+Docker containers are running a moderately complex of services which ultimately run processes or workflows defined in Python.
 
-Generally speaking there is a single python script per DAG, which defines the recipe of processes we want to perform.
+Generally speaking, there is a single python script per DAG, which defines the recipe of processes we want to perform.
 
 We can click into the DAG and see individual tasks, these are all simply functions in a single Python script.
 
 We have options for inputs, and whether it is scheduled on a timer, or by a "sensor" or we start them manually.
+
 
 
 ---
