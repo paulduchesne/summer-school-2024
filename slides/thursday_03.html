@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,23 +12,23 @@
 class: center, middle, titlepage
 ### THU03: *Scaling Digital Preservation Workflows*
 
-???
-Quick overview of scalability challenges, and importance of automation and efficient workflows. File sizes, volume of data, efficient validation checking without 'carbon' errors, efficiency with CPUs/servers, keeping storage empty.
 ---
 class: contentpage
 ### **Agenda**
       
 1. Scheduling Tools  
- 1.1 Cron jobs (Unix)   
+ 1.1 Unix Cron   
  1.2 Windows Task Scheduler   
+
 2. Environmental variables   
- 2.1 Reasons for using them  
- 2.2 Setting them in Unix/Windows  
- 2.3 Accessing them in code  
+ 2.1 Setting them in Unix/Windows  
+ 2.2 Accessing them in code  
+
 3. Elasticsearch and MySQL connections  
  3.1 Elasticsearch Indexing, searching documents     
  3.2 Connecting to MySQL databases  
- 3.3 Search and retrieval with sqlite3  
+ 3.3 Search and retrieval with sqlite3 
+
 4. Expanding workflows with APIs   
  4.1 RESTful API basics  
  4.2 Requests library  
@@ -36,12 +37,221 @@ class: contentpage
     
 ---
 class: contentpage
-### **Scheduling Tools**
+### **1. Scheduling Tools**
 
+Script scheduling involves automating the execution of scripts or programs at predetermined times or intervals. This is crucial for:  
+- Routine maintenance tasks
+- Automated backups
+- Periodic data processing
+- Recurring reports generation
 
+Key components of script scheduling include the scheduling mechanism, exectution parameters and the script, programme or command.
 
+```sh
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+#
+```
+---
+class: contentpage
+### **1.1 Unix Cron**
 
+Cron is the standard Unix scheduler for Mac and Linux. It uses crontab files to manage schedules, structing the timing parameters: `Minute Hour Day Month DayOfWeek Command`  
 
+```sh
+# MIN    HR    DAY  MTH  DAY/WK  USR   FLOCK LOCK DETAILS                                         COMMAND
+ */15    *     *    *    *       root  /usr/bin/flock -w 0 --verbose /var/run/dpx_rawcook.lock    ${DPX_SCRIPTS}qnap/dpx_rawcook.sh
+```
+This example runs a shell script for automated DPX encoding every 15 minutes. The Linux Flock lock flock can help prevent multiple instances of a script from running concurrently, essential for maintaining system stability and data integrity.
+
+Advanced cron features include:     
+- Reboot tasks at system startup using `@reboot` prefix
+- Environment variable setting by adding $PATH information into cron
+- Log redirection to capture stdout/stderr `>> /path/to/logfile 2>&1`
+
+To launch a cron editing session you can call one of the following:
+- `crontab -e` opens a user's crontab editing. All users including root user can schedule scripts here
+- `/etc/crontab/` is a system wide crontab intended for system scheduling purposes
+
+---
+class: contentpage
+### **1.1 Unix Cron**
+
+```sh
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields.
+
+# MIN    HR    DAY  MTH  DAY/WK  USR   FLOCK LOCK DETAILS                                             COMMAND
+ */15    *     *    *    *       root  /usr/bin/flock -w 0 --verbose /var/run/dpx_rawcook.lock       ${DPX_SCRIPTS}qnap/dpx_rawcook.sh
+ 0       */4   *    *    *       root  /usr/bin/flock -w 0 --verbose /var/run/dpx_post_rawcook.lock  ${DPX_SCRIPTS}qnap/dpx_post_rawcook.sh
+ 30      */4   *    *    *       root  /usr/bin/flock -w 0 --verbose /var/run/dpx_check_script.lock  ${DPX_SCRIPTS}qnap/dpx_check_script.sh
+ 0       20    *    *    5       root  ${PY3_ENV}  ${DPX_SCRIPTS}qnap/dpx_part_whole_move.py > /tmp/python_cron.log 2>&1
+ */5     *     *    *    *       root  ${CODE}flock_rebuild.sh
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+```
+---
+class: contentpage
+### **1.1 Unix Cron**
+
+When cron jobs fail it can be hard to identify the cause of the problem.
+- Syntax error somewhere in a schedule line
+- Incorrect numbers in designated column (ie, 8, or 9 in a day of the week)
+- Unknown user or mistyped user name
+- Insufficient user permissions for the command
+
+When the crontab fails to run it can take some time to understand what the problems is:
+- Restart crontab after making challenges
+  ```sh
+  sudo systemctl restart cron
+  ```
+- Check the logs
+  ```sh
+  /var/log/cron (CentOS)  /var/log/syslog (Ubuntu or Debian)
+  ```
+- Run CronitorCLI software which includes shell command to test run any job emulating cron, with debugging
+  ```sh
+  cronitor select
+  ```
+---
+class: contentpage
+### **1.2 Windows Task Scheduler**
+
+The Windows Task Scheduler is the equivalent to cron.  
+
+Graphical interface for creating and managing scheduled tasks, which can also be managed via the command line (schtasks)
+
+You can launch the Task Scheduler GUI from `CMD.exe` or `Powershell` by typing:
+```sh
+taskschd.msc
+```
+
+The Task scheduler offers hey features:
+- Flexible scheduling options (daily, weekly, monthly, etc.)
+- Ability to set conditions (e.g., run only when idle)
+- Can run scripts, programs, or send emails
+
+Example schtasks command:
+```sh
+schtasks /create /tn "Backup daily" /tr C:\scripts\backup.bat /sc daily /st 12:00
+```
+This command creates a task named "Daily Backup" that runs backup.bat daily at 12:00 Noon  
+
+---
+class: contentpage
+### **2. Environmental variables**
+
+Environment variables are dynamic values that can affect the behavior of running processes on a computer. They are part of the environment in which a process runs and are typically used for:  
+- Store configuration settings 
+- Manage system-wide settings
+- Pass information between processes
+- Enhancing security by keeping sensitive data out of code
+- Facilitate cross-environment development
+
+Advantages when using them in your code:  
+
+- If dynamic content changes they can change application behaviour without modifying the code itself
+- They store sensitive information (like API keys) keeping them invisible in repositories
+- The same variable name can be allocated across environments, but contain different information like paths
+- Useful to help anage different settings for development, testing, and production
+- They help with cross-platform code compatibility when storing OS specific data
+
+---
+class: contentpage
+### **2.1 Setting environmental variables in Windows**
+
+Create a temporary environmental variable for current session only.  
+In Command Prompt then Powershell:  
+```sh
+set MY_VARIABLE=my_value
+$env:MY_VARIABLE = "my_value"
+```
+Permanent for the logged in user.  
+Using Command Prompt then Powershell:  
+```sh
+setx MY_VARIABLE "my_value"
+[System.Environment]::SetEnvironmentVariable("MY_VARIABLE", "my_value", "User")
+```
+System-wide using PowerShell run as Administrator:
+```sh
+[System.Environment]::SetEnvironmentVariable("MY_VARIABLE", "my_value", "Machine")
+```
+---
+class: contentpage
+### **2.1 Setting environmental variables in Unix**
+
+You can create temporary, permanent and system wide environmental variables.
+Temporary variable to be used only in your current session:
+```sh
+export MY_VARIABLE="my_value"
+```
+Permanent for a specific user creating the variable. Depending on the shell being used you would add this to ~/.bashrc, ~/.bash_profile, or ~/.zshrc:
+```sh
+echo 'export MY_VARIABLE="my_value"' >> ~/.bashrc
+source ~/.bashrc
+```
+Or to add them system-wide for all users/automations to easily access add them to `/etc/environment':
+```sh
+sudo echo 'MY_VARIABLE="my_value"' >> /etc/environment
+sudo nano /etc/environment
+```
+To make the variable available you need to run this command then log in the server again:
+```sh
+source /etc/environment
+```
+
+---
+class: contentpage
+### **2.2 Accessing environmental variables in code**
+
+You have seen may examples of this already, particulary in the example bash scripts
+```sh
+$VARIALBLE
+"${PATH_VARIABLE}/sub_folder/"
+```
+
+In Python you can use one simple method for all cross-platform code use by importing Python's `os` module:
+
+```python3
+import os
+# Retrieve environmental variable
+variable = os.environ.get('VARIABLE_NAME')
+print(f"The data stored in VARIABLE_NAME is {variable}")
+
+# Set an environmental variable in the current process only
+os.environ['NEW_VARIABLE'] = 'my new data'
+
+# Safely check if the environmental variable exists
+if 'VARIABLE_NAME' in os.environ:
+    return True
+else:
+    return False
+
+# To delete an environmental variable in current process only
+if 'NEW_VARIABLE' in os.environ:
+    del os.environ['NEW_VARIABLE']
+```
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
     <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
