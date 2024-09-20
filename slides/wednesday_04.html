@@ -20,9 +20,11 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-In this session we are going to talk about "external connections". Up until now all our processes have been happening locally, but what if we seek to connect with the outside world?
 
-You will notice that Wikipedia and Wikidata feature very heavily in thhis section as they both comprise the largets unified open knowdlege resources on the web. 
+In this session, we are going to talk about "external connections". Up until now, all our processes have been happening locally, but what if we seek to connect with the outside world?
+
+You will notice that Wikipedia and Wikidata feature very heavily in this section, as they both comprise the largest unified open knowledge resources on the web. 
+
 
 1. DROID        
     1.1 PRONOM     
@@ -68,11 +70,11 @@ And now we can use it on a directory! Here using our scans. This is not especial
 java -jar droid-command-line-6.8.0.jar -a /home/paulduchesne/Desktop/summer-school-2024/media -o /home/paulduchesne/Desktop/droid_test.csv
 ```
 
-Just to unpack what is happening here, DROID is processing each file and checking that the "signature" of the file (which we saw earlier) are correct and match the extension - this is to catch any instances where someone has taken a "image.jpg" and renamed as "image.dpx".
+Just to unpack what is happening here, DROID is processing each file and checking that the "signature" of the file (which we saw earlier) are correct and match the extension - this is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx".
 
 
-What is especially interesting, and the focus of this session is the PUID column, which is printing the PRONOM identieifre.
 
+What is especially interesting, and the focus of this session, is the PUID column, which is printing the PRONOM identifier.
 
 ---
 class: contentpage
@@ -80,7 +82,7 @@ class: contentpage
 
 
 
-If we go across to the PRONOM technical registry we can look up this identifier and get more contextual information on what this file is
+If we go across to the PRONOM technical registry, we can look up this identifier and get more contextual information on what this file is.
 
 This exciting to me for two reasons, one it means that archives can start to compare their digital collections with a greater level of detail, ie when I talk about fmt/193 we both know we are talking about the same thing
 
@@ -89,9 +91,11 @@ This exciting to me for two reasons, one it means that archives can start to com
 https://www.wikidata.org/wiki/Q1676669
 
 
-but also this can link out to playability information. So one of the outstanding issues for an audiovisual archive is the question how much of my collection is at risk, and these tools are the means of identfying at scale where there are parts of your collection
 
-note that I'm really talking about born digital collections here, obviously if you are digitising to a certain spec you should be well aware of the playability of those files.
+But also this can link out to playability information. So one of the outstanding issues for an audiovisual archive is the question of how much of my collection is at risk, and these tools are the means of identifying at scale where there are parts of your collection.
+
+
+Note that I'm really talking about born digital collections here, obviously if you are digitising to a certain spec you should be well aware of the playability of those files.
 
 
 
@@ -100,18 +104,18 @@ note that I'm really talking about born digital collections here, obviously if y
 class: contentpage
 ### **2. Concept Wikification**
 
-The first section covered connecting technical signature externally, but now we can revisit the generated content extraction from the last session and look at a process called wikifiction.
 
-This is a very new field for archives, but can be seen as a continution of the "subject" cataologuing field.
+The first section covered connecting technical signature externally, but now we can revisit the generated content extraction from the last session and look at a process called Wikifiction.
 
-From the previous session we extracted the speech-to-text of our film scan, we can now feed it to an LLM and ask it to match across to wikipedia entities.
+This is a very new field for archives, and can be seen as a continuation of the "subject" cataloguing field, but with far greater granularity.
 
-We are in an interesting possition where the really big langaugae models seem to be performing very well, the lower level are performing 
+From the previous session we extracted the speech-to-text of our film scan, we can now feed it to an LLM and ask it to match across to Wikipedia entities.
 
-two consdierations are context aware wikification, for eaxmple if I said "I grew up in Australia and visited Newcastle often", that newcastle being different to "I grew up in the UK and visited Newcastle often".
+We are in an interesting position where the huge language models seem to be performing very well, the lower level are performing 
 
-second is that there is a differnec between an LLM inventing a good looking wiki address and knowing whether the wiki entity exists.
+two considerations are context aware Wikification, for example if I said "I grew up in Australia and visited Newcastle often", that Newcastle being different to "I grew up in the UK and visited Newcastle often".
 
+Second is that there is a difference between an LLM inventing a good-looking wiki address and knowing whether the wiki entity exists.
 
 <!-- https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales -->
 
