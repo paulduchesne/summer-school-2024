@@ -621,7 +621,7 @@ class: contentpage
 
 One last example, say we can also install whole operating systems through doccker, and then install tools on top
 
-Here is a new docker file which uses Ubuntu, popular Linux distro, and installs FFmpeg
+Here is a new docker file which uses Ubuntu, a popular Linux distro, and installs FFmpeg
 
 
 ```docker
@@ -632,35 +632,170 @@ RUN apt update
 RUN apt-get install -y ffmpeg
 ```
 
+---
+class: contentpage
+### **3. Containerisation**
 
+We now build a new docker image using this docker file
+
+```sh
 docker build -t ffmpeg_docker -f dockerfile . 
+```
 
+Once this is complete we can see the new image available to us.
+
+
+```sh
 docker images
+```
 
+We can run it
+```sh
 docker run -t -d ffmpeg_docker
+```
 
+See it running
+```sh
 docker ps
+```
 
+And log into it and run ffmpeg commands
+```sh
 docker exec -it ffmpeg_docker /bin/bash
-
+```
 
 
 There is loads of cool things you can do with Docker, hopefully this has been inspiring!
 
+Docker is useful if you want to deploy complex applications (say you are trying to deploy a system which needs a database, an API and a user interface), if you want to ensure that systems behave predicatbly, or if you want to deploy other people's systems with minimal manual install steps.
 
 
 
 
-~
 
-The last topic for today is orchestration. We have covered writing and scheduling individual tasks, which is fine if you are running one or two handfuls of processes. Once you scale up to fifty or a hundred distinct processes this can be hard to manage.
 
-What we need then is a system to manage all of our processes, which is generally called an orchestrator. 
+
+---
+class: contentpage
+### **4. Orchestration**
+
+
+
+The last topic for today is orchestration. We have covered writing and scheduling individual tasks, which is fine if you are running one or two handfuls of processes. 
+
+Once you scale up to fifty or a hundred distinct processes this can be hard to manage, keeping track of what ran when, failures.
+
+What we need then is a system to manage all of our processes, which is generally called an "orchestrator". 
 
 This is an ineteresing subject as I believe Joanna and I are both at the point where our own processes have only recently reached this moment, so these tools are new for us as well.
 
-ORCH examples
+---
+class: contentpage
+### **4. Orchestration**
 
+The most popular of these tools is Apache Airflow, a complex system which we are going to use Docker to set up quickly!
+
+Lets curl the "docker compose" file. What is docker compose? 
+
+In the last example we were building and deploying single containers, docker compose lets us define mulitple containers in one configuration document.
+
+```sh
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.1/docker-compose.yaml'
+```
+
+Make required airflow containers
+
+```sh
+mkdir -p ./dags ./logs ./plugins ./config
+```
+
+Create a required env file.
+
+```sh
+echo -e "AIRFLOW_UID=$(id -u)" > .env
+```
+
+Start the database
+
+```sh
+docker compose up airflow-init
+```
+
+Start the system
+
+```sh
+docker compose up
+```
+
+This should now be running and accessible through the browser.
+
+Before we have a look at the user interface, worth considering what is actually happening here.
+
+Docker containers are running a moderatly complex of services which ultimatley run processes or workflows defined in Python.
+
+Generally speaking there is a single python script per DAG, which defines the recipe of processes we want to perform.
+
+We can click into the DAG and see individual tasks, these are all simply functions in a single Python script.
+
+We have options for inputs, and whether it is scheduled on a timer, or by a "sensor" or we start them manually.
+
+
+---
+class: contentpage
+### **4. Orchestration**
+
+There are many orchestration options, and so I just wanted to very quickly deploy two alternatives to Airflow, Kestra and Dagster.
+
+I haven't spent much time in either of these, but it is just to show that the user interface for all of these systems is ultimatley very similar.
+
+
+
+
+---
+class: contentpage
+### **4. Orchestration**
+
+
+### kestra deploy
+
+
+curl -o docker-compose.yml https://raw.githubusercontent.com/kestra-io/kestra/develop/docker-compose.yml
+
+
+
+docker compose up -d
+
+port 8080
+
+
+---
+class: contentpage
+### **4. Orchestration**
+
+
+
+### dagster deploy
+
+version: '3.7'
+services:
+  dagster:
+    image: remisharoon/docker_dagster:latest
+    ports:
+      - 3000:3000
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./dagster_home:/opt/dagster/dagster_home
+      
+      
+docker-compose up
+
+port 3000
+
+
+---
+class: center, middle, titlepage
+### End of Day Four.
 
 
 
