@@ -78,18 +78,20 @@ For audiovisual archiving this can get significantly more involved as certain fo
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 When we talk about "files", we are really talking about two different things.
 
 
-For this section it would be useful to have a hex editor to be able to open the file in an objective way, and see what is inside. 
+For this section, it would be useful to have a hex editor to be able to open the file in an objective way, and see what is inside. 
 
-https://hexed.it is an good online resource, although will presumably be unhappy if you try any files which are too big.
+
+https://hexed.it is a good online resource, although it will presumably be unhappy if you try any files which are too big.
+
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 On the one hand we have text documents, like "txt" (or "py"!) which are just text. There is no additional data in the file. Also note how the same letters result in the same binary encodings.
@@ -98,13 +100,13 @@ On the one hand we have text documents, like "txt" (or "py"!) which are just tex
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 When we open up a wav file from the Bundesarchiv film scan, we see something different.
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 .left[<img src="../img/hex_wav.png" width="700">]
@@ -114,16 +116,16 @@ A guide to what we are seeing! The first four letters are called the "magic numb
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
-Underneath is the audio expressed as "binary data", which allows us the flexibilty for the expression of any file: sound, video, 3d models etc etc. 
+Underneath is the audio expressed as "binary data", which allows us the flexibility for the expression of any file: sound, video, 3d models etc etc. 
 
 
 .left[<img src="../img/hex_wav2.png" width="700">]
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 We are not really able to engage with the media directly like this, however a staple of the "glitch art" toolbox would be to open files like this and then do "find replace" functions.
@@ -134,7 +136,7 @@ https://en.wikipedia.org/wiki/Databending
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 But if we have a lossless file, we can sometimes see where the nature of the encoded information forms appreciable patterns.
@@ -142,7 +144,7 @@ But if we have a lossless file, we can sometimes see where the nature of the enc
 
 .left[<img src="../img/hex_sine.png" width="700">]
 
-This is a very low frequency sinewave, it is literally encoded in the file as values which go up, then down, then up.
+This is a very low frequency sine wave, it is literally encoded in the file as values which go up, then down, then up.
 
 
 
@@ -203,27 +205,31 @@ class: contentpage
 
 
 
-We can also extract metadata as JSON, which is an explicitly machine readable format for data storage.
+We can also extract metadata as JSON, which is an explicitly machine-readable format for data storage.
 
 ```sh
 ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx
 ```
 
+And write the output to a file.
+
+```sh
+ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx > ffprobe_test.json
+```
+
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
-When extracting metadata, or working with data more generally (data in the sense of "encoded knowledge" not binary files) we are going to be using machine readable "serialisations".
+When extracting metadata, or working with data more generally (data in the sense of "encoded knowledge" not binary files) we are going to be using machine-readable "serialisations".
 
 The most common of these are CSV, JSON and XML.
 
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
-You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data inbetween.
-
-
+You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data in-between.
 
 This is used when you have one-to-one data relationships.
 
@@ -248,15 +254,17 @@ This is used when you have one-to-one data relationships.
   </tr>
 </table>
 
-We call these formats "machine readble" because machines can use them to easily get answers to "questions".
 
-For example if you had a string "Paul is a person with blue eyes, a cat called Chupa Chups and lives in Canberra" and you collected hundreds of similar statements about people it would be very hard to extract just the eye colour, or pet information.
+We call these formats "machine-readable" because machines can use them to easily get answers to "questions".
+
+For example, if you had a string "Paul is a person with blue eyes, a cat called Chupa Chups and lives in Canberra" and you collected hundreds of similar statements about people it would be very hard to extract just the eye colour, or pet information.
 
 Having said that, machine learning systems are actually quite good at converting between human and machine-readable data, so we might see this distinction breaking down in the next few decades.
 
+
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
 
 But what happens if I get another Cat? What happens if I want to store the new Cat's eye colour!!!
@@ -266,7 +274,7 @@ But what happens if I get another Cat? What happens if I want to store the new C
 
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
 JSON exists to solve this problem. 
 
@@ -286,10 +294,10 @@ There are two key concepts to understand:
 
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
 
-Using these simple concepts you can build out quite elaborate data structures:
+Using these simple concepts, you can build out quite elaborate data structures:
 
 ```json
 {
@@ -310,13 +318,13 @@ Using these simple concepts you can build out quite elaborate data structures:
   ]
 }```
 
-JSON intergrates extremely well with Python as it almost identical to the Python `dictionary` concept, which we will see later on.
+JSON integrates extremely well with Python as it is almost identical to the Python `dictionary` concept, which we will see later on.
 
 ---
 class: tangentpage
-### **Tanget: Machine Readable Data**
+### **Tangent: Machine Readable Data**
 
-XML is identical concepptualy to JSON, so you can easily convert between the two. It is much older, so you are liikely to find it in older systems. But it is still very much around!!!
+XML is identical conceptually to JSON, so you can easily convert between the two. It goes back to the 90s, so you are likely to find it in older systems. But it is still very much around!!!
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
