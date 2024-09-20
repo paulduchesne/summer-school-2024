@@ -171,7 +171,7 @@ Note that embARC is a java application which we run as a "jar". This can also be
 
 
 ```sh
-java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx
+java -jar applications/embARC-0.4.0.jar media/0088860.dpx
 ```
 
 
@@ -181,7 +181,7 @@ java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx
 
 
 ```sh
-java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx -print
+java -jar applications/embARC-0.4.0.jar media/0088860.dpx -print
 ```
 
 embARC also has the capacity for conformance checks, where we define what fields need to be populated and embARC ensures they are present.
@@ -194,7 +194,7 @@ class: contentpage
 FFprobe is a sibling tool of FFmpeg and also allows the extraction of metadata of audiovisual material. This can either be printed to the terminal
 
 ```sh
-ffprobe media/dpx/0088860.dpx
+ffprobe media/0088860.dpx
 ```
 .left[<img src="../img/ffprobe.png" width="700">]
 
@@ -208,13 +208,13 @@ class: contentpage
 We can also extract metadata as JSON, which is an explicitly machine-readable format for data storage.
 
 ```sh
-ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx
+ffprobe -v quiet -print_format json -show_format -show_streams media/0088860.dpx
 ```
 
 And write the output to a file.
 
 ```sh
-ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx > ffprobe_test.json
+ffprobe -v quiet -print_format json -show_format -show_streams media/0088860.dpx > ffprobe_test.json
 ```
 
 ---

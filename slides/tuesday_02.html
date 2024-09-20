@@ -425,10 +425,9 @@ For now, we are going to use a very useful library called Pathlib.
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
     print(filename, type(filename))
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     print(pathlib_filename, type(pathlib_filename))
     print(pathlib_filename.exists())
-
 ```
 
 Note the `.exists()` method at the end of the `pathlib_filename`? 
@@ -477,7 +476,7 @@ We can also use "if statements" inside "for loops", or "for loops" inside "if st
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
@@ -526,7 +525,7 @@ A very important feature of your code is what is called "exception handling". Th
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
