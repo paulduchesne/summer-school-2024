@@ -357,7 +357,7 @@ We can configure to write to a file, and formatting the logs like this
 import logging
 
 logger = logging.getLogger()
-file_handler = logging.FileHandler('app3.log')
+file_handler = logging.FileHandler('app.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -404,7 +404,7 @@ def my_process(file_name):
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler('xxx2.log')
+file_handler = logging.FileHandler('app.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -501,6 +501,8 @@ Then we need to create a cool script. This doesn't have to be Python, but we hav
 Here is a simple script which calls the NFSA collection API and prints out a JSON file.
 
 ```python
+# script.py
+
 import requests
 result = requests.get('https://api.collection.nfsa.gov.au/title/331321')
 print(result.status_code)
@@ -521,14 +523,16 @@ We can think of this exactly the same as a cooking recipe.
 
 Here is an example - don't worry if it looks unfamiliar, this is special docker syntax!
 
+Dockerfile
+
 ```docker
 FROM python:3.11
 
-ADD nfsa_api_script.py .
+ADD script.py .
 
 RUN pip install requests
 
-CMD python ./nfsa_api_script.py
+CMD python ./script.py
 ```
 
 
@@ -543,7 +547,7 @@ We can now `build` the container. This means that all the setup required from th
 What we are doing here is essentially "cooking" a custom computer which is based on a "python" image.
 
 ```sh
-docker build -t my_python_container -f dockerfile .
+docker build -t script_container -f Dockerfile .
 ```
 
 This will take a bit!
@@ -573,7 +577,7 @@ class: contentpage
 If we want to actually run the image, i.e. boot up the computer we have created, we run
 
 ```sh
-docker run my_python_container
+docker run script_container
 ```
 
 And we should see API output.
@@ -592,22 +596,14 @@ Well, this is where it gets cool!
 Run
 
 ```sh
-docker run -e MYSQL_ROOT_PASSWORD=mypass -p 3306:3306 mariadb
+docker run --name mariadb-instance -p 3306:3306 -e MARIADB_ROOT_PASSWORD=password -d mariadb
 ```
 
 You are now running the popular MariaDB database on your computer without having to go through any manual steps.
 
----
-class: contentpage
-### **3. Containerisation**
-
-If you open a different window (not closing the first) you can run
-
 ```sh
 docker ps
 ```
-
-And you will see the MariaDB container running.
 
 
 ---
@@ -617,7 +613,7 @@ class: contentpage
 You can also log into it, and have a look around!
 
 ```
-docker exec -it mariadbtest /bin/bash
+docker exec -it mariadb-instance /bin/bash
 ```
 
 
@@ -645,7 +641,7 @@ class: contentpage
 We now build a new docker image using this docker file
 
 ```sh
-docker build -t ffmpeg_docker -f dockerfile . 
+docker build -t ffmpeg_docker -f Dockerfile . 
 ```
 
 Once this is complete, we can see the new image available to us.
@@ -689,7 +685,7 @@ Docker is useful if you want to deploy complex applications (say you are trying 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
 
 
@@ -705,7 +701,7 @@ This is an interesting subject, as I believe Joanna and I are both at the point 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
 The most popular of these tools is Apache Airflow, a complex system which we are going to use Docker to set up quickly!
 
@@ -713,14 +709,19 @@ Let's `curl` the "docker compose" file. What is docker compose?
 
 In the last example we were building and deploying single containers, docker compose lets us define multiple containers in one configuration document.
 
+
+
+
 ```sh
+mkdir airflow
+cd airflow
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.1/docker-compose.yaml'
 ```
 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
 
 Make required airflow containers
@@ -744,16 +745,15 @@ docker compose up airflow-init
 Start the system
 
 ```sh
-docker compose up
+docker compose up -d
 ```
 
 
-This should now be running and accessible through the browser at http://localhost:8080
 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
 
 
@@ -764,8 +764,19 @@ Docker containers are running a moderately complex of services which ultimately 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
+
+This should now be running and accessible through the browser at http://localhost:8080 (this may take a minute or two).
+
+Login is "airflow/airflow".
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+Lets look at `example_python_decorator`
 
 Generally speaking, there is a single python script per DAG, which defines the recipe of processes we want to perform.
 
@@ -777,7 +788,7 @@ We have options for inputs, and whether it is scheduled on a timer, or by a "sen
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Airflow**
 
 There are many orchestration options, and so I just wanted to very quickly deploy two alternatives to Airflow, Kestra and Dagster.
 
@@ -788,44 +799,34 @@ I haven't spent much time in either of these, but it is just to show that the us
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Kestra**
+
+Kestra is a newer orchestration project, with paid features which work against it (unlike Airflow), but it does have a slick user interface.
 
 
-### kestra deploy
-
-
+```sh
+mkdir kestra
+cd kestra
 curl -o docker-compose.yml https://raw.githubusercontent.com/kestra-io/kestra/develop/docker-compose.yml
-
-
-
 docker compose up -d
+```
 
-port 8080
+Service should be available at http://localhost:8080
 
 
 ---
 class: contentpage
-### **4. Orchestration**
+### **4. Orchestration: Dagster**
 
+Dagster is very popular in the machine learning space as an orchstrator for model training, I haven't really ever used it!
 
+```sh
+git clone https://github.com/dagster-io/dagster.git
+cd dagster/examples/deploy_docker/
+docker compose up -d
+```
 
-### dagster deploy
-
-version: '3.7'
-services:
-  dagster:
-    image: remisharoon/docker_dagster:latest
-    ports:
-      - 3000:3000
-    environment:
-      DAGSTER_HOME: /opt/dagster/dagster_home
-    volumes:
-      - ./dagster_home:/opt/dagster/dagster_home
-      
-      
-docker-compose up
-
-port 3000
+Service should be available at http://localhost:3000
 
 
 ---
