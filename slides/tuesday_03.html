@@ -194,27 +194,44 @@ embARC also has the capacity for conformance checks, where we define what fields
 class: contentpage
 ### **4. FFprobe**
 
-FFprobe is a sibling tool of FFmpeg and also allows the extraction of metadata of audiovisual material. This can either be printed to the terminal
+FFprobe is a sibling tool of FFmpeg and also allows the extraction of metadata of audiovisual material. This can either be printed to the terminal and the command structure is fairly simple:
 
 ```sh
-ffprobe media/dpx/0088860.dpx
+ffprobe [option] [input]
 ```
-.left[<img src="../img/ffprobe.png" width="700">]
-
-
+There's excellent help options available at:
+```sh
+ffprobe -h
+man ffrobe
+```
+<font color="orange">Practise:</font> Try the basic commands suggested at [FFprobe Tips](https://trac.ffmpeg.org/wiki/FFprobeTips) to return all data for streams and format, then targetting just the format size, and then just the value of the format size:
+```sh
+ffprobe -v error -show_format -show_streams 086400.dpx
+ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1 086400.dpx
+ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 086400.dpx
+```
+Shortform options can be used:
+```sh
+ffprobe -v error -show_entries format=size -of default=nw=1:nk=1 086400.dpx
+```
 ---
 class: contentpage
 ### **4. FFprobe**
 
-
-
-We can also extract metadata as JSON, which is an explicitly machine readable format for data storage.
-
+To get the same metadata, like duration, from the container and the stream you need ensure you add the `-select_stream v:0`, and differentiate where the duration is obtained from `format` or `stream`
 ```sh
-ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx
+ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 input.mp4
+ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=nw=1:nk=1 input.mp4
 ```
-
-
+<font color="orange">Practise:</font> JSON and XML formatted metadata can be extracted, both useful for automation
+```sh
+ffprobe -v quiet -of json -show_format -show_streams media/dpx/0086400.dpx
+ffprobe -v quiet -of xml -show_format -show_streams media/dpx/0086400.dpx
+```
+Using the `-report` flag you can dump the data to a logs named `ffprobe-YYYYMMDD-HHMMSS.log`
+```sh
+ffprobe media/dpx/0088860.dpx -report
+```
 
 ---
 class: contentpage
