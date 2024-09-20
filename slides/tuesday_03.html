@@ -231,28 +231,33 @@ class: tangentpage
 
 You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data in-between.
 
-This is used when you have one-to-one data relationships.
+This is great when you have one-to-one data relationships.
 
-<table style="border-collapse: collapse;  border: 1px solid black;">
-  <tr style="border: 1px solid black;">
-    <td style="border: 1px solid black;">Name</td>
-    <td style="border: 1px solid black;">Eye Colour</td>
-    <td style="border: 1px solid black;">City</td>
-    <td style="border: 1px solid black;">Pet</td>  
+<table style="padding: 10px;border-collapse: collapse;  border: 2px solid black;">
+  <tr style="padding: 10px;border: 2px solid black;">
+    <td style="border: 2px solid black;">Name</td>
+    <td style="border: 2px solid black;">Eye Colour</td>
+    <td style="border: 2px solid black;">City</td>
+    <td style="border: 2px solid black;">Pet</td>  
   </tr>
-  <tr style="border: 1px solid black;"></tr>
-    <td style="border: 1px solid black;">Paul</td>
-    <td style="border: 1px solid black;">Blue</td>
-    <td style="border: 1px solid black;">Canberra</td>
-    <td style="border: 1px solid black;">Chupa Chups (Cat)</td>  
+  <tr style="border: 2px solid black;"></tr>
+    <td style="border: 2px solid black;">Paul</td>
+    <td style="border: 2px solid black;">Blue</td>
+    <td style="border: 2px solid black;">Canberra</td>
+    <td style="border: 2px solid black;">Chupa Chups (Cat)</td>  
   </tr>
-  <tr style="border: 1px solid black;">
-    <td style="border: 1px solid black;">Joanna</td>
-    <td style="border: 1px solid black;">???</td>
-    <td style="border: 1px solid black;">???</td>
-    <td style="border: 1px solid black;">???</td>  
+  <tr style="border: 2px solid black;">
+    <td style="border: 2px solid black;">Joanna</td>
+    <td style="border: 2px solid black;">???</td>
+    <td style="border: 2px solid black;">???</td>
+    <td style="border: 2px solid black;">???</td>  
   </tr>
 </table>
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
 
 
 We call these formats "machine-readable" because machines can use them to easily get answers to "questions".
@@ -267,7 +272,7 @@ class: tangentpage
 ### **Tangent: Machine Readable Data**
 
 
-But what happens if I get another Cat? What happens if I want to store the new Cat's eye colour!!!
+But what happens if I get another cat? What happens if I want to record data about the new cat's eye colour!!!
 
 
 
@@ -318,13 +323,13 @@ Using these simple concepts, you can build out quite elaborate data structures:
   ]
 }```
 
-JSON integrates extremely well with Python as it is almost identical to the Python `dictionary` concept, which we will see later on.
+JSON integrates extremely well with Python as it is almost identical to the Python `dictionary` type, which we will see later on.
 
 ---
 class: tangentpage
 ### **Tangent: Machine Readable Data**
 
-XML is identical conceptually to JSON, so you can easily convert between the two. It goes back to the 90s, so you are likely to find it in older systems. But it is still very much around!!!
+XML is conceptually identical to JSON, so you can easily convert between the two. It goes back to the 90s, so you are likely to find it in older systems. But it is still used all over the place.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

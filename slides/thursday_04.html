@@ -220,9 +220,9 @@ print(datetime.datetime.now())
 ---
 class: contentpage
 ### **1. Multiprocessing with Python**
-
-PAGE INTENTIONALLY BLANK
-
+<b>
+<tspan style="color:black">PAGE INTENTIONALLY BLANK</tspan>
+</b>
 
 
 ---
@@ -374,13 +374,18 @@ class: contentpage
 Now for our practical, can we add this to our previous hashing example!
 
 
+---
+class: contentpage
+### **2. Logging with Python**
+<b>
+<tspan style="color:black">PAGE INTENTIONALLY BLANK</tspan>
+</b>
+
 
 
 ---
 class: contentpage
 ### **2. Logging with Python**
-
-Solution!
 
 ```python
 import hashlib
@@ -569,7 +574,7 @@ If we want to actually run the image, i.e. boot up the computer we have created,
 
 ```sh
 docker run my_python_container
-``
+```
 
 And we should see API output.
 
@@ -655,10 +660,17 @@ We can run it
 docker run -t -d ffmpeg_docker
 ```
 
+---
+class: contentpage
+### **3. Containerisation**
+
+
 See it running
 ```sh
 docker ps
 ```
+
+
 
 And log into it and run FFmpeg commands
 ```sh
@@ -705,6 +717,12 @@ In the last example we were building and deploying single containers, docker com
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.1/docker-compose.yaml'
 ```
 
+
+---
+class: contentpage
+### **4. Orchestration**
+
+
 Make required airflow containers
 
 ```sh
@@ -730,11 +748,24 @@ docker compose up
 ```
 
 
-This should now be running and accessible through the browser.
+This should now be running and accessible through the browser at http://localhost:8080
+
+
+---
+class: contentpage
+### **4. Orchestration**
+
+
 
 Before we have a look at the user interface, worth considering what is actually happening here.
 
 Docker containers are running a moderately complex of services which ultimately run processes or workflows defined in Python.
+
+
+---
+class: contentpage
+### **4. Orchestration**
+
 
 Generally speaking, there is a single python script per DAG, which defines the recipe of processes we want to perform.
 
