@@ -146,11 +146,6 @@ This is a very low frequency sinewave, it is literally encoded in the file as va
 
 
 
----
-class: tangentpage
-### **Tanget: What is a file!**
-
-TODO: one pixel dpx
 
 ---
 class: contentpage
@@ -214,6 +209,123 @@ We can also extract metadata as JSON, which is an explicitly machine readable fo
 ffprobe -v quiet -print_format json -show_format -show_streams media/dpx/0088860.dpx
 ```
 
+---
+class: tangentpage
+### **Tanget: Machine Readable Data**
+
+When extracting metadata, or working with data more generally (data in the sense of "encoded knowledge" not binary files) we are going to be using machine readable "serialisations".
+
+The most common of these are CSV, JSON and XML.
+
+---
+class: tangentpage
+### **Tanget: Machine Readable Data**
+
+You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data inbetween.
+
+This is used when you have one-to-one data relationships.
+
+<table style="border-collapse: collapse;  border: 1px solid black;">
+  <tr style="border: 1px solid black;">
+    <td style="border: 1px solid black;">Name</td>
+    <td style="border: 1px solid black;">Eye Colour</td>
+    <td style="border: 1px solid black;">City</td>
+    <td style="border: 1px solid black;">Pet</td>  
+  </tr>
+  <tr style="border: 1px solid black;"></tr>
+    <td style="border: 1px solid black;">Paul</td>
+    <td style="border: 1px solid black;">Blue</td>
+    <td style="border: 1px solid black;">Canberra</td>
+    <td style="border: 1px solid black;">Chupa Chups (Cat)</td>  
+  </tr>
+  <tr style="border: 1px solid black;">
+    <td style="border: 1px solid black;">Joanna</td>
+    <td style="border: 1px solid black;">???</td>
+    <td style="border: 1px solid black;">???</td>
+    <td style="border: 1px solid black;">???</td>  
+  </tr>
+</table>
+
+But what happens if I get another Cat? What happens if I want to store the new Cat's eye colour!!!
+
+
+
+
+---
+class: tangentpage
+### **Tanget: Machine Readable Data**
+
+JSON exists to solve this problem. 
+
+
+There are two key concepts to understand: 
+
+1. key/value pairs 
+```json
+{"Name":"Paul"}
+```
+
+2. arrays
+```json
+{"Pets": ["Chupa Chups (Cat)", "New Cat (Cat)"]}
+```
+
+
+---
+class: tangentpage
+### **Tanget: Machine Readable Data**
+
+
+Using these simple concepts you can build out quite elaborate data structures:
+
+```json
+{
+  "Name": "Paul",
+  "Eye Colour": "Blue",
+  "City": "Canberra",
+  "Pets": [
+      {
+          "Type": "Cat",
+          "Name": "Chupa Chups",
+          "Birthday": "2013-07-12"
+      },
+      {
+          "Type": "Cat",
+          "Name": "New Cat",
+          "Birthday": "2026-02-17"
+      }
+  ]
+}```
+
+JSON intergrates extremely well with Python as it almost identical to the Python `dictionary` concept, which we will see later on.
+
+---
+class: tangentpage
+### **Tanget: Machine Readable Data**
+
+XML is identical concepptualy to JSON, so you can easily convert between the two. It is much older, so you are liikely to find it in older systems. But it is still very much around!!!
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+ <root>
+     <Name>Paul</Name>
+     <Eye Colour>Blue</Eye Colour>
+     <City>Canberra</City>
+     <Pets>
+         <Type>Cat</Type>
+         <Name>Chupa Chups</Name>
+         <Birthday>2013-07-12</Birthday>
+     </Pets>
+     <Pets>
+         <Type>Cat</Type>
+         <Name>New Cat</Name>
+         <Birthday>2026-02-17</Birthday>
+     </Pets>
+ </root>
+
+
+
+```
 
 
 ---
