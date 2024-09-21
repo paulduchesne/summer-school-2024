@@ -565,11 +565,15 @@ Here we are pulling in images from Wikicommons via Wikidata, we can also access 
 TO DO likewise, simplify this.
 
 ```python
+
+
+
+      
 import pathlib
 
-df = pandas.read_csv(pathlib.Path.cwd() / 'database_update.csv').fillna('')
-wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_director_id.unique() if x])
-
+df = pandas.read_csv("https://raw.githubusercontent.com/paulduchesne/nttw-wikidata-workshop/refs/heads/main/data/data4.csv").fillna('')
+# wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_director_id.unique() if x])
+wikidata_ids = "wd:Q55424"
 query = '''
     select ?wikidata_director_id ?wikidata_director_image   
     where {
@@ -578,16 +582,18 @@ query = '''
     } '''
 
 response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
-df2 = pandas.DataFrame(response.json()['results']['bindings']).dropna()
-df2['wikidata_director_id'] = df2['wikidata_director_id'].apply(lambda x: x['value'].split('/')[-1])
-df2['wikidata_director_image'] = df2['wikidata_director_image'].apply(lambda x: x['value'])
-df = pandas.merge(df, df2, on='wikidata_director_id', how='right').fillna('')
-for x in df.to_dict('records'):
-    print(f"{x['director_label']} ({x['wikidata_director_id']})")
-    display(Image(x['wikidata_director_image'], width=300, height=300))
+print(json.dumps(response.json(), indent=4))
 
-print(len(df))
-df.head(40)
+
+url = 'http://example.com/some_file.pdf'
+r = requests.get(url)
+
+with open('some_file.pdf', 'wb') as f:
+    f.write(r.content)
+
+
+
+      
 ```
 
 
