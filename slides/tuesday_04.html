@@ -745,15 +745,46 @@ class: contentpage
 import imagehash, pathlib, random, subprocess, tqdm
 from PIL import Image
 
-frames = pathlib.Path.cwd() / 'bag_test'
+frames = pathlib.Path.cwd() / 'media'
 for dpx_frame in frames.rglob('*'):
-    jpg_frame = dpx_frame.with_suffix('.jpg')
+    jpg_frame = dpx_frame.parents[1] / 'jpg' / f'{dpx_frame.stem}.jpg'
+    jpg_frame.parents[0].mkdir(exist_ok=True)
     if not jpg_frame.exists():
         subprocess.call(['ffmpeg', '-v', 'quiet', '-i', str(dpx_frame), str(jpg_frame)])
 
 ```
 
+
+---
+class: tangentpage
+### **Tangent: F-Strings**
+
+In the previous example you may have noticed that I was embedding variables into strings like this `f'{file} started'`.
+
+f-string are a relatively new addition to make embedding variables into string easier, around since Python 3.6.
+
+Older methods would have been:
+
+```python
+apple_colour = "green"
+print('I like', apple_colour, 'apples a lot.')
 ```
+
+
+```python
+apple_colour = "green"
+print('I like %s apples a lot.' % apple_colour)
+```
+
+But the new amazing recommended way, which I think does improve readability, is 
+
+```python
+apple_colour = "green"
+print(f'I like {apple_colour} apples a lot.')
+```
+
+Note that that "f" at the start indicates that this is an "f-string" and any time curly brackets are used inside, they are embedding a variable.
+
 
 ---
 class: contentpage
@@ -761,8 +792,7 @@ class: contentpage
 ### **8. Perceptual hashing, similarity matching**
 
 ```
-frames = pathlib.Path.cwd() / 'bag_test'
-
+frames = pathlib.Path.cwd() / 'jpg'
 jpeg_files = [x for x in frames.rglob('*') if x.suffix == '.jpg']
 random_jpg = random.choice(jpeg_files)
 random_jpg_phash = imagehash.average_hash(Image.open(str(random_jpg)))
