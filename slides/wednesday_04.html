@@ -21,14 +21,26 @@ class: contentpage
 ### **Agenda**
 
 
-In this session, we are going to talk about "external connections". Up until now, all our processes have been happening locally, but what if we seek to connect with the outside world?
+In this session, we are going to talk about "external connections". 
 
-You will notice that Wikipedia and Wikidata feature very heavily in this section, as they both comprise the largest unified open knowledge resources on the web. 
+Up until now, all our processes have been happening locally, but what if we seek to connect the results up with the outside world?
+
+This could be thought of as knowledge enrichment, benefiting from knowledge available elsewhere, but also ensuring shared definitions - is my DPX also your DPX?
+
+You will notice that Wikidata will feature very heavily in this section, as it is the largest open structured open knowledge resource on the web. 
+
+
+---
+class: contentpage
+### **Agenda**
 
 
 1. DROID        
     1.1 PRONOM     
 2. Wikification of text
+3. Linked Open Data for Collections.
+3.1 Linking
+3.2 Leveraging
 
 
 
@@ -36,13 +48,11 @@ You will notice that Wikipedia and Wikidata feature very heavily in this section
 class: contentpage
 ### **1. DROID**
 
-DROID is a very interesting tool from the National Archives in the UK which profiles files. It is very useful if you are given a full collection of digital files given to you, and you want to figure out what you have been given.
+DROID is a very interesting tool from the UK National Archives which profiles files, meaning determining the type of the file, beyond just the extension.
+
+It is very useful if you are given a full collection of diverse digital files, and you want to figure out what you have been given.
 
 https://digital-preservation.github.io/droid/
-
-One of these profiles is a connection to PRONOM which is a registry of file formats, also maintained by the UK National Archives.
-
-https://www.nationalarchives.gov.uk/PRONOM/Default.aspx
 
 
 
@@ -64,17 +74,41 @@ Once we have unpacked the bin.zip we can run the following to show everything is
 java -jar droid-command-line-6.8.0.jar -v
 ```
 
-And now we can use it on a directory! Here using our scans. This is not especially interesting as the film scans are quite homogenous, but try pointing towards your Downloads directory and seeing what reports you get.
+And we can now use it on a directory, here using our scans. This is not especially interesting as the film scans are quite homogenous, but try pointing towards this at your Downloads directory and seeing what reports you get.
 
 ```sh
 java -jar droid-command-line-6.8.0.jar -a /home/paulduchesne/Desktop/summer-school-2024/media -o /home/paulduchesne/Desktop/droid_test.csv
 ```
 
-Just to unpack what is happening here, DROID is processing each file and checking that the "signature" of the file (which we saw earlier) are correct and match the extension - this is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx".
+Just to unpack what is happening here, DROID is processing each file and checking that the "signatures" of the file (which we saw earlier) are correct and match the extension. This is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx", a feature we can test ourselves.
+
+
+What is especially interesting though, and the focus of this session, is the PUID column, which is printing the PRONOM identifier.
+
+---
+class: contentpage
+### **1.1 PRONOM**
+
+
+These PUIDs connect to the PRONOM technical registry, also managed by the UK National Archives.
+
+https://www.nationalarchives.gov.uk/PRONOM/Default.aspx
+
+This becomes useful, because it turns out there very different types of file which use the "dpx" extension.
+
+By moving from referring to a file as a "dpx file" to "fmt/193" we establish exactly what type of file we are talking about to prevent confusion.
 
 
 
-What is especially interesting, and the focus of this session, is the PUID column, which is printing the PRONOM identifier.
+---
+class: contentpage
+### **1.1 PRONOM**
+
+PRONOM also provides great context around the file, where is it from, what are some technical qualities.
+
+https://www.nationalarchives.gov.uk/PRONOM/Format/proFormatSearch.aspx?status=detailReport&id=669
+
+
 
 ---
 class: contentpage
@@ -82,48 +116,154 @@ class: contentpage
 
 
 
-If we go across to the PRONOM technical registry, we can look up this identifier and get more contextual information on what this file is.
-
-This exciting to me for two reasons, one it means that archives can start to compare their digital collections with a greater level of detail, ie when I talk about fmt/193 we both know we are talking about the same thing
-
-
+It also links to Wikidata, which is the machine-readable sister to Wikipedia (which we will look at in more depth shortly).
 
 https://www.wikidata.org/wiki/Q1676669
 
+Wikidata links to the "preservation plan" of the NARA (National Archives and Records Administration in the US)
+
+https://www.archives.gov/files/lod/dpframework/id/NF00492.ttl
+
+Which in turn gives us a "risk level", "appropriate tools" and a "preservation plan status".
 
 
-But also this can link out to playability information. So one of the outstanding issues for an audiovisual archive is the question of how much of my collection is at risk, and these tools are the means of identifying at scale where there are parts of your collection.
+---
+class: contentpage
+### **1.1 PRONOM**
+
+For me this is exciting stuff, it is still early days for a lot of these systems, but the vision is that we are moving towards a space where we can ask questions like "how much of my digital collection is at risk" using shared risk analysis.
 
 
-Note that I'm really talking about born digital collections here, obviously if you are digitising to a certain spec you should be well aware of the playability of those files.
+---
+class: contentpage
+### **1.1 PRONOM**
+
+If this is specifically interesting to you, I would recommend having a read of the DPC guide to "Wikidata for Digital Preservationists"
+
+https://www.dpconline.org/docs/technology-watch-reports/2551-thorntonwikidatadpc-revsionthornton/file
+
+
+
+
 
 
 
 
 ---
 class: contentpage
-### **2. Concept Wikification**
+### **2. Text Wikification**
 
 
-The first section covered connecting technical signature externally, but now we can revisit the generated content extraction from the last session and look at a process called Wikification.
+The first section covered connecting technical attributes externally, but now we can revisit the generated content extraction from the last session and look at a process called Wikification.
 
-This is a very new field for archives, and can be seen as a continuation of the "subject" cataloguing field, but with far greater granularity.
+This plays into a broader field called Named Entity Recognition, which essentialy boils down to extracting "entities" from text. There is online example of this concept here: https://demos.explosion.ai/displacy-ent
 
-From the previous session we extracted the speech-to-text of our film scan, we can now feed it to an LLM and ask it to match across to Wikipedia entities.
+"Paul grew up in Australia" becomes
 
-We are in an interesting position where the huge language models seem to be performing very well, the lower level are performing 
+.left[<img src="../img/ner.png" height="400">]
 
-two considerations are context aware Wikification, for example if I said "I grew up in Australia and visited Newcastle often", that Newcastle being different to "I grew up in the UK and visited Newcastle often".
+This gets us so far, in that we now know that Paul is a person - but which person? This plays into making your collection searchable, because researchers and users are likely to be looking for a specific "Paul".
 
-Second is that there is a difference between an LLM inventing a good-looking wiki address and knowing whether the wiki entity exists.
-
-<!-- https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales -->
+This means we need an ID, or a URI to apply to the Named Entity, and given the avaialbity and ubiquity of Wikipedia, it can be used to fulfil this function.
 
 
+Machine-learning are also a gamechanger in this space, while there were absolutely techniques for doing this stretching back decades, ML performs better and can jump through multiple processes at once.
+
+An example prompt to feed to an LLM:
+
+```
+Take the following text and determine all spaCY entities and types, then add valid wikipedia links, using Markdown link syntax. For example if the input was "Annie Ernaux wrote the book The Years", return "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". Do not return a wikipedia link if the wikipedia page does not really exist. Here is the source text: "David Lean directed the film Lawrence of Arabia.",
+```
+
+Note we are switching from a LLaVA model to Llama3.1, as we do not need all of the media processing functions, this is text only.
 
 
 
 
+---
+class: contentpage
+### **2. Text Wikification**
+
+This is still an emerging field for archives, with the promise of revolutionaising the granulairty of search. 
+
+A few considerations to be aware of:
+
+- Whether the Wikipedia link actually exists. Tests on low-size models showed a willingness to invent "likely" Wikipedia addresses which just did not exist (eg "https://en.wikipedia.org/wiki/Lawrence_of_Arabia_(David_Lean_film)").
+- Whether the Wikipedia link is being properly disambiguestaed based on context, eg "It is a short drive from Sydney to Newcastle" returning https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales, not https://en.wikipedia.org/wiki/Newcastle_upon_Tyne or https://en.wikipedia.org/wiki/Newcastle_(film)
+
+
+
+
+
+---
+class: contentpage
+### **2. Text Wikification**
+
+
+
+We can write a simple function to process the Whisper text extraction of our film scan and see what we get out!
+
+
+```python
+
+import ollama
+import pathlib
+
+def text_wikification(source_text):
+    request = ollama.chat(
+        model='llama3.1:8b',
+        messages=[
+            {
+            'role': 'user',
+            'content':  'Take the following text and determine all spaCY entities and types, then add valid wikipedia links, \
+                using Markdown link syntax. For example if the input was "Annie Ernaux wrote the book The Years", return \
+                "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". \
+                Do not return a wikipedia link if the wikipedia page does not really exist. Here is the source text: "'+source_text
+            }
+        ]
+    )
+
+    return request['message']['content']
+
+with open(pathlib.Path.cwd() / 'whisper_test'/ 'audio.txt') as text_in:
+    text_in = text_in.read()
+    processed_text = text_wikification(text_in)
+
+print('SOURCE_TEXT', '\n', text_in, '\n')
+print('PROCESSED_TEXT', '\n', processed_text, '\n')
+
+
+
+```
+
+Quality of results will vary depending on the model and prompt used. For example I have seen very good results from the Gemini Pro google models, which are not currently available through Ollama.
+
+A more time consuming possible method would be to use a systme like GLiNER (https://github.com/urchade/GLiNER) to first identify all Entities and types, and then use a system like Llama to perform context aware Wikipedia linking one at a time?
+
+
+
+
+
+---
+class: tangentpage
+### **Tangent: What is Markdown?**
+
+In the previous examples we were producing text formatted as "Markdown", thought it worth cycling back and explaining markdown to anyone who this may be a new concept.
+
+Markdown is simply a method of annotating a text file so that it can contain formatting (bold, italics, links, tables and images) without requiring a proprietrayr and closed application to render (eg Word).
+
+This is good as it means that your documents remain application agnostic, and you don't have to be concerned about access in the future.
+
+Here we had used the markdown "link" syntax to attach a wikipedia link to an "entity". This is not exactly what it was designed for, but works perfectly fine for our purposes.
+
+---
+class: tangentpage
+### **Tangent: What is Markdown?**
+
+
+These slides are all written as markdown!
+
+If you want more information on how to use markdown, this is a good guide: https://www.markdownguide.org/
 
 
 
