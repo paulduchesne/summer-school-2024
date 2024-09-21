@@ -69,7 +69,6 @@ A traditional artificial neural network has three components, "inputs", "hidden 
 
 - The hidden layers sit in-between. These are sequential layers of nodes which are all interconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
 
-
 - The outputs could be as simple as a "yes" or "no" answer to the question, "is this a Spanish word?"
 
 The power of artificial neural networks are that they can apply to almost any subject or discipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot explain how a certain trained neural net (or "model") is producing a certain result.
@@ -233,8 +232,10 @@ class: contentpage
 General description example
 
 ```sh
-can you describe image '/home/paulduchesne/Desktop/summer-school-2024/media/0087679.jpg'
+Can you describe image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087679.jpg'
 ```
+
+
 
 ---
 class: contentpage
@@ -244,13 +245,16 @@ OCR example
 
 
 ```sh
-what text is there in this image '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What text is in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
-For anyone who remembers using tesseract, mind-bendingly we can ask for specific interpreted text.
+Please note that accuracy can depend on model size, so this is the one section of the course where having a powerful computer will give you better results, not just faster.
+I am currently running the lowest model as my laptop is nothing special, would be keen to compare with people running something better.
+
+For anyone who remembers using Tesseract, mind-bendingly we can ask for specific interpreted text.
 
 ```sh
-What is the name of the boat in image '/home/paulduchesne/Desktop/summer-school-2024/media/0087024.jpg'
+What is the name of the boat in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
 ```
 
 ---
@@ -260,10 +264,20 @@ class: contentpage
 Object Detection
 
 
+Frame with boat.
+
 ```sh
-What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/media/0087280.jpg'
+What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
 ```
 
+
+Frame with flags.
+
+```sh
+What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087200.jpg'
+```
+
+A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutivelu in the same session, so quiting in between may not be a terrible idea.
 
 
 
@@ -277,24 +291,23 @@ Image characteristics
 
 
 ```sh
-Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
 
 
 ```sh
-What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85): '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
-This is especially interesting as the image is letterboxed.
+This is especially interesting as the image is letterboxed. There are much easier ways to do "letterbox detection" (e.g. with FFmpeg), but those can be susceptible to black levels.
+
 
 
 
 ```sh
-What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
-
-
 
 
 ---
@@ -304,7 +317,7 @@ class: contentpage
 So far we have been returning text, which is great, but as we want to integrate with databases and automated systems we want a machine-readable output - LLMs can do this as well.
 
 ```sh
-Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
 ---
@@ -314,74 +327,92 @@ class: contentpage
 
 Now the only piece missing is automating this - copying and pasting lines of text into the terminal is not going to scale if we want to inspect hundreds, thousands or millions of images.
 
+Basic Python example.
 
+```python
+import ollama
+
+request = ollama.chat(
+    model='llava:7b',
+    messages=[
+        {
+        'role': 'user',
+        'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
+        'images': ['/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'],
+        }
+    ]
+)
+
+print(request['message']['content'])
 ```
-import requests
 
-url = 'http://localhost:11434/api/generate'
-data = {
-    "model": "llava:7b", 
-    "prompt": "What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'",
-    "stream": False 
-}
 
-response = requests.post(url, json=data)
-print(response.text)
 
+---
+class: contentpage
+### **LLMs**
+
+Convert to a reusable function.
+
+```python
+import ollama
+
+def aspect_ratio_detector(frame):
+    
+    request = ollama.chat(
+        model='llava:7b',
+        messages=[
+            {
+            'role': 'user',
+            'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
+            'images': [frame],
+            }
+        ]
+    )
+
+    return request['message']['content']
+
+result = aspect_ratio_detector('/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg')
+
+print(result)
 ```
 
 
-WORKING CODE
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+Iterate over the full directory of scans.
+
+On my computer this would take a very long time, and there would be little value in processing every image - you would probably want to reduce to one frame per second, or less.
+
+```python
 
 import ollama
-import sys
 
+def image_summary(frame):
+    
+    request = ollama.chat(
+        model='llava:7b',
+        messages=[
+            {
+            'role': 'user',
+            'content': 'Can you describe this image in less than ten words',
+            'images': [str(frame)],
+            }
+        ]
+    )
 
-def query_the_image(query: str, image_list: list[str]) -> ollama.chat:
-    try:
-        res = ollama.chat(
-            model=selected_model,
-            messages=[
-                {
-                'role': 'user',
-                'content': query,
-                'images': image_list,
-                }
-            ]
-        )
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-    return res['message']['content']
+    return request['message']['content']
 
-
-def print_out_the_response(query_message: str, image_list: list[str]) -> None:
-    response = query_the_image(query_message, image_list)
-    if response:
-        print(response)
-        sys.stdout.flush()
-        sys.stdout.write("\n")
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+jpg_path = pathlib.Path.cwd() / 'jpg'
+for frame in jpg_path.iterdir():
+    result = image_summary(frame)
+    print(frame, result)
+```
 
 
 
