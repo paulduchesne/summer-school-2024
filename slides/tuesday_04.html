@@ -31,7 +31,7 @@ class: contentpage
 2.6 FFV1 slice checksums  
 3. Python hashlib.   
 4. Perceptual hashing, visual similarity matching.   
-5. Bagit for Python. 
+5. BagIt for Python. 
 6. OAIS
 7. PREMIS
 8. TAR wrapping with CLI 'tar' or Python 'tarfile'. 
@@ -40,7 +40,7 @@ class: contentpage
 class: contentpage
 ### **1. Intro to Checksums**
 
-Checksums are "fixed width" (ie always the same length) digital fingerprints.
+Checksums are "fixed width" (i.e. always the same length) digital fingerprints.
 
 They can be generated from source text or files!
 
@@ -54,7 +54,7 @@ echo -n "Paul Duchesne" | md5sum
 MD5 for a DPX file!
 
 ```sh
-md5sum media/dpx/0088600.dpx 
+md5sum media/0088600.dpx 
 e0c39a37430fbacb9b7fb634580a1858
 ```
 
@@ -67,19 +67,19 @@ Different operating systems have different ways of generating checksums, in orde
 macOS
 
 ```sh
-md5 media/dpx/0088600.dpx 
+md5 media/0088600.dpx 
 ```
 
 Linux
 
 ```sh
-md5sum media/dpx/0088600.dpx 
+md5sum media/0088600.dpx 
 ```
 
 Windows
 
 ```sh
-CertUtil -hashfile media/dpx/0088600.dpx MD5
+CertUtil -hashfile media/0088600.dpx MD5
 ```
 
 
@@ -159,11 +159,14 @@ echo -n "my_cool_password" | md5sum
 a873aee995ffc1fe2634e63560d3aabb
 ```
 
-When the user wants to log in again, they will re-enter their password which should generate the same checksum... result: they can log in!
 
-If a hacker steals the checksums (the only element the system has retained) they do not automatically know what the source password was, so they can't login.
+When the user wants to log in again, they will re-enter their password, which should generate the same checksum... result: they can log in!
 
-If the checksum algorithm (so far we have been using MD5) is not complex enough, the hacker may start trying to find a password which matches the checksum (eg a list of common passwords) or even "brute force" (eg "a", "aa", "aaa", "aaaa" etc etc etc) until they get a password which matches the checksum.
+If a hacker steals the checksums (the only element the system has retained) they do not automatically know what the source password was, so they can't log in.
+
+If the checksum algorithm (so far we have been using MD5) is not complex enough, the hacker may start trying to find a password which matches the checksum (e.g. a list of common passwords) or even "brute force" (eg "a", "aa", "aaa", "aaaa" etc etc etc) until they get a password which matches the checksum.
+
+
 
 ---
 class: contentpage
@@ -387,6 +390,7 @@ Failures in the FFV1 codec will show as SliceCRC mismatches along with time stam
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.35.58.png" width="1000">]
 
+
 ---
 class: contentpage
 
@@ -418,7 +422,7 @@ Example of hashing a file.
 import hashlib
 import pathlib
 
-filepath = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
+filepath = pathlib.Path.cwd() / 'media' / '0088600.dpx'
 
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
@@ -435,37 +439,37 @@ Example of hashing two files, and checking if they match.
 
 Note, we have condensed our code slightly, but it is doing exactly the same thing.
 
+
 ```python
 import hashlib
 import pathlib
 
-filepath1 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088600.dpx'
+filepath1 = pathlib.Path.cwd() / 'media' / '0088600.dpx'
 with open(filepath1, 'rb') as file1:    
     result1 = hashlib.md5(file1.read()).hexdigest()  
     print(filepath1, result1)
 
-filepath2 = pathlib.Path.cwd() / 'media' / 'dpx' / '0088601.dpx'
+filepath2 = pathlib.Path.cwd() / 'media' / '0088601.dpx'
 with open(filepath2, 'rb') as file2:    
     result2 = hashlib.md5(file2.read()).hexdigest()  
     print(filepath2, result2)
 
 print(result1 == result2)
 ```
-Okay, but say we want to hash the files in an entire directory! We don't want to have to create individual statement for each file.
-
+Okay, but say we want to hash the files in an entire directory! We don't want to have to create an individual statement for each file.
 ---
 class: contentpage
 
 ### **3. Python hashlib**
 
-Exmample of hashing multiple files (TODO use film scan frames) in a "for loop", 
+Example of hashing multiple files in a "for loop", 
 
 ```python
 import hashlib
 import pathlib
 
 for filepath in ['0088600.dpx', '0088601.dpx']:
-    with open(pathlib.Path.cwd() / 'media' / 'dpx' / filepath, 'rb') as file:  
+    with open(pathlib.Path.cwd() / 'media' / filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
         print(filepath, result)
 ```
@@ -478,13 +482,13 @@ class: contentpage
 
 ### **3. Python hashlib**
 
-Example of processing a whole directory (TODO use film scans)
+Example of processing a whole directory.
 
 ```python
 import hashlib
 import pathlib
 
-dpx_frames = pathlib.Path.cwd() / 'media' / 'dpx'
+dpx_frames = pathlib.Path.cwd() / 'media'
 for filepath in dpx_frames.iterdir():
     with open(filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
@@ -493,25 +497,25 @@ for filepath in dpx_frames.iterdir():
 
 ```
 
-Note that if we want to not print the whole filename we can use `filepath.name`
+Note that if we want to not print the whole filename, we can use `filepath.name`
 
 ---
 class: contentpage
 
 ### **4. Bagit for Python**
 
-BagIt is an opensource project developed by Library of Congress to provide structures and tools, typically used to verify that collections of files have remained unchanged.
 
-You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a conveniance method for fundamental digital archiving processes. 
+BagIt is an open-source project developed by the Library of Congress to provide structures and tools, typically used to verify that collections of files have remained unchanged.
 
-If you want to create a "bag" as a one-off we can just use the Python script provided by LOC:
+You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a convenience method for fundamental digital archiving processes. 
+
+If you want to create a "bag" as a one-off, we can just use the Python script provided by LOC:
 
 ```sh
 bagit.py /directory/to/bag
 ```
 
-If we want to do something more complex we will want to write Python code which uses their Python code ourselves, which can be imported as a library.
-
+If we want to do something more complex, we will want to write Python code which uses their Python code ourselves, which can be imported as a library.
 
 ---
 class: tangentpage
@@ -525,7 +529,7 @@ Now, unlike the other libraries we have looked at today, BagIt is not pre-instal
 import bagit
 ```
 
-As we don't have the 'bagit' library installed we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
+As we don't have the 'bagit' library installed, we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
 
 We can check out libraries using `pip freeze` to verify that this is true!
 
@@ -535,7 +539,7 @@ The easiest way to install is with pip, which is the recommended Python library 
 pip install bagit
 ```
 
-Note that we can also install a specific version if we so choose. This can be useful if there are changes to the library and we want to be confident everyone is running the same thing.
+Note that we can also install a specific version if we so choose. This can be useful if there are changes to the library, and we want to be confident everyone is running the same thing.
 
 ```sh
 pip install bagit==1.8.1
@@ -559,18 +563,17 @@ class: tangentpage
 
 ### **Tangent 2: managing requirements.**
 
-Now that we have started installing our own libraries we have drifted away from the default experience of a fresh Python install.
+Now that we have started installing our own libraries, we have drifted away from the default experience of a fresh Python install.
 
-We might have a project which requires twenty external libaries, and we want other people to know about these and to be able to install them all themselves easily.
+We might have a project which requires twenty external libraries, and we want other people to know about these and to be able to install them all themselves easily.
 
-The normal way to do this is to keep track of these lirbaries in a `requirements.txt` file in our project.
-
+The normal way to do this is to keep track of these libraries in a `requirements.txt` file in our project.
 ```
 bagit==1.8.1
 ```
 
-This way we can install all of the required packages in one go, and with specific versions.
 
+This way we can install all the required packages in one go, and with specific versions.
 ```
 pip install -r requirements.txt
 ```
@@ -579,13 +582,13 @@ pip install -r requirements.txt
 ---
 class: tangentpage
 
-### **Tangent 3: virtual enviroments.**
+### **Tangent 3: virtual environments.**
 
-Installing those libraries is in pursuit of creating the same enviroment, so that code which runs should behave the same consistently.
+Installing those libraries is in pursuit of creating the same environment, so that code which runs should behave the same consistently.
 
 But we can have multiple projects which require different versions of the same library, for example Project 1 needs `library 2.5` but Project 2 needs `library 3.4`.
 
-Virtual enviroments let us manage the python libraries per project, which is pretty cool.
+Virtual environments let us manage the python libraries per project, which is pretty cool.
 
 
 ```sh
@@ -598,10 +601,11 @@ python app.py
 ---
 class: contentpage
 
-### **4. Bagit for Python**
+### **4. BagIt for Python**
 
-Walkthrough of bagit for Python!
+Walkthrough of BagIt for Python!
 
+Copy the `media` folder to a `bag_test` folder.
 
 ```python
 import bagit
@@ -610,20 +614,11 @@ import pathlib
 bagit.make_bag(pathlib.Path.cwd() / 'bag_test', checksums=['md5'])
 ```
 
-We can now load our bag and validate it is correct, meaning intact from when we bagged it.
-
-```python
-bag = bagit.Bag(str(pathlib.Path.cwd() / 'bag_test'))
-if bag.is_valid():
-    print('yes, we are good')
-else:
-    print('something went wrong')
-```
 
 ---
 class: contentpage
 
-### **4. Bagit for Python**
+### **4. BagIt for Python**
 
 
 Tour of what "bag" looks like.
@@ -633,6 +628,24 @@ Tour of what "bag" looks like.
 +++ Danger of "recursive bags" if process is run multiple times. +++
 
 
+---
+class: contentpage
+
+### **4. BagIt for Python**
+
+
+We can also load our bag and validate it is correct, meaning intact from when we bagged it.
+
+```python
+bag = bagit.Bag(str(pathlib.Path.cwd() / 'bag_test'))
+if bag.is_valid():
+    print('yes, we are good')
+else:
+    print('something went wrong')
+```
+
+Adjust something to make this fail!
+
 
 ---
 class: contentpage
@@ -641,11 +654,13 @@ class: contentpage
 
 Great, so we now have our "bag", but what do we do with it?
 
-Generally speaking many archives will then "wrap the bag". 
+
+Generally speaking, many archives will then "wrap the bag". 
 TAR is a very old option (back to 1979) and widely supported means of wrapping files for storage or transport.
 
 
-As you have now heard many times, we can either create TARs from the command line on a unix-machine (Linux/macOS) or using Python (OS-agnostic)
+As you have now heard many times, we can either create TARs from the command line on a Unix-machine (Linux/macOS) or using Python (OS-agnostic)
+
 
 ```sh
 tar cfv archive.tar bag_test/
@@ -669,7 +684,6 @@ with tarfile.open(pathlib.Path.cwd() / 'archive.tar', "w") as tar_file:
     bag_files = pathlib.Path.cwd() / 'bag_test'
     for file in bag_files.iterdir():
         tar_file.add(file)
-
 ```
 
 
@@ -680,28 +694,30 @@ class: contentpage
 
 ### **6. OAIS**
 
+
 Now is probably a good moment to raise the concept of OAIS, or Open Archival Information System.
 
 This is a standard (although, importantly, conceptual standard) around how archives should store their material. 
 
 I would recommend the DPC introduction to OAIS if you are interested: https://www.dpconline.org/docs/technology-watch-reports/1359-dpctw14-02/file.
 
-OAIS describes three stages in the archival objects lifecycle:
+OAIS describes three stages in the archival object's lifecycle:
 - The Submission Information Package (aka SIP), the package entering archival control.
 - The Archival Information Package (aka AIP), the package in archival control.
 - The Dissemination Information Package (aka DIP), the package leaving archival control.
 
 
-Because this is a conceptual or reference model there is some flexibility to interprete what an implementation should look like, but generally understood to mean that files should be stored in a state of assured fixity, with sufficent metadata to assess format conformance and playbility.
+Because this is a conceptual or reference model there is some flexibility to interpret what an implementation should look like, but generally understood meaning that files should be stored in a state of assured fixity, with sufficient metadata to assess format conformance and playability.
+
 
 ---
 class: contentpage
 
 ### **7. PREMIS**
 
-PREMIS is another concept originating from Library of Congress, which defines an expected model for expressing information around preservation activity. This includes defining the entities of those invoved in preservatoon activity: Objects, Events, Agents and Rights.
+PREMIS is another concept originating from Library of Congress, which defines an expected model for expressing information around preservation activity. This includes defining the entities of those involved in preservation activity: Objects, Events, Agents and Rights.
 
-These entities also have expected properties, instigating the collection of the sort of metadata required to properly contexulaise digital preservation activity.
+These entities also have expected properties, instigating the collection of the sort of metadata required to properly contextualise digital preservation activity.
 
 If you were so inspired you could literally express this using their XML or OWL schemas, otherwise it could be a good reference to understand what data you should be considering for collection: who created this file, when? Was the filename changed?
 
@@ -729,13 +745,55 @@ class: contentpage
 import imagehash, pathlib, random, subprocess, tqdm
 from PIL import Image
 
-frames = pathlib.Path.cwd() / 'media' / 'dpx'
-for dpx_frame in frames.iterdir():
-    jpg_frame = dpx_frame.with_suffix('.jpg')
+frames = pathlib.Path.cwd() / 'media'
+for dpx_frame in frames.rglob('*'):
+    jpg_frame = dpx_frame.parents[1] / 'jpg' / f'{dpx_frame.stem}.jpg'
+    jpg_frame.parents[0].mkdir(exist_ok=True)
     if not jpg_frame.exists():
-        subprocess.call(['ffmpeg', '-i', str(dpx_frame), str(jpg_frame)])
+        subprocess.call(['ffmpeg', '-v', 'quiet', '-i', str(dpx_frame), str(jpg_frame)])
 
-jpeg_files = [x for x in frames.iterdir() if x.suffix == '.jpg']
+```
+
+
+---
+class: tangentpage
+### **Tangent: F-Strings**
+
+In the previous example you may have noticed that I was embedding variables into strings like this `f'{file} started'`.
+
+f-string are a relatively new addition to make embedding variables into string easier, around since Python 3.6.
+
+Older methods would have been:
+
+```python
+apple_colour = "green"
+print('I like', apple_colour, 'apples a lot.')
+```
+
+
+```python
+apple_colour = "green"
+print('I like %s apples a lot.' % apple_colour)
+```
+
+But the new amazing recommended way, which I think does improve readability, is 
+
+```python
+apple_colour = "green"
+print(f'I like {apple_colour} apples a lot.')
+```
+
+Note that that "f" at the start indicates that this is an "f-string" and any time curly brackets are used inside, they are embedding a variable.
+
+
+---
+class: contentpage
+
+### **8. Perceptual hashing, similarity matching**
+
+```
+frames = pathlib.Path.cwd() / 'jpg'
+jpeg_files = [x for x in frames.rglob('*') if x.suffix == '.jpg']
 random_jpg = random.choice(jpeg_files)
 random_jpg_phash = imagehash.average_hash(Image.open(str(random_jpg)))
 
@@ -760,11 +818,9 @@ class: contentpage
 
 Where would this be useful for an archive?
 
-Say someone gives you digital material, it is useful to be able to check if it is already in your collection. Hashing processes like MD5 will tell you if you already have *exactly* the same file, but this will tell you if you have something which is just very similar.
+If someone gives you digital material, it is useful to be able to check if it is already in your collection. Hashing processes like MD5 will tell you if you already have *exactly* the same file, but this will tell you if you have something which is just very similar, say a JPEG and a PNG of the same image, or a compressed vs uncompressed image.
 
-I am also personally very interested in its use in determining where visual work has been sampled or featured in other works.
-
-
+I am also personally very interested in its use in determining where visual work has been sampled or featured in other works, to identify where clips or sections of video are present in other moving image files.
 
 ---
 class: center, middle, titlepage

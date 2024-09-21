@@ -3,3 +3,8 @@ applications/
 test_dcp/
 script.py
 whisper_test/
+notebook.ipynb
+airflow/
+bag_test/
+jpg/
+dagster/

@@ -29,7 +29,8 @@ This is an area which is being revolutionised by Large Language Models aka Machi
 class: contentpage
 ### **Content Metadata**
 
-Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
 
 Speech to text.    
 OCR.    
@@ -40,7 +41,7 @@ Experimental/Other.
 class: contentpage
 ### **Content Metadata**
 
-Prior to around 2022, there were many projects in this space, using a variety of different techniques often stretching back decades.
+Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
 
 ~~Speech to text.~~ now -> Whisper    
 ~~OCR.~~ now -> LLM        
@@ -53,41 +54,41 @@ Prior to around 2022, there were many projects in this space, using a variety of
 class: contentpage
 ### **Machine Learning**
 
-These systems all have in common the idea of an artifical neural network, an idea which has been around since the 1940s, but has only achieved reccent widespread use due to computational oiwer and innovative strategies.
 
-An artifical neural network very roughly approximates the way our own brains work, in that they comprise many many many very simple "nodes", which develop to behave in certain ways, and complexity arises out of many many nodes communicating with many many other nodes.
+These systems all have in common the idea of an artificial neural network, an idea which has been around since the 1940s, but has only achieved recent widespread use due to computational power and innovative strategies.
 
+An artificial neural network very roughly approximates the way our own brains work, in that they comprise many many many very simple "nodes", which develop to behave in certain ways, and complexity arises out of many many nodes communicating with many many other nodes.
 
 ---
 class: contentpage
 ### **Machine Learning**
 
-A traditional artifical neural network has three components, "inputs", "hidden layers", and "outputs".
+A traditional artificial neural network has three components, "inputs", "hidden layers", and "outputs".
 
 - The inputs could be numbers, letters, pixels, audio samples, as long as the expressed as numbers.
 
-- The hidden layers sit inbetween. These are sequential layers of nodes which are all inteerconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
+- The hidden layers sit in-between. These are sequential layers of nodes which are all interconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
 
+- The outputs could be as simple as a "yes" or "no" answer to the question, "is this a Spanish word?"
 
-- The outputs could be as simple as a "yes" or "no" answer to the question, "is this a spanish word?"
+The power of artificial neural networks are that they can apply to almost any subject or discipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot explain how a certain trained neural net (or "model") is producing a certain result.
 
-The power of artifical neural networks are that they can applied to almost any subject or dsicipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot exaplin how a certain trained neural net (or "model") is producing a certain reuslt.
+Depending on source material, we can also see undesired biases replicated. 
 
-Depending on source material we can also see undesired biases replicated. 
+[NNFS](https://nnfs.io/) is a wonderful resource which contains examples of building a neural network using just vanilla Python.
 
-
-
+Of course, like cars, we don't have to understand fully how artifical neural networks work to use them!!
 
 ---
 class: contentpage
 ### **Whisper**
 
-With this context we can now start to look at Whisper from OpenAI. 
 
-Whisper is now so ubitious it has almost completely replaced all other copetitors and all other speech to text systems.
+With this context, we can now start to look at Whisper from OpenAI. 
 
-It returns speech-to-text "cooked", with punctuation and disfluences removed. As with all neural network models it comes in a variety of "sizes" dependant on complexity, which generally correlate to quality of results.
+Whisper is now so ubiquitous it has almost completely replaced all other competitors and all other speech to text systems.
 
+It returns speech-to-text "cooked", with punctuation and disfluences (this is a new word for me) removed. As with all neural network models, it comes in a variety of "sizes" dependent on complexity, which generally correlate to quality of results.
 
 
 ---
@@ -109,9 +110,10 @@ which will use default values for the "model" (neural network discussed before) 
 class: contentpage
 ### **Whisper**
 
-The first flag we might want to feed whisper is the language, otherwise it will take a sample of the first 30 seconds and automtcally detect.
 
-As an aside, I have noticed that anytime Whisper cannot detect a langugae if seems to think it is "welsh".
+The first flag we might want to feed whisper is the language, otherwise it will take a sample of the first 30 seconds and automatically detect.
+
+As an aside, I have noticed that anytime Whisper cannot detect a language if seems to think it is "Welsh".
 
 ```sh
 whisper --language en media/audio.wav
@@ -135,14 +137,14 @@ whisper --language en --output_dir whisper_test/ media/audio.wav
 class: contentpage
 ### **Whisper**
 
-while we are at it we may also want to pick an output format.
+
+while we are at it, we may also want to pick an output format.
 
 SRTs and VTTs are subtitle tracks with timestamps, which you should be able to drop straight into VLC or DCPs you are creating.
 
-JSON and TSV are useful as strcutured data, using formats which are common for storing machine readable data.
+JSON and TSV are useful as structured data, using formats which are common for storing machine-readable data.
 
-We are are for now going to use the simplest - a TXT file.
-
+We are for now going to use the simplest - a TXT file.
 
 ```sh
 whisper --language en --output_dir whisper_test/ --output_format txt media/audio.wav
@@ -158,7 +160,7 @@ class: contentpage
 
 As mentioned before we can also set the size of the model which is used: base, small, medium, large.
 
-It is worth doing some tests to see what effect the bigger the model has, it will use more diskspace and take longer to process, so worth checking the results to see if they are significant enough to justofy this.
+It is worth doing some tests to see what effect the bigger the model has, it will use more disk space and take longer to process, so worth checking the results to see if they are significant enough to justify this.
 
 
 Matt Miller at Library of Congress has done something similar.
@@ -171,7 +173,7 @@ whisper --language en --output_dir whisper_test/ --output_format txt --model lar
 
 PRACTICAL: compare results of base and large-v2 side by side.
 
-Also, there is nothing restricting you to only using the models providided by OpenAI.
+Also, there is nothing restricting you to only using the models provided by OpenAI.
 
 
 
@@ -179,9 +181,9 @@ Also, there is nothing restricting you to only using the models providided by Op
 class: contentpage
 ### **LLMs**
 
-Now to shift focus to other tools using similar technology, LLMs or Large language Models.
+Now to shift focus to other tools using similar technology, LLMs or Large Language Models.
 
-The most famous of these is undoubtely ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
+The most famous of these is undoubtedly ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
 
 We might begin by looking at different things we can do with these models, and then different ways to access them.
 
@@ -205,14 +207,13 @@ https://ollama.com/library/gemma2
 class: contentpage
 ### **LLMs**
 
-Once we have ollama installed we can easily call our required model using the following command.
+Once we have Ollama installed, we can easily call our required model using the following command.
 
 ```sh
 ollama run llava:7b
 ```
 
-Bigger models may have systems requriements beyond what our computer can handle, in which case we will get an error message to inform us of this.
-
+Bigger models may have systems requirements beyond what our computer can handle, in which case we will get an error message to inform us of this.
 
 ---
 class: contentpage
@@ -231,8 +232,10 @@ class: contentpage
 General description example
 
 ```sh
-can your describe image '/home/paulduchesne/Desktop/summer-school-2024/media/0087679.jpg'
+Can you describe image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087679.jpg'
 ```
+
+
 
 ---
 class: contentpage
@@ -242,13 +245,16 @@ OCR example
 
 
 ```sh
-what text is there in this image '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What text is in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
-For anyone who remembers using tesseract, mind-blowingly we can ask for specific interpreted text.
+Please note that accuracy can depend on model size, so this is the one section of the course where having a powerful computer will give you better results, not just faster.
+I am currently running the lowest model as my laptop is nothing special, would be keen to compare with people running something better.
+
+For anyone who remembers using Tesseract, mind-bendingly we can ask for specific interpreted text.
 
 ```sh
-What is the name of the boat in image '/home/paulduchesne/Desktop/summer-school-2024/media/0087024.jpg'
+What is the name of the boat in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
 ```
 
 ---
@@ -258,10 +264,20 @@ class: contentpage
 Object Detection
 
 
+Frame with boat.
+
 ```sh
-What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/media/0087280.jpg'
+What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
 ```
 
+
+Frame with flags.
+
+```sh
+What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087200.jpg'
+```
+
+A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutivelu in the same session, so quiting in between may not be a terrible idea.
 
 
 
@@ -275,37 +291,34 @@ Image characteristics
 
 
 ```sh
-Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
 
 
 
 ```sh
-What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85): '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
+
+This is especially interesting as the image is letterboxed. There are much easier ways to do "letterbox detection" (e.g. with FFmpeg), but those can be susceptible to black levels.
 
 
 
 
 ```sh
-What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
+What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
 ```
-
-
 
 
 ---
 class: contentpage
 ### **LLMs**
 
-So far we have been returning text, which is great, but as we want to integrate with databases and automated systems we want a machine readable output - LLMs can do this as well.
+So far we have been returning text, which is great, but as we want to integrate with databases and automated systems we want a machine-readable output - LLMs can do this as well.
 
 ```sh
-Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'
-``
-
-
-`
+Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
+```
 
 ---
 class: contentpage
@@ -314,74 +327,92 @@ class: contentpage
 
 Now the only piece missing is automating this - copying and pasting lines of text into the terminal is not going to scale if we want to inspect hundreds, thousands or millions of images.
 
+Basic Python example.
 
+```python
+import ollama
+
+request = ollama.chat(
+    model='llava:7b',
+    messages=[
+        {
+        'role': 'user',
+        'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
+        'images': ['/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'],
+        }
+    ]
+)
+
+print(request['message']['content'])
 ```
-import requests
 
-url = 'http://localhost:11434/api/generate'
-data = {
-    "model": "llava:7b", 
-    "prompt": "What aspect ratio is the following image: '/home/paulduchesne/Desktop/summer-school-2024/media/0086556.jpg'",
-    "stream": False 
-}
 
-response = requests.post(url, json=data)
-print(response.text)
 
+---
+class: contentpage
+### **LLMs**
+
+Convert to a reusable function.
+
+```python
+import ollama
+
+def aspect_ratio_detector(frame):
+    
+    request = ollama.chat(
+        model='llava:7b',
+        messages=[
+            {
+            'role': 'user',
+            'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
+            'images': [frame],
+            }
+        ]
+    )
+
+    return request['message']['content']
+
+result = aspect_ratio_detector('/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg')
+
+print(result)
 ```
 
 
-WORKING CODE
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+Iterate over the full directory of scans.
+
+On my computer this would take a very long time, and there would be little value in processing every image - you would probably want to reduce to one frame per second, or less.
+
+```python
 
 import ollama
-import sys
 
+def image_summary(frame):
+    
+    request = ollama.chat(
+        model='llava:7b',
+        messages=[
+            {
+            'role': 'user',
+            'content': 'Can you describe this image in less than ten words',
+            'images': [str(frame)],
+            }
+        ]
+    )
 
-def query_the_image(query: str, image_list: list[str]) -> ollama.chat:
-    try:
-        res = ollama.chat(
-            model=selected_model,
-            messages=[
-                {
-                'role': 'user',
-                'content': query,
-                'images': image_list,
-                }
-            ]
-        )
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-    return res['message']['content']
+    return request['message']['content']
 
-
-def print_out_the_response(query_message: str, image_list: list[str]) -> None:
-    response = query_the_image(query_message, image_list)
-    if response:
-        print(response)
-        sys.stdout.flush()
-        sys.stdout.write("\n")
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+jpg_path = pathlib.Path.cwd() / 'jpg'
+for frame in jpg_path.iterdir():
+    result = image_summary(frame)
+    print(frame, result)
+```
 
 
 

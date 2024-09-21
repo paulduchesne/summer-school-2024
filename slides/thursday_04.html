@@ -9,52 +9,801 @@
 
 
 
-Note to Paul, write out the whole doc as markdown before worrying about segmenting and agenda, do this last.
-
-
-
-
-
-
-
-
-
-
-
-
 class: center, middle, titlepage
-### THU04: *Multiprocessing, Jupyter, Orchestration.*
+### THU04: *Multiprocessing, Logging, Containerisation, Orchestration.*
 
-multiprocessing
-
-Python logging
-
-introdution to jupyter and altair
-
-docker container, containerisation example with a python script to do something
-
-Airflow and orchestration
-
-
-
-
-
-
-1. Jupyter/Altair viz (Paul)
-2. Docker containers/dockerisation (Paul)
-3. Airflow (Paul)
-      
-
-      
 ---
 class: contentpage
 ### **Agenda**
 
-1.    
-1.1 
+This afternoon we are going to look at some more advanced Python topics, such as Multiprocessing and Logging.
+
+Then we are going to look at containerisation and orchestration, which are a jump up in complexity level from what we have covered, but very useful if you want to manage many automated processes.
+
 ---
 class: contentpage
+### **1. Multiprocessing with Python**
 
+Multiprocessing, in this context, refers to the fact that Python runs on a single processor.
+
+What does this mean? A modern computer will generally have multiple "processors" to balance the load of different operations, but systems like Python are only able, by default, to draw upon one processor at a time.
+
+To illustrate this, we can open up our activity monitor and observe activity.
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+
+Depending on your situation, this is a missed opportunity, as you could have an extremely powerful computer where your Python process is only using a small percentage of total possible computational power.
+
+Worth noting that most laptops have limited resources compared to higher end desktop computers, so a possible development pathway is to refine a process on your laptop and then transfer to a serious multicore desktop machine (if one is available to you).
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+
+The goal here is that if a process takes a certain amount of time, if you can efficiently multiprocess on a 64-core machine, the process will run 64 times faster.
+
+There is a big difference between 1 day and 64 days, or 1 year and 64 years!!!
+
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+
+
+
+Python has a handy multiprocessing library called "multiprocessing".
+
+The first thing we would want to do is so how many processors our computer has to give some idea of how we allocate resources.
+
+```python
+import multiprocessing
+multiprocessing.cpu_count() 
+```
+
+Also useful is that the library will automatically make use of as many "CPUs" (or processors) as are available.
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+We can now define a task in Python (or a "function"), and then organise for it to run in batches.
+
+The Pool method makes allocating tasks in batches quite easy, but note that all results will be returns when the longest has finished.
+
+```python
+import multiprocessing
+import time
+
+def my_process(file_name):
+    print(f"{file_name} has started.")
+    time.sleep(10) 
+    print(f"{file_name} has ended.")
+
+if __name__ == "__main__":
+
+    files = ['file_01', 'file_02', 'file_03', 'file_04']
+    
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+    print("All processes have finished.")
+```
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+There are also a few new code components we can see here!
+
+
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+```python
+import multiprocessing
+import time
+
+def my_process(file_name):
+    print(f"{file_name} has started.")
+    time.sleep(10) 
+    print(f"{file_name} has ended.")
+
+if __name__ == "__main__":
+
+    files = ['file_01', 'file_02', 'file_03', 'file_04']
+    
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+    print("All processes have finished.")
+```
+
+The `def name()` construction in Python is what we can define a function, which is a common way to group a block of code we want to reuse to do the same thing over and over, but maybe with different inputs.
+
+This is perfect for multiprocessing, where we want to define a single block of code which gets executed in different processes at the same time.
+
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+```python
+import multiprocessing
+import time
+
+def my_process(file_name):
+    print(f"{file_name} has started.")
+    time.sleep(10) 
+    print(f"{file_name} has ended.")
+
+if __name__ == "__main__":
+
+    files = ['file_01', 'file_02', 'file_03', 'file_04']
+    
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+    print("All processes have finished.")
+```
+
+The `if __name__ == "__main__":` part is a common way of making sure that the Python script is being executed directly, and not being imported into other code.
+
+If you recall, a "library" is just someone else's code we have imported, and this is an explicit mechanism to avoid this happening accidentally.
+
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+```python
+import multiprocessing
+import time
+
+def my_process(file_name):
+    print(f"{file_name} has started.")
+    time.sleep(10) 
+    print(f"{file_name} has ended.")
+
+if __name__ == "__main__":
+
+    files = ['file_01', 'file_02', 'file_03', 'file_04']
+    
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+    print("All processes have finished.")
+```
+
+If we run this, we will observe that four processes start simultaneously, perform the action which is to "sleep" (do nothing) for ten seconds, and the processes are all returned at the same time.
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+Practical: Let us  now write a script to hash all the image files in our film scan, then write a multiprocessing variant and observe the speed difference.
+
+Hint: An easy way to get timestamps is using the datetime library
+
+```python
+import datetime
+
+print(datetime.datetime.now())
+```
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+<b>
+<tspan style="color:black">PAGE INTENTIONALLY BLANK</tspan>
+</b>
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+Solutions: Hashing all files in film scan sample.
+
+
+
+```python
+import datetime
+import hashlib
+import pathlib
+
+start_time = datetime.datetime.now()
+files = pathlib.Path.cwd() / 'media'
+for file in files.iterdir():
+    with open(file, 'rb') as f:  
+        file_content = f.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+
+end_time = datetime.datetime.now()
+print('processing time:', end_time-start_time)
+```
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+Solutions: Multiprocess hashing all files in film scan sample.
+
+
+```python
+import datetime
+import multiprocessing
+import time
+
+def my_process(file_name):
+
+    with open(file_name, 'rb') as f:  
+        file_content = f.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+
+if __name__ == "__main__":
+    start_time = datetime.datetime.now()
+    files = pathlib.Path.cwd() / 'media'
+    files = [x for x in files.iterdir()]
+
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+    end_time = datetime.datetime.now()
+
+    print('processing time:', end_time-start_time)
+
+```
+
+
+
+
+
+---
+class: contentpage
+### **1. Multiprocessing with Python**
+
+
+Multiprocessing is extremely useful if you have "expensive" operations (like hashing!) which are causing you to wait for your script to finish. 
+It does however introduce extra complexity to your scripts, so should only be used if required.
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+
+
+Logging is an important feature when we build a complex pipeline and something goes wrong, or if we want to check up on where a process is up to!
+
+Python has an inbuilt `logging` library! 
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+Logging is quite similar to "print" statements, but intended to report activity that can be consulted later, whereas print statements are ephemeral.
+
+It is also extremely useful if you ever get asked the questions: when did you exactly transcode that file? How long did it take? What was the output?
+
+
+
+
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+We can do all kinds of experiments with logging, but for now we are just going to apply it to our multiprocessing hashing example.
+
+Note that logging has a built-in five levels of severity: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+
+An example of debug logs would be "this variable equalled this value", while an error would be something like the `raise Exceptions` we saw earlier.
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+The simplest example of logging is something like:
+
+```python
+import logging
+
+logging.info('hello')
+```
+
+Note that this will not print anything.
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+We can configure to write to a file, and formatting the logs like this
+
+```python
+import logging
+
+logger = logging.getLogger()
+file_handler = logging.FileHandler('app.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+logger.error("There is an error!")
+```
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+
+Now for our practical, can we add this to our previous hashing example!
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+<b>
+<tspan style="color:black">PAGE INTENTIONALLY BLANK</tspan>
+</b>
+
+
+
+---
+class: contentpage
+### **2. Logging with Python**
+
+```python
+import hashlib
+import logging
+import multiprocessing
+import pathlib
+import time
+
+def my_process(file_name):
+    logging.info(f'{file_name} started.')
+    with open(file_name, 'rb') as f:  
+        file_content = f.read()  
+        result = hashlib.md5(file_content).hexdigest()  
+    logging.info(f'{file_name} finished.')
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler('app.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+if __name__ == "__main__":
+    files = pathlib.Path.cwd() / 'media'
+    files = [x for x in files.iterdir()]
+    p = multiprocessing.Pool()
+    with p:
+        p.map(my_process, files)
+
+```
+
+
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+Containerisation refers to the process of encapsulating an environment to ensure that systems run predictably. 
+
+Why would you do this? Quite simply because every computer in the world, once it has been used for a significant period of time, becomes its own environment. 
+Files sit in different locations, applications are installed or removed, etc. 
+There are also inherent differences we have seen in different software versions, different operating systems, differences, differences, differences.
+
+Containerisation is about building a fully predictable computing environment. 
+On our own computers. 
+Amazing!
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+Containerisation is also useful if you want a build a system which requires installing a lot of smaller applications, and configuration (as we have done in this course) and you want it to deploy predictably.
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+Docker is ubiquitous in this space. 
+
+Podman has some benefits around security considerations, so may be more attractive to your IT team.
+
+Test Docker is installed.
+
+```sh
+docker --version
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+Then we need to create a cool script. This doesn't have to be Python, but we have been doing so much work with Python so far seems good to stick with.
+
+Here is a simple script which calls the NFSA collection API and prints out a JSON file.
+
+```python
+# script.py
+
+import requests
+result = requests.get('https://api.collection.nfsa.gov.au/title/331321')
+print(result.status_code)
+print(result.text)
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+
+
+A core component of working with Docker is the idea of the Dockerfile. 
+
+We can think of this exactly the same as a cooking recipe.
+
+Here is an example - don't worry if it looks unfamiliar, this is special docker syntax!
+
+Dockerfile
+
+```docker
+FROM python:3.11
+
+ADD script.py .
+
+RUN pip install requests
+
+CMD python ./script.py
+```
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+We can now `build` the container. This means that all the setup required from the Dockerfile is run, but the process itself is not.
+
+What we are doing here is essentially "cooking" a custom computer which is based on a "python" image.
+
+```sh
+docker build -t script_container -f Dockerfile .
+```
+
+This will take a bit!
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+Once completed you can run 
+
+```sh
+docker images
+```
+
+
+And you will see all the "docker images". Note these are not running, they are frozen state computational environments.
+
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+If we want to actually run the image, i.e. boot up the computer we have created, we run
+
+```sh
+docker run script_container
+```
+
+And we should see API output.
+
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+Okay, but so what? What have we gained from running it locally as a Python script?
+
+Well, this is where it gets cool!
+
+Run
+
+```sh
+docker run --name mariadb-instance -p 3306:3306 -e MARIADB_ROOT_PASSWORD=password -d mariadb
+```
+
+You are now running the popular MariaDB database on your computer without having to go through any manual steps.
+
+```sh
+docker ps
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+You can also log into it, and have a look around!
+
+```
+docker exec -it mariadb-instance /bin/bash
+```
+
+
+---
+class: contentpage
+### **3. Containerisation**
+
+One last example, say we can also install whole operating systems through Docker, and then install tools on top
+
+Here is a new Dockerfile which uses Ubuntu, a popular Linux distro, and installs FFmpeg
+
+
+```docker
+FROM ubuntu:22.04
+
+RUN apt update  
+
+RUN apt-get install -y ffmpeg
+```
+
+---
+class: contentpage
+### **3. Containerisation**
+
+We now build a new docker image using this docker file
+
+```sh
+docker build -t ffmpeg_docker -f Dockerfile . 
+```
+
+Once this is complete, we can see the new image available to us.
+
+
+```sh
+docker images
+```
+
+We can run it
+```sh
+docker run -t -d ffmpeg_docker
+```
+
+---
+class: contentpage
+### **3. Containerisation**
+
+
+See it running
+```sh
+docker ps
+```
+
+
+
+And log into it and run FFmpeg commands
+```sh
+docker exec -it ffmpeg_docker /bin/bash
+```
+
+
+
+There are loads of cool things you can do with Docker, hopefully this has been inspiring!
+
+Docker is useful if you want to deploy complex applications (say you are trying to deploy a system which needs a database, an API and a user interface), if you want to ensure that systems behave predictably, or if you want to deploy systems with minimal manual installation steps.
+
+
+
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+
+
+The last topic for today is orchestration. We have covered writing and scheduling individual tasks, which is fine if you are running one or two handfuls of processes. 
+
+Once you scale up to fifty or a hundred distinct processes this can be hard to manage, keeping track of what ran when, failures.
+
+What we need then is a system to manage all of our processes, which is generally called an "orchestrator". 
+
+
+This is an interesting subject, as I believe Joanna and I are both at the point where our own processes have only recently reached this moment, so these tools are new for us as well.
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+The most popular of these tools is Apache Airflow, a complex system which we are going to use Docker to set up quickly!
+
+Let's `curl` the "docker compose" file. What is docker compose? 
+
+In the last example we were building and deploying single containers, docker compose lets us define multiple containers in one configuration document.
+
+
+
+
+```sh
+mkdir airflow
+cd airflow
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.10.1/docker-compose.yaml'
+```
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+
+Make required airflow containers
+
+```sh
+mkdir -p ./dags ./logs ./plugins ./config
+```
+
+Create a required env file.
+
+```sh
+echo -e "AIRFLOW_UID=$(id -u)" > .env
+```
+
+Start the database
+
+```sh
+docker compose up airflow-init
+```
+
+Start the system
+
+```sh
+docker compose up -d
+```
+
+
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+
+
+Before we have a look at the user interface, worth considering what is actually happening here.
+
+Docker containers are running a moderately complex of services which ultimately run processes or workflows defined in Python.
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+
+This should now be running and accessible through the browser at http://localhost:8080 (this may take a minute or two).
+
+Login is "airflow/airflow".
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+Lets look at `example_python_decorator`
+
+Generally speaking, there is a single python script per DAG, which defines the recipe of processes we want to perform.
+
+We can click into the DAG and see individual tasks, these are all simply functions in a single Python script.
+
+We have options for inputs, and whether it is scheduled on a timer, or by a "sensor" or we start them manually.
+
+
+
+---
+class: contentpage
+### **4. Orchestration: Airflow**
+
+There are many orchestration options, and so I just wanted to very quickly deploy two alternatives to Airflow, Kestra and Dagster.
+
+I haven't spent much time in either of these, but it is just to show that the user interface for all of these systems is ultimatley very similar.
+
+
+
+
+---
+class: contentpage
+### **4. Orchestration: Kestra**
+
+Kestra is a newer orchestration project, with paid features which work against it (unlike Airflow), but it does have a slick user interface.
+
+
+```sh
+mkdir kestra
+cd kestra
+curl -o docker-compose.yml https://raw.githubusercontent.com/kestra-io/kestra/develop/docker-compose.yml
+docker compose up -d
+```
+
+Service should be available at http://localhost:8080
+
+
+---
+class: contentpage
+### **4. Orchestration: Dagster**
+
+Dagster is very popular in the machine learning space as an orchstrator for model training, I haven't really ever used it!
+
+```sh
+git clone https://github.com/dagster-io/dagster.git
+cd dagster/examples/deploy_docker/
+docker compose up -d
+```
+
+Service should be available at http://localhost:3000
+
+
+---
+class: center, middle, titlepage
+### End of Day Four.
 
 
 

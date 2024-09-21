@@ -78,18 +78,20 @@ For audiovisual archiving this can get significantly more involved as certain fo
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 When we talk about "files", we are really talking about two different things.
 
 
-For this section it would be useful to have a hex editor to be able to open the file in an objective way, and see what is inside. 
+For this section, it would be useful to have a hex editor to be able to open the file in an objective way, and see what is inside. 
 
-https://hexed.it is an good online resource, although will presumably be unhappy if you try any files which are too big.
+
+https://hexed.it is a good online resource, although it will presumably be unhappy if you try any files which are too big.
+
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 On the one hand we have text documents, like "txt" (or "py"!) which are just text. There is no additional data in the file. Also note how the same letters result in the same binary encodings.
@@ -98,13 +100,13 @@ On the one hand we have text documents, like "txt" (or "py"!) which are just tex
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 When we open up a wav file from the Bundesarchiv film scan, we see something different.
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 .left[<img src="../img/hex_wav.png" width="700">]
@@ -114,16 +116,16 @@ A guide to what we are seeing! The first four letters are called the "magic numb
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
-Underneath is the audio expressed as "binary data", which allows us the flexibilty for the expression of any file: sound, video, 3d models etc etc. 
+Underneath is the audio expressed as "binary data", which allows us the flexibility for the expression of any file: sound, video, 3d models etc etc. 
 
 
 .left[<img src="../img/hex_wav2.png" width="700">]
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 We are not really able to engage with the media directly like this, however a staple of the "glitch art" toolbox would be to open files like this and then do "find replace" functions.
@@ -134,7 +136,7 @@ https://en.wikipedia.org/wiki/Databending
 
 ---
 class: tangentpage
-### **Tanget: What is a file!!**
+### **Tangent: What is a file!!**
 
 
 But if we have a lossless file, we can sometimes see where the nature of the encoded information forms appreciable patterns.
@@ -142,15 +144,10 @@ But if we have a lossless file, we can sometimes see where the nature of the enc
 
 .left[<img src="../img/hex_sine.png" width="700">]
 
-This is a very low frequency sinewave, it is literally encoded in the file as values which go up, then down, then up.
+This is a very low frequency sine wave, it is literally encoded in the file as values which go up, then down, then up.
 
 
 
----
-class: tangentpage
-### **Tanget: What is a file!**
-
-TODO: one pixel dpx
 
 ---
 class: contentpage
@@ -174,7 +171,7 @@ Note that embARC is a java application which we run as a "jar". This can also be
 
 
 ```sh
-java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx
+java -jar applications/embARC-0.4.0.jar media/0088860.dpx
 ```
 
 
@@ -184,7 +181,7 @@ java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx
 
 
 ```sh
-java -jar applications/embARC-0.4.0.jar media/dpx/0088860.dpx -print
+java -jar applications/embARC-0.4.0.jar media/0088860.dpx -print
 ```
 
 embARC also has the capacity for conformance checks, where we define what fields need to be populated and embARC ensures they are present.
@@ -218,6 +215,7 @@ ffprobe -v error -show_entries format=size -of default=nw=1:nk=1 086400.dpx
 class: contentpage
 ### **4. FFprobe**
 
+
 To get the same metadata, like duration, from the container and the stream you need ensure you add the `-select_stream v:0`, and differentiate where the duration is obtained from `format` or `stream`
 ```sh
 ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 input.mp4
@@ -232,6 +230,144 @@ Using the `-report` flag you can dump the data to a logs named `ffprobe-YYYYMMDD
 ```sh
 ffprobe media/dpx/0088860.dpx -report
 ```
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+When extracting metadata, or working with data more generally (data in the sense of "encoded knowledge" not binary files) we are going to be using machine-readable "serialisations".
+
+The most common of these are CSV, JSON and XML.
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data in-between.
+
+This is great when you have one-to-one data relationships.
+
+<table style="padding: 10px;border-collapse: collapse;  border: 2px solid black;">
+  <tr style="padding: 10px;border: 2px solid black;">
+    <td style="border: 2px solid black;">Name</td>
+    <td style="border: 2px solid black;">Eye Colour</td>
+    <td style="border: 2px solid black;">City</td>
+    <td style="border: 2px solid black;">Pet</td>  
+  </tr>
+  <tr style="border: 2px solid black;"></tr>
+    <td style="border: 2px solid black;">Paul</td>
+    <td style="border: 2px solid black;">Blue</td>
+    <td style="border: 2px solid black;">Canberra</td>
+    <td style="border: 2px solid black;">Chupa Chups (Cat)</td>  
+  </tr>
+  <tr style="border: 2px solid black;">
+    <td style="border: 2px solid black;">Joanna</td>
+    <td style="border: 2px solid black;">???</td>
+    <td style="border: 2px solid black;">???</td>
+    <td style="border: 2px solid black;">???</td>  
+  </tr>
+</table>
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+
+We call these formats "machine-readable" because machines can use them to easily get answers to "questions".
+
+For example, if you had a string "Paul is a person with blue eyes, a cat called Chupa Chups and lives in Canberra" and you collected hundreds of similar statements about people it would be very hard to extract just the eye colour, or pet information.
+
+Having said that, machine learning systems are actually quite good at converting between human and machine-readable data, so we might see this distinction breaking down in the next few decades.
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+
+But what happens if I get another cat? What happens if I want to record data about the new cat's eye colour!!!
+
+
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+JSON exists to solve this problem. 
+
+
+There are two key concepts to understand: 
+
+1. key/value pairs 
+```json
+{"Name":"Paul"}
+```
+
+2. arrays
+```json
+{"Pets": ["Chupa Chups (Cat)", "New Cat (Cat)"]}
+```
+
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+
+Using these simple concepts, you can build out quite elaborate data structures:
+
+```json
+{
+  "Name": "Paul",
+  "Eye Colour": "Blue",
+  "City": "Canberra",
+  "Pets": [
+      {
+          "Type": "Cat",
+          "Name": "Chupa Chups",
+          "Birthday": "2013-07-12"
+      },
+      {
+          "Type": "Cat",
+          "Name": "New Cat",
+          "Birthday": "2026-02-17"
+      }
+  ]
+}```
+
+JSON integrates extremely well with Python as it is almost identical to the Python `dictionary` type, which we will see later on.
+
+---
+class: tangentpage
+### **Tangent: Machine Readable Data**
+
+XML is conceptually identical to JSON, so you can easily convert between the two. It goes back to the 90s, so you are likely to find it in older systems. But it is still used all over the place.
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+ <root>
+     <Name>Paul</Name>
+     <Eye Colour>Blue</Eye Colour>
+     <City>Canberra</City>
+     <Pets>
+         <Type>Cat</Type>
+         <Name>Chupa Chups</Name>
+         <Birthday>2013-07-12</Birthday>
+     </Pets>
+     <Pets>
+         <Type>Cat</Type>
+         <Name>New Cat</Name>
+         <Birthday>2026-02-17</Birthday>
+     </Pets>
+ </root>
+
+
+
+```
+
 
 ---
 class: contentpage

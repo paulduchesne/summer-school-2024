@@ -51,7 +51,7 @@ class: contentpage
 class: contentpage
 ### **1. IDEs**
 
-Before we start writing any Python scripts, we need to set up a DEVELOPER ENVIROMENT!!
+Before we start writing any Python scripts, we need to set up a DEVELOPER ENVIRONMENT!!
 
 
 ---
@@ -78,14 +78,13 @@ https://vscodium.com/
 class: contentpage
 ### **1.1 Jupyter**
 
-When looking at coding in Python, you might come across mentions of Jupyter and Jupyter notebooks. A Jupyter notebook is a document which comprises various blocks of text and code which can be run in any order, or executed directly.
+When looking at coding in Python, you might come across mentions of Jupyter and Jupyter notebooks. A Jupyter notebook is a document that comprises various blocks of text and code that can be run in any order, or executed directly.
 
-Jupyter is open source, so there are plenty of platforms which have "borrowed" the same concept: Google Colaboratory, Netflix Nteract, Microsoft Fabric notebooks. Visual Studio Code can also run Jupyter notebooks.
+Jupyter is open source, so there are plenty of platforms that have "borrowed" the same concept: Google Colaboratory, Netflix Nteract, Microsoft Fabric notebooks. Visual Studio Code can also run Jupyter notebooks.
 
 The ability to integrate explanatory text, graphics, code and even interactive widgets is a reason why it is quite popular in science and academic contexts.
 
 Because our focus of this course is more on functional and operational processes, we won't really be looking at Jupyter any further, but keep it in mind if you want to do data analysis, fancy reports or just have a more interactive experience with Python.
-
 
 ---
 class: contentpage
@@ -119,7 +118,7 @@ Turn your FOLDER into a REPOSITORY. WOW!
 git init
 ```
 
-There is now a hidden folder called `.git` which will handle version management.
+There is now a hidden folder called `.git` that will handle version management.
 
 ---
 class: contentpage
@@ -158,14 +157,14 @@ git --help
 class: contentpage
 ### **3. GitHub**
 
+
 GitHub is to Git what Facebook is to Faces.
 
-GitHub is a website which allows developers to host their software projects using Git, with a lot of other useful features to help with keeping track of projects.
+GitHub is a website that allows developers to host their software projects using Git, with a lot of other useful features to help with keeping track of projects.
 
-In the previous example we were just storing work on our own computer, GitHub lets us host it online, with benefits for collaboration between different coders.
+In the previous example, we were just storing work on our own computers; GitHub lets us host it online, with benefits for collaboration between different coders.
 
-It is owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform which has some superior features, but GitHub still has much more traffic.
-
+It has been owned by Microsoft since it was bought in 2018. GitLab is also an equivalent platform that has some superior features, but GitHub still has much more traffic.
 
 
 ---
@@ -175,16 +174,40 @@ class: contentpage
 Practical: 
 
 - Login to GitHub
-- Make a "respository"
+- Make a "repository"
 - Add a file
 - Clone to your computer
 
-TODO: discuss SSH authentication, and setting commit author?
 
+---
+class: tangentpage
+### **Tangent: GitHub Authentication via SSH**
 
+Once we start working with GitHub we will want a means of authenticating our computer so that we can read and write code, including private repositories.
 
+A popular method of achieveing this is via SSH. This means creating a secret key on our computer, we share a "public" component with GitHub and then can authenticate that our computer is authorised to read and write our repositoreis.
 
+We can create a new SSH key (if none exist) with the following command, and step through the prompts
 
+```sh
+ssh-keygen
+```
+
+We then copy the pub (public) part of the key to GitHub under `Settings` -> `SSH and GPG keys` -> `New SSH key`
+
+We should now have the ability to clone and commit to our GitHub repos.
+
+---
+class: tangentpage
+### **Tangent: Set GitHub Authorship**
+
+We can commit code, but we want our changes to be attributed to us. This can be set globally on your computer using the following commands.
+      
+```sh
+git config --global user.email "paulduchesne@tuta.io"
+git config --global user.name "paulduchesne"
+```
+      
 ---
 class: contentpage
 ### **3. GitHub**
@@ -220,8 +243,8 @@ class: contentpage
 
 The act of writing a Python script and executing the script are distinct. A Python script can be written in any text editor or IDE, but we will require the Python Interpreter for it to do anything.
 
-In practise this will look like: 
 
+In practise, this will look like: 
 Use a text editor/IDE to write your script.
 
 ```python
@@ -230,25 +253,23 @@ hello = "hi"
 
 save as -> `myscript.py`
 
-In the command line use the Python Interpreter to execute the code
+In the command line, use the Python Interpreter to execute the code
 
 ```sh
 python myscript.py
 ```
 
-Depending on your install you may need to specifically call `python3`.
-
+Depending on your install, you may need to specifically call `python3`.
 
 
 ---
 class: contentpage
 ### **4.3 Types of Python**
+Like most software, there are many different versions of Python, with version 3.12 being the current version.
 
-Like most software there are many different versions of Python, with version 3.12 being the current version.
+There was a significant change in code between Python2 and Python3, which required a lot of script rewriting.
 
-There was a significant change in code between Python2 and Python3 which required a lot of script rewriting.
-
-Be careful if you are on macOS as Python2.7 is still installed by default, so just calling `python my_script.py` might have unexpcted results.
+Be careful if you are on macOS, as Python2.7 is still installed by default, so just calling `python my_script.py` might have unexpected results.
 
 Good idea to check your version of Python with
 
@@ -263,8 +284,7 @@ or
 python3 --version
 ```
 
-On Unix systems (macOS and Linux) you can also see what exactly what Python interpretor is running with `which python`. 
-
+On Unix systems (macOS and Linux) you can also see exactly which Python interpreter is running with `which python`. 
 
 ---
 class: contentpage
@@ -357,9 +377,9 @@ print(type('hello'))
 ```
 
 
-Variables inherit type. Note Python is a "dynamic typed" language, we don't need to explicitly instruct on type, it figures it out for us.
-This means we can write code a lot faster, but it can cause problems if we think a variable is certain type and we get it wrong. As an example `100` (an integer), `'100'` (a string) are different things.
 
+Variables inherit type. Note Python is a "dynamic typed" language, we don't need to explicitly instruct on type, it figures it out for us.
+This means we can write code a lot faster, but it can cause problems if we think a variable is a certain type, and we get it wrong. As an example, `100` (an integer), `'100'` (a string) are different things.
 
 ```python
 greeting = 'hello'
@@ -411,7 +431,7 @@ for a_number in [17, 27, 37, 47]:
     print(a_number + 4)
 ```
 
-We can use this pattern to start to perform interesting file operations, but first we will need to find a library to help us work with filepaths!
+We can use this pattern to start to perform interesting file operations, but first we will need to find a library to help us work with file paths!
 
 
 
@@ -429,10 +449,9 @@ For now, we are going to use a very useful library called Pathlib.
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
     print(filename, type(filename))
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     print(pathlib_filename, type(pathlib_filename))
     print(pathlib_filename.exists())
-
 ```
 
 Note the `.exists()` method at the end of the `pathlib_filename`? 
@@ -460,15 +479,17 @@ else:
   print('what is this number?')
 ```
 
+
 Typical symbols here are '<' something is less than something else, '>' greater than, '==' equals, and '!=' not equals.
 
-Worth paying attention the difference between '=' which means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
+Worth paying attention to the difference between '=' which means "this thing is this thing" (defining a variable, an assertion), '==' means "does this thing equal this thing?" (assess the truth of a statement, a question).
 
-Also you can use these checks outside of if statements.
+Also, you can use these checks outside of if statements.
 
 ```python
 print(900 == 700)
 ```
+
 
 ---
 class: contentpage
@@ -479,7 +500,7 @@ We can also use "if statements" inside "for loops", or "for loops" inside "if st
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
@@ -494,7 +515,7 @@ class: contentpage
 ### **4.12 Basics: Subprocess**
 
 
-The last thing I wanted to introduce was the `subprocess` library. Subprocess is cool because we can call command line applications from within Python!
+I wanted to introduce the `subprocess` library. Subprocess is cool because we can call command line applications from within Python!
 
 
 This can be useful if you want to orchestrate tools sequentially (extract video metadata with MediaInfo, transcode using FFmpeg, make a checksum).
@@ -508,9 +529,11 @@ subprocess.call(['ffmpeg', '-version'])
 ```
 
 
-Good part of this is that we can have processes defined which work inside or outside of Python (eg a specific FFmpeg command to convert video files).
 
-Bad news is that this can make our scripts OS dependant (eg "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run the same scripts OS-agnostic.
+A good part of this is that we can have processes defined which work inside or outside of Python (e.g. a specific FFmpeg command to convert video files).
+
+Bad news is that this can make our scripts OS dependant (e.g. "copy a file" CLI command is different on macOS or Windows). One of the strengths of Python is that normally it can run the same scripts OS-agnostic.
+
 
 You will also notice `subprocess` needs the command expressed as an array of strings.
 
@@ -520,14 +543,13 @@ You will also notice `subprocess` needs the command expressed as an array of str
 class: contentpage
 ### **4.13 Basics: Exceptions**
 
-A very important feature of your code is what is called "exception handling". This is where something unexpected or undesired happens and you want to stop your script and say, "SOMETHING HAS GONE WRONG".
 
-
+A very important feature of your code is what is called "exception handling". This is where something unexpected or undesired happens, and you want to stop your script and say, "SOMETHING HAS GONE WRONG".
 
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / 'dpx' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
@@ -562,7 +584,7 @@ We are going to:
 ---
 class: contentpage, middle
 
-This has been an introduction to Python!
+This has been an introduction to Python and Git!
 
 
 
