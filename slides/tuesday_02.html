@@ -178,12 +178,36 @@ Practical:
 - Add a file
 - Clone to your computer
 
-TODO: discuss SSH authentication, and setting commit author?
 
+---
+class: tangentpage
+### **Tangent: GitHub Authentication via SSH**
 
+Once we start working with GitHub we will want a means of authenticating our computer so that we can read and write code, including private repositories.
 
+A popular method of achieveing this is via SSH. This means creating a secret key on our computer, we share a "public" component with GitHub and then can authenticate that our computer is authorised to read and write our repositoreis.
 
+We can create a new SSH key (if none exist) with the following command, and step through the prompts
 
+```sh
+ssh-keygen
+```
+
+We then copy the pub (public) part of the key to GitHub under `Settings` -> `SSH and GPG keys` -> `New SSH key`
+
+We should now have the ability to clone and commit to our GitHub repos.
+
+---
+class: tangentpage
+### **Tangent: Set GitHub Authorship**
+
+We can commit code, but we want our changes to be attributed to us. This can be set globally on your computer using the following commands.
+      
+```sh
+git config --global user.email "paulduchesne@tuta.io"
+git config --global user.name "paulduchesne"
+```
+      
 ---
 class: contentpage
 ### **3. GitHub**
