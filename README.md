@@ -46,9 +46,9 @@ Syllabus for Filmuniversität Babelsberg Digital Archiving Summer School 2024.
 |  | Coffee Break | | | 
 | 11:00 - 12:30 | FFmpeg filter output | [@digitensions](https://github.com/digitensions) | [slides](slides/thursday_02.html) | 
 |  | Lunch | | | 
-| 13:30 - 15:00 | Scaling Python | [@digitensions](https://github.com/digitensions) | [slides](slides/thursday_03.html)| 
+| 13:30 - 15:00 | Scaling Digital Preservation Workflows | [@digitensions](https://github.com/digitensions) | [slides](slides/thursday_03.html)| 
 |  | Coffee Break | | |
-| 15:30 - 17:30 | Multiprocessing, Jupyter, Orchestration | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/thursday_04.html) | 
+| 15:30 - 17:30 | Multiprocessing, Logging, Containerisation, Orchestration | [@paulduchesne](https://github.com/paulduchesne) | [slides](slides/thursday_04.html) | 
 
 **Friday 2024-09-27**
 
