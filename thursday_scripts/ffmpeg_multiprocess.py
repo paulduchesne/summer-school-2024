@@ -13,7 +13,7 @@ import subprocess
 from multiprocessing import Pool
 
 
-def create(fpath) -> str:
+def ffmpeg_encode(fpath) -> str:
     '''
     Builds FFmpeg command based on height/dar input
     '''
@@ -67,7 +67,7 @@ def main():
         sys.exit("Insufficient files in file path for multiprocessing example.")
 
     with Pool() as p:
-        response = p.map(create, file_list)
+        response = p.map(ffmpeg_encode, file_list)
         print(f"Response code for encoding: {response.returncode}")
         p.close()
 
