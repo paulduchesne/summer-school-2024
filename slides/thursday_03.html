@@ -24,17 +24,17 @@ class: contentpage
  2.1 Setting them in Unix/Windows  
  2.2 Accessing them in code  
 
-3. Elasticsearch and MySQL connections  
- 3.1 Elasticsearch Indexing, searching documents     
- 3.2 Connecting to MySQL databases  
- 3.3 Search and retrieval with sqlite3 
+3. Expanding workflows with APIs   
+ 3.1 RESTful API basics  
+ 3.2 Requests library  
+ 3.3 Authentication and rate limiting  
+ 3.4 Cloud storage and AWS S3  
 
-4. Expanding workflows with APIs   
- 4.1 RESTful API basics  
- 4.2 Requests library  
- 4.3 Authentication and rate limiting  
- 4.4 Cloud storage and AWS S3  
-    
+4. Elasticsearch and MySQL connections  
+ 4.1 Elasticsearch Indexing, searching documents     
+ 4.2 Connecting to MySQL databases  
+ 4.3 Search and retrieval with sqlite3 
+
 ---
 class: contentpage
 ### **1. Scheduling Tools**
@@ -206,12 +206,12 @@ Temporary variable to be used only in your current session:
 ```sh
 export MY_VARIABLE="my_value"
 ```
-Permanent for a specific user creating the variable. Depending on the shell being used you would add this to ~/.bashrc, ~/.bash_profile, or ~/.zshrc:
+Permanent for a specific user creating the variable. Depending on the shell being used you would add this to `~/.bashrc`, `~/.bash_profile`, or `~/.zshrc`:
 ```sh
 echo 'export MY_VARIABLE="my_value"' >> ~/.bashrc
 source ~/.bashrc
 ```
-Or to add them system-wide for all users/automations to easily access add them to `/etc/environment':
+Or to add them system-wide for all users/automations to easily access add them:
 ```sh
 sudo echo 'MY_VARIABLE="my_value"' >> /etc/environment
 sudo nano /etc/environment
@@ -220,8 +220,8 @@ To make the variable available you need to run this command then log in the serv
 ```sh
 source /etc/environment
 ```
-
 ---
+
 class: contentpage
 ### **2.2 Accessing environmental variables in code**
 
@@ -230,14 +230,11 @@ You have seen may examples of this already, particulary in the example bash scri
 $VARIALBLE
 "${PATH_VARIABLE}/sub_folder/"
 ```
-
-In Python you can use one simple method for all cross-platform code use by importing Python's `os` module:
-
+<font color="orange">Practise:</font> In a Python REPL try using the `os` module to create, get and delete variables:
 ```python3
 import os
 # Retrieve environmental variable
 variable = os.environ.get('VARIABLE_NAME')
-print(f"The data stored in VARIABLE_NAME is {variable}")
 
 # Set an environmental variable in the current process only
 os.environ['NEW_VARIABLE'] = 'my new data'
@@ -252,6 +249,23 @@ else:
 if 'NEW_VARIABLE' in os.environ:
     del os.environ['NEW_VARIABLE']
 ```
+---
+class: contentpage
+### **2.2 Accessing environmental variables in code**
+
+Python's `python-dotenv` module is often used to store sensitive information. This data is stored in a '.env' file which can be excluded from version control. They can also be useful if you need to keep environmental variable separate between different stagings on one server, when running development, testing and production environments.
+
+```python3
+from dotenv import load_dotenv
+import os
+
+# Load environmental variables from a .env file
+load_dotenv()
+
+# Access the variables
+secret_key = os.getenv('SECRET_KEY')
+```
+
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
     <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
