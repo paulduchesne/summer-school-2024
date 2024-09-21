@@ -504,7 +504,29 @@ We can also build on the linking with some custom code using Python.
 Here is some Python to insert the box office takings for these films from Wikidata.
 
 TODO, this not a helpful example, make it fire the query and return just a cooked table.
+TODO better but you need to add a database_wikidata.csv example to get picked up here
 
+```python
+import json
+import pathlib
+import requests
+
+df = pandas.read_csv("https://raw.githubusercontent.com/paulduchesne/nttw-wikidata-workshop/refs/heads/main/data/data4.csv").fillna('')
+# wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_work_id.unique() if x])
+wikidata_ids = "wd:Q1421747"
+
+query = '''
+    select ?wikidata_work_id ?box_office   
+    where {
+        values ?wikidata_work_id {'''+wikidata_ids+'''}
+        optional { ?wikidata_work_id wdt:P2142 ?box_office . }
+    } '''
+
+response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
+print(json.dumps(response.json(), indent=4))
+```
+
+      
 ```python
 import pathlib
 
