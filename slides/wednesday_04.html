@@ -514,17 +514,15 @@ class: contentpage
 We can also build on the linking with some custom code using Python. 
 Here is some Python to insert the box office takings for these films from Wikidata.
 
-TODO, this not a helpful example, make it fire the query and return just a cooked table.
-TODO better but you need to add a database_wikidata.csv example to get picked up here
-
 ```python
+
 import json
+import pandas
 import pathlib
 import requests
 
-df = pandas.read_csv("https://raw.githubusercontent.com/paulduchesne/nttw-wikidata-workshop/refs/heads/main/data/data4.csv").fillna('')
-# wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_work_id.unique() if x])
-wikidata_ids = "wd:Q1421747"
+df = pandas.read_csv(pathlib.Path.cwd() / 'database_wikidata.csv').fillna('')
+wikidata_ids = ' '.join(['wd:'+x for x in df.work_wikidata.unique() if x])
 
 query = '''
     select ?wikidata_work_id ?box_office   
@@ -535,32 +533,9 @@ query = '''
 
 response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
 print(json.dumps(response.json(), indent=4))
-```
-
-      
-```python
-import pathlib
-
-df = pandas.read_csv(pathlib.Path.cwd() / 'database_update.csv').fillna('')
-wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_work_id.unique() if x])
-
-query = '''
-    select ?wikidata_work_id ?wikidata_work_box_office   
-    where {
-        values ?wikidata_work_id {'''+wikidata_ids+'''}
-        optional { ?wikidata_work_id wdt:P2142 ?wikidata_work_box_office . }
-    } '''
-
-response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
-df2 = pandas.DataFrame(response.json()['results']['bindings']).dropna()
-df2['wikidata_work_id'] = df2['wikidata_work_id'].apply(lambda x: x['value'].split('/')[-1])
-df2['wikidata_work_box_office'] = df2['wikidata_work_box_office'].apply(lambda x: x['value'])
-df = pandas.merge(df, df2, on='wikidata_work_id', how='left').fillna('')
-
-print(len(df))
-df.head(40)
 
 ```
+
 
 
 ---
@@ -573,18 +548,16 @@ class: contentpage
 
 Here we are pulling in images from Wikicommons via Wikidata, we can also access the image licensing data (important!), although that would be a more complex query:
 
-TO DO likewise, simplify this.
-
 ```python
 
-
-
-      
+import json
+import pandas
 import pathlib
+import requests
 
-df = pandas.read_csv("https://raw.githubusercontent.com/paulduchesne/nttw-wikidata-workshop/refs/heads/main/data/data4.csv").fillna('')
-# wikidata_ids = ' '.join(['wd:'+x for x in df.wikidata_director_id.unique() if x])
-wikidata_ids = "wd:Q55424"
+df = pandas.read_csv(pathlib.Path.cwd() / 'database_wikidata.csv').fillna('')
+wikidata_ids = ' '.join(['wd:'+x for x in df.director_wikidata.unique() if x])
+
 query = '''
     select ?wikidata_director_id ?wikidata_director_image   
     where {
@@ -593,17 +566,13 @@ query = '''
     } '''
 
 response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
-print(json.dumps(response.json(), indent=4))
 
+for image in response.json()['results']['bindings']:
+    director_id = pathlib.Path(image['wikidata_director_id']['value']).stem
+    image_url = image['wikidata_director_image']['value']
 
-url = 'http://example.com/some_file.pdf'
-r = requests.get(url)
-
-with open('some_file.pdf', 'wb') as f:
-    f.write(r.content)
-
-
-
+    print(director_id, image_url)
+   
       
 ```
 

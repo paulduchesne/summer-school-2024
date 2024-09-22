@@ -8,3 +8,4 @@ airflow/
 bag_test/
 jpg/
 dagster/
+wikidata_images/
