@@ -239,7 +239,7 @@ import hashlib
 import pathlib
 
 start_time = datetime.datetime.now()
-files = pathlib.Path.cwd() / 'media'
+files = pathlib.Path.cwd() / 'media' / 'film_scan'
 for file in files.iterdir():
     with open(file, 'rb') as f:  
         file_content = f.read()  
@@ -270,7 +270,7 @@ def my_process(file_name):
 
 if __name__ == "__main__":
     start_time = datetime.datetime.now()
-    files = pathlib.Path.cwd() / 'media'
+    files = pathlib.Path.cwd() / 'media' / 'film_scan'
     files = [x for x in files.iterdir()]
 
     p = multiprocessing.Pool()
@@ -410,7 +410,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 if __name__ == "__main__":
-    files = pathlib.Path.cwd() / 'media'
+    files = pathlib.Path.cwd() / 'media' / 'film_scan'
     files = [x for x in files.iterdir()]
     p = multiprocessing.Pool()
     with p:
