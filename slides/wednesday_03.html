@@ -43,10 +43,12 @@ class: contentpage
 
 Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
 
-~~Speech to text.~~ now -> Whisper    
-~~OCR.~~ now -> LLM        
-~~Image analysis.~~ now -> LLM     
-~~Experimental/Other.~~ now -> LLM   
+~~Speech to text.~~ -> Whisper    
+~~OCR.~~ -> LLM        
+~~Image analysis.~~ -> LLM     
+~~Experimental/Other.~~ -> LLM   
+
+Advances in Machine Learning models are really taking over, but this is very much a constantly evolving area with new models being released often.
 
 
 
@@ -98,7 +100,7 @@ class: contentpage
 A minimum viable command for whisper is 
 
 ```sh
-whisper media/audio.wav
+whisper media/film_scan/audio.wav
 ```
 
 which will use default values for the "model" (neural network discussed before) the language and the output format.
@@ -116,7 +118,7 @@ The first flag we might want to feed whisper is the language, otherwise it will 
 As an aside, I have noticed that anytime Whisper cannot detect a language if seems to think it is "Welsh".
 
 ```sh
-whisper --language en media/audio.wav
+whisper --language en media/film_scan/audio.wav
 ```
 
 
@@ -128,7 +130,7 @@ class: contentpage
 output_dir lets us specify an output directory 
 
 ```sh
-whisper --language en --output_dir whisper_test/ media/audio.wav
+whisper --language en --output_dir whisper_test/ media/film_scan/audio.wav
 ```
 
 
@@ -147,7 +149,7 @@ JSON and TSV are useful as structured data, using formats which are common for s
 We are for now going to use the simplest - a TXT file.
 
 ```sh
-whisper --language en --output_dir whisper_test/ --output_format txt media/audio.wav
+whisper --language en --output_dir whisper_test/ --output_format txt media/film_scan/audio.wav
 ```
 
 
@@ -168,7 +170,7 @@ https://thisismattmiller.com/post/lomax-whisper/
 
 
 ```sh
-whisper --language en --output_dir whisper_test/ --output_format txt --model large-v2 media/audio.wav
+whisper --language en --output_dir whisper_test/ --output_format txt --model large-v2 media/film_scan/audio.wav
 ```
 
 PRACTICAL: compare results of base and large-v2 side by side.
@@ -241,7 +243,7 @@ Can you describe image '/home/paulduchesne/Desktop/summer-school-2024/jpg/008767
 class: contentpage
 ### **LLMs**
 
-OCR example
+*OCR*
 
 
 ```sh
@@ -257,11 +259,15 @@ For anyone who remembers using Tesseract, mind-bendingly we can ask for specific
 What is the name of the boat in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
 ```
 
+A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutivelu in the same session, so quiting in between may not be a terrible idea.
+
+
+
 ---
 class: contentpage
 ### **LLMs**
 
-Object Detection
+*Object Detection*
 
 
 Frame with boat.
@@ -277,8 +283,6 @@ Frame with flags.
 What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087200.jpg'
 ```
 
-A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutivelu in the same session, so quiting in between may not be a terrible idea.
-
 
 
 
@@ -287,7 +291,7 @@ class: contentpage
 ### **LLMs**
 
 
-Image characteristics
+*Image Characteristics*
 
 
 ```sh
@@ -393,24 +397,9 @@ On my computer this would take a very long time, and there would be little value
 
 import ollama
 
-def image_summary(frame):
-    
-    request = ollama.chat(
-        model='llava:7b',
-        messages=[
-            {
-            'role': 'user',
-            'content': 'Can you describe this image in less than ten words',
-            'images': [str(frame)],
-            }
-        ]
-    )
-
-    return request['message']['content']
-
 jpg_path = pathlib.Path.cwd() / 'jpg'
 for frame in jpg_path.iterdir():
-    result = image_summary(frame)
+    result = cool_llm_process(frame)
     print(frame, result)
 ```
 
