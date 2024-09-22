@@ -244,7 +244,7 @@ The most common of these are CSV, JSON and XML.
 class: tangentpage
 ### **Tangent: Machine Readable Data**
 
-You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data in-between.
+You would likely already be familiar with CSV, which is what is called tabular data, exactly like Excel. There are columns up the top, rows, and data at the intersections.
 
 This is great when you have one-to-one data relationships.
 
@@ -277,7 +277,14 @@ class: tangentpage
 
 We call these formats "machine-readable" because machines can use them to easily get answers to "questions".
 
-For example, if you had a string "Paul is a person with blue eyes, a cat called Chupa Chups and lives in Canberra" and you collected hundreds of similar statements about people it would be very hard to extract just the eye colour, or pet information.
+For example, if you had the text "Paul is a person with blue eyes, a cat called Chupa Chups and lives in Canberra" and you collected hundreds of similar statements about people it would be very hard to extract just the eye colour, or pet information.
+
+Whereas if it is structured in a table it is easy to query, with languages like SQL for example 
+
+```SQL
+select eye_colour from data 
+where name = "Paul"
+```
 
 Having said that, machine learning systems are actually quite good at converting between human and machine-readable data, so we might see this distinction breaking down in the next few decades.
 
@@ -344,7 +351,7 @@ JSON integrates extremely well with Python as it is almost identical to the Pyth
 class: tangentpage
 ### **Tangent: Machine Readable Data**
 
-XML is conceptually identical to JSON, so you can easily convert between the two. It goes back to the 90s, so you are likely to find it in older systems. But it is still used all over the place.
+XML is conceptually identical to JSON, so you can easily convert between the two. Its origins are closely tied to the web, which is why it looks familiar if you have ever studied HTML. It goes back to the 90s, so you are likely to find it in older systems. But it is still used all over the place.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

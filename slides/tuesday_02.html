@@ -23,7 +23,7 @@ class: contentpage
 1. IDEs         
     1.1 Jupyter     
 2. Git
-3. GitHub
+3. GitHub    
 4. Python    
     4.1 Why Python?    
     4.2 How Python?    
@@ -38,7 +38,6 @@ class: contentpage
     4.11 Basics: If statements          
     4.12 Basics: Subprocess    
     4.13 Basics: Exceptions
-
 5. Practical 🏋️
 
 
@@ -449,7 +448,7 @@ For now, we are going to use a very useful library called Pathlib.
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
     print(filename, type(filename))
-    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'film_scan' / filename
     print(pathlib_filename, type(pathlib_filename))
     print(pathlib_filename.exists())
 ```
@@ -500,7 +499,7 @@ We can also use "if statements" inside "for loops", or "for loops" inside "if st
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'film_scan' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
@@ -549,7 +548,7 @@ A very important feature of your code is what is called "exception handling". Th
 ```python
 import pathlib
 for filename in ['0086400.dpx', 'not_a_file.dpx']:
-    pathlib_filename = pathlib.Path.cwd() / 'media' / filename
+    pathlib_filename = pathlib.Path.cwd() / 'media' / 'film_scan' / filename
     if pathlib_filename.exists():
         print(pathlib_filename, 'THE FILE EXISTS, HOORAY')
     else:
