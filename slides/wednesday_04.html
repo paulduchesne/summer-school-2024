@@ -7,14 +7,8 @@
   <body>
     <textarea id="source">
 
-
-
-
 class: center, middle, titlepage
-### WED03: *Extracting content metadata.*
-
-
-
+### WED04: *Extracting content metadata.*
 
 ---
 class: contentpage
@@ -24,11 +18,9 @@ We have looked a bit at extracting technical metadata from media, but now we are
 
 This is an area which is being revolutionised by Large Language Models aka Machine Learning aka AI (like ChatGPT).
 
-
 ---
 class: contentpage
 ### **Content Metadata**
-
 
 Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
 
@@ -48,65 +40,31 @@ Prior to around 2022, there were many projects in this space, using a variety of
 ~~Image analysis.~~ -> LLM     
 ~~Experimental/Other.~~ -> LLM   
 
-Advances in Machine Learning models are really taking over, but this is very much a constantly evolving area with new models being released often.
-
-
-
----
-class: contentpage
-### **Machine Learning**
-
-
-These systems all have in common the idea of an artificial neural network, an idea which has been around since the 1940s, but has only achieved recent widespread use due to computational power and innovative strategies.
-
-An artificial neural network very roughly approximates the way our own brains work, in that they comprise many many many very simple "nodes", which develop to behave in certain ways, and complexity arises out of many many nodes communicating with many many other nodes.
-
----
-class: contentpage
-### **Machine Learning**
-
-A traditional artificial neural network has three components, "inputs", "hidden layers", and "outputs".
-
-- The inputs could be numbers, letters, pixels, audio samples, as long as the expressed as numbers.
-
-- The hidden layers sit in-between. These are sequential layers of nodes which are all interconnected to one direction. Often these would start off as randomised noise, so will produce useless results, but if we have known input which result in expected outputs, we can start to "train" all the nodes in the hidden layer to start to behave in a certain way.
-
-- The outputs could be as simple as a "yes" or "no" answer to the question, "is this a Spanish word?"
-
-The power of artificial neural networks are that they can apply to almost any subject or discipline, the downside is that the hidden layers are not explicable - we get to a place where we cannot explain how a certain trained neural net (or "model") is producing a certain result.
-
-Depending on source material, we can also see undesired biases replicated. 
-
-[NNFS](https://nnfs.io/) is a wonderful resource which contains examples of building a neural network using just vanilla Python.
-
-Of course, like cars, we don't have to understand fully how artifical neural networks work to use them!!
+Advances in Machine Learning are really taking over this space, and constantly evolving, with new models being released often.
 
 ---
 class: contentpage
 ### **Whisper**
 
+Let us start by looking at Whisper from OpenAI. 
 
-With this context, we can now start to look at Whisper from OpenAI. 
+Whisper is now so ubiquitous it has almost completely replaced all other competitors and all other speech-to-text systems.
 
-Whisper is now so ubiquitous it has almost completely replaced all other competitors and all other speech to text systems.
+It returns speech-to-text "cooked", with punctuation and with all disfluences (this is a new word for me) removed. 
 
-It returns speech-to-text "cooked", with punctuation and disfluences (this is a new word for me) removed. As with all neural network models, it comes in a variety of "sizes" dependent on complexity, which generally correlate to quality of results.
-
+As with all neural network models, it comes in a variety of "sizes" of model dependent on complexity, which generally correlate to quality of results.
 
 ---
 class: contentpage
 ### **Whisper**
 
-A minimum viable command for whisper is 
+A minimum viable command for whisper is
 
 ```sh
 whisper media/film_scan/audio.wav
 ```
 
-which will use default values for the "model" (neural network discussed before) the language and the output format.
-
-
-
+which will use default values for model, language and the output format.
 
 ---
 class: contentpage
@@ -121,8 +79,6 @@ As an aside, I have noticed that anytime Whisper cannot detect a language if see
 whisper --language en media/film_scan/audio.wav
 ```
 
-
-
 ---
 class: contentpage
 ### **Whisper**
@@ -133,28 +89,22 @@ output_dir lets us specify an output directory
 whisper --language en --output_dir whisper_test/ media/film_scan/audio.wav
 ```
 
-
-
 ---
 class: contentpage
 ### **Whisper**
 
 
-while we are at it, we may also want to pick an output format.
+We can also select and output format.
 
 SRTs and VTTs are subtitle tracks with timestamps, which you should be able to drop straight into VLC or DCPs you are creating.
 
 JSON and TSV are useful as structured data, using formats which are common for storing machine-readable data.
 
-We are for now going to use the simplest - a TXT file.
+But we are going to use the simplest - a TXT file.
 
 ```sh
 whisper --language en --output_dir whisper_test/ --output_format txt media/film_scan/audio.wav
 ```
-
-
-
-
 
 ---
 class: contentpage
@@ -164,32 +114,25 @@ As mentioned before we can also set the size of the model which is used: base, s
 
 It is worth doing some tests to see what effect the bigger the model has, it will use more disk space and take longer to process, so worth checking the results to see if they are significant enough to justify this.
 
-
 Matt Miller at Library of Congress has done something similar.
 https://thisismattmiller.com/post/lomax-whisper/
 
 
 ```sh
-whisper --language en --output_dir whisper_test/ --output_format txt --model large-v2 media/film_scan/audio.wav
+whisper --language en --output_dir whisper_test/ --output_format txt --model small media/film_scan/audio.wav
 ```
 
-PRACTICAL: compare results of base and large-v2 side by side.
-
-Also, there is nothing restricting you to only using the models provided by OpenAI.
-
-
+Interesting to note that that a number of AV archives are involved in producing their own Whisper models which are trained on certain languages or dialects.
 
 ---
 class: contentpage
 ### **LLMs**
 
-Now to shift focus to other tools using similar technology, LLMs or Large Language Models.
+Now to shift focus to tools using similar technology to extract information, generally called LLMs or Large Language Models.
 
-The most famous of these is undoubtedly ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
+The most famous of these is ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
 
-We might begin by looking at different things we can do with these models, and then different ways to access them.
-
-
+We might begin by looking at different things we can do with these models.
 
 ---
 class: contentpage
@@ -197,11 +140,11 @@ class: contentpage
 
 We are going to dive right in with a multi-modal model called LLaVA, which allows us to do image analysis. Note that we are now about to discover how powerful (or not) our computers are.
 
-Ollama is a cross-platform command line application which us lets run machine learning models very easily from our own machines.
+Ollama is a cross-platform command line application which us lets run machine learning models locally.
 
 https://ollama.com/
 
-There is a wide selection of models on offer, and as with whisper they range in size, with the expectation that bigger the model better the results (apparently not always true)!
+There is a wide selection of models on offer, and as with whisper they range in size, with the expectation that bigger the model better the results (apparently not always 100% true)!
 
 https://ollama.com/library/gemma2
 
@@ -229,15 +172,11 @@ Back in time if you wanted to do OCR, object detection, or other visual analysis
 class: contentpage
 ### **LLMs**
 
-
-
 General description example
 
 ```sh
-Can you describe image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087679.jpg'
+Can you describe image '/home/summerschool/Desktop/ml_test_files/0087679.jpg'
 ```
-
-
 
 ---
 class: contentpage
@@ -247,19 +186,29 @@ class: contentpage
 
 
 ```sh
-What text is in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
+What text is in this image '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
 ```
 
-Please note that accuracy can depend on model size, so this is the one section of the course where having a powerful computer will give you better results, not just faster.
+Please note that accuracy can depend on model size, so this is the one section of the course where having a powerful computer will give you **better** results, not just faster.
 I am currently running the lowest model as my laptop is nothing special, would be keen to compare with people running something better.
+
+For me on the lowest model, it gets it wrong almost every time with fascinating results.
+
+---
+class: contentpage
+### **LLMs**
+
+*OCR*
+
 
 For anyone who remembers using Tesseract, mind-bendingly we can ask for specific interpreted text.
 
 ```sh
-What is the name of the boat in this image '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
+What is the name of the boat in this image '/home/summerschool/Desktop/ml_test_files/0087024.jpg'
 ```
 
-A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutivelu in the same session, so quiting in between may not be a terrible idea.
+
+A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutively in the same session, so quiting in between may not be a terrible idea.
 
 
 
@@ -270,18 +219,20 @@ class: contentpage
 *Object Detection*
 
 
-Frame with boat.
-
-```sh
-What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087024.jpg'
-```
-
-
 Frame with flags.
 
 ```sh
-What objects are visible in '/home/paulduchesne/Desktop/summer-school-2024/jpg/0087200.jpg'
+What objects are visible in '/home/summerschool/Desktop/ml_test_files/0087200.jpg'
 ```
+
+
+
+Frame with boat as Python array.
+
+```sh
+Give me a list objects are visible in '/home/summerschool/Desktop/ml_test_files/0087024.jpg'. Return a list of items as Python strings in a list, eg ['hat', 'house', 'car']
+```
+
 
 
 
@@ -295,34 +246,16 @@ class: contentpage
 
 
 ```sh
-Is the following image black and white or colour: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
+Is the following image black and white or colour: '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
 ```
 
 
 
 ```sh
-What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85): '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
+What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85): '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
 ```
 
 This is especially interesting as the image is letterboxed. There are much easier ways to do "letterbox detection" (e.g. with FFmpeg), but those can be susceptible to black levels.
-
-
-
-
-```sh
-What period do you think the following image is from: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
-```
-
-
----
-class: contentpage
-### **LLMs**
-
-So far we have been returning text, which is great, but as we want to integrate with databases and automated systems we want a machine-readable output - LLMs can do this as well.
-
-```sh
-Return whether the following image is black and white or colour as a JSON result, following the example {"colour":"Black and White"} or {"colour":"Colour"} and do not return any other text than the JSON: '/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'
-```
 
 ---
 class: contentpage
@@ -342,70 +275,13 @@ request = ollama.chat(
         {
         'role': 'user',
         'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
-        'images': ['/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg'],
+        'images': ['/home/summerschool/Desktop/ml_test_files/0086556.jpg'],
         }
     ]
 )
 
 print(request['message']['content'])
 ```
-
-
-
----
-class: contentpage
-### **LLMs**
-
-Convert to a reusable function.
-
-```python
-import ollama
-
-def aspect_ratio_detector(frame):
-    
-    request = ollama.chat(
-        model='llava:7b',
-        messages=[
-            {
-            'role': 'user',
-            'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
-            'images': [frame],
-            }
-        ]
-    )
-
-    return request['message']['content']
-
-result = aspect_ratio_detector('/home/paulduchesne/Desktop/summer-school-2024/jpg/0086556.jpg')
-
-print(result)
-```
-
-
-
-
-
----
-class: contentpage
-### **LLMs**
-
-Iterate over the full directory of scans.
-
-On my computer this would take a very long time, and there would be little value in processing every image - you would probably want to reduce to one frame per second, or less.
-
-```python
-
-import ollama
-
-jpg_path = pathlib.Path.cwd() / 'jpg'
-for frame in jpg_path.iterdir():
-    result = cool_llm_process(frame)
-    print(frame, result)
-```
-
-
-
-
 
 
 
@@ -418,13 +294,11 @@ class: contentpage
 ### **Agenda**
 
 
-In this session, we are going to talk about "external connections". 
+We are going to talk about "external connections". 
 
 Up until now, all our processes have been happening locally, but what if we seek to connect the results up with the outside world?
 
 This could be thought of as knowledge enrichment, benefiting from knowledge available elsewhere, but also as a step to ensuring explicit shared definitions - when I say "DPX", does it mean the same thing as when you say "DPX"?
-
-You will notice that Wikidata will feature very heavily in this section, as it is the largest structured open knowledge resource on the web. 
 
 
 ---
@@ -435,11 +309,7 @@ class: contentpage
 1. DROID        
     1.1 PRONOM     
 2. Text Wikification
-3. Collection Wikification     
-3.1 Linking    
-3.2 Leveraging    
-
-
+ 
 
 ---
 class: contentpage
@@ -483,10 +353,10 @@ class: contentpage
 ### **1. DROID**
 
 
-Just to unpack what is happening here, DROID is processing each file and checking that the "signatures" of the file (which we saw earlier) are correct and match the extension. This is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx", a feature we can test ourselves.
+Just to unpack what is happening here, DROID is processing each file and checking that the "magic numbers" of the file (which we saw earlier) are correct and match the extension. This is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx", a feature we can test ourselves.
 
 
-What is especially interesting though, and the focus of this session, is the PUID column, which is printing the PRONOM identifier.
+What is especially interesting though, and the focus of this next section, is the PUID column, which is printing the PRONOM identifier.
 
 ---
 class: contentpage
