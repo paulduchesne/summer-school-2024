@@ -1,6 +1,6 @@
 # Digital Archives 2024
 
-Syllabus for Filmuniversität Babelsberg Digital Archiving Summer School 2024.
+Syllabus for Filmuniversität Babelsberg Digital Archiving Summer School 2024.   
 
 ### Schedule
 
