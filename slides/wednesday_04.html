@@ -1,18 +1,291 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Digital Summer School 2024: WED04</title>
+    <title>Digital Summer School 2024: WED03</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="../style.css">  </head>
   <body>
     <textarea id="source">
 
+class: center, middle, titlepage
+### WED04: *Extracting content metadata.*
+
+---
+class: contentpage
+### **Content Metadata**
+
+We have looked a bit at extracting technical metadata from media, but now we are going to look at something else - extracting metadata around the content of the media.
+
+This is an area which is being revolutionised by Large Language Models aka Machine Learning aka AI (like ChatGPT).
+
+---
+class: contentpage
+### **Content Metadata**
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
+
+Speech to text.    
+OCR.    
+Image analysis.    
+Experimental/Other.
+
+---
+class: contentpage
+### **Content Metadata**
+
+Prior to around 2022, there were many projects in this space, using a variety of different techniques, often stretching back decades.
+
+~~Speech to text.~~ -> Whisper    
+~~OCR.~~ -> LLM        
+~~Image analysis.~~ -> LLM     
+~~Experimental/Other.~~ -> LLM   
+
+Advances in Machine Learning are really taking over this space, and constantly evolving, with new models being released often.
+
+---
+class: contentpage
+### **Whisper**
+
+Let us start by looking at Whisper from OpenAI. 
+
+Whisper is now so ubiquitous it has almost completely replaced all other competitors and all other speech-to-text systems.
+
+It returns speech-to-text "cooked", with punctuation and with all disfluences (this is a new word for me) removed. 
+
+As with all neural network models, it comes in a variety of "sizes" of model dependent on complexity, which generally correlate to quality of results.
+
+---
+class: contentpage
+### **Whisper**
+
+A minimum viable command for whisper is
+
+```sh
+whisper media/film_scan/audio.wav
+```
+
+which will use default values for model, language and the output format.
+
+---
+class: contentpage
+### **Whisper**
+
+
+The first flag we might want to feed whisper is the language, otherwise it will take a sample of the first 30 seconds and automatically detect.
+
+As an aside, I have noticed that anytime Whisper cannot detect a language if seems to think it is "Welsh".
+
+```sh
+whisper --language en media/film_scan/audio.wav
+```
+
+---
+class: contentpage
+### **Whisper**
+
+output_dir lets us specify an output directory 
+
+```sh
+whisper --language en --output_dir whisper_test/ media/film_scan/audio.wav
+```
+
+---
+class: contentpage
+### **Whisper**
+
+
+We can also select and output format.
+
+SRTs and VTTs are subtitle tracks with timestamps, which you should be able to drop straight into VLC or DCPs you are creating.
+
+JSON and TSV are useful as structured data, using formats which are common for storing machine-readable data.
+
+But we are going to use the simplest - a TXT file.
+
+```sh
+whisper --language en --output_dir whisper_test/ --output_format txt media/film_scan/audio.wav
+```
+
+---
+class: contentpage
+### **Whisper**
+
+As mentioned before we can also set the size of the model which is used: base, small, medium, large.
+
+It is worth doing some tests to see what effect the bigger the model has, it will use more disk space and take longer to process, so worth checking the results to see if they are significant enough to justify this.
+
+Matt Miller at Library of Congress has done something similar.
+https://thisismattmiller.com/post/lomax-whisper/
+
+
+```sh
+whisper --language en --output_dir whisper_test/ --output_format txt --model small media/film_scan/audio.wav
+```
+
+Interesting to note that that a number of AV archives are involved in producing their own Whisper models which are trained on certain languages or dialects.
+
+---
+class: contentpage
+### **LLMs**
+
+Now to shift focus to tools using similar technology to extract information, generally called LLMs or Large Language Models.
+
+The most famous of these is ChatGPT from OpenAI, but there are now equivalent models from Meta (Llama), Microsoft (Phi) and Google (Gemma).
+
+We might begin by looking at different things we can do with these models.
+
+---
+class: contentpage
+### **LLMs**
+
+We are going to dive right in with a multi-modal model called LLaVA, which allows us to do image analysis. Note that we are now about to discover how powerful (or not) our computers are.
+
+Ollama is a cross-platform command line application which us lets run machine learning models locally.
+
+https://ollama.com/
+
+There is a wide selection of models on offer, and as with whisper they range in size, with the expectation that bigger the model better the results (apparently not always 100% true)!
+
+https://ollama.com/library/gemma2
+
+---
+class: contentpage
+### **LLMs**
+
+Once we have Ollama installed, we can easily call our required model using the following command.
+
+```sh
+ollama run llava:7b
+```
+
+Bigger models may have systems requirements beyond what our computer can handle, in which case we will get an error message to inform us of this.
+
+---
+class: contentpage
+### **LLMs**
+
+
+
+Back in time if you wanted to do OCR, object detection, or other visual analysis, this would have required dedicated processes. LLMs are a bit different, they are capable of doing it all, we just need to ask the right questions.
+
+---
+class: contentpage
+### **LLMs**
+
+General description example
+
+```sh
+Can you describe image '/home/summerschool/Desktop/ml_test_files/0087679.jpg'
+```
+
+---
+class: contentpage
+### **LLMs**
+
+*OCR*
+
+
+```sh
+What text is in this image '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
+```
+
+Please note that accuracy can depend on model size, so this is the one section of the course where having a powerful computer will give you **better** results, not just faster.
+I am currently running the lowest model as my laptop is nothing special, would be keen to compare with people running something better.
+
+For me on the lowest model, it gets it wrong almost every time with fascinating results.
+
+---
+class: contentpage
+### **LLMs**
+
+*OCR*
+
+
+For anyone who remembers using Tesseract, mind-bendingly we can ask for specific interpreted text.
+
+```sh
+What is the name of the boat in this image '/home/summerschool/Desktop/ml_test_files/0087024.jpg'
+```
+
+
+A problem I noticed during testing this was that LLaVA can sometimes be confused when new images are supplied consecutively in the same session, so quiting in between may not be a terrible idea.
+
+
+
+---
+class: contentpage
+### **LLMs**
+
+*Object Detection*
+
+
+Frame with flags.
+
+```sh
+What objects are visible in '/home/summerschool/Desktop/ml_test_files/0087200.jpg'
+```
+
+
+
+Frame with boat as Python array.
+
+```sh
+Give me a list objects are visible in '/home/summerschool/Desktop/ml_test_files/0087024.jpg'. Return a list of items as Python strings in a list, eg ['hat', 'house', 'car']
+```
 
 
 
 
 
+---
+class: contentpage
+### **LLMs**
 
+
+*Image Characteristics*
+
+
+```sh
+Is the following image black and white or colour: '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
+```
+
+
+
+```sh
+What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85): '/home/summerschool/Desktop/ml_test_files/0086556.jpg'
+```
+
+This is especially interesting as the image is letterboxed. There are much easier ways to do "letterbox detection" (e.g. with FFmpeg), but those can be susceptible to black levels.
+
+---
+class: contentpage
+### **LLMs**
+
+
+Now the only piece missing is automating this - copying and pasting lines of text into the terminal is not going to scale if we want to inspect hundreds, thousands or millions of images.
+
+Basic Python example.
+
+```python
+import ollama
+
+request = ollama.chat(
+    model='llava:7b',
+    messages=[
+        {
+        'role': 'user',
+        'content': 'What is the aspect ratio of the image area of the following film frame (eg 1.66, 1.85)',
+        'images': ['/home/summerschool/Desktop/ml_test_files/0086556.jpg'],
+        }
+    ]
+)
+
+print(request['message']['content'])
+```
+
+
+
+---
 class: center, middle, titlepage
 ### WED04: *External Connections.*
 
@@ -21,13 +294,11 @@ class: contentpage
 ### **Agenda**
 
 
-In this session, we are going to talk about "external connections". 
+We are going to talk about "external connections". 
 
 Up until now, all our processes have been happening locally, but what if we seek to connect the results up with the outside world?
 
 This could be thought of as knowledge enrichment, benefiting from knowledge available elsewhere, but also as a step to ensuring explicit shared definitions - when I say "DPX", does it mean the same thing as when you say "DPX"?
-
-You will notice that Wikidata will feature very heavily in this section, as it is the largest structured open knowledge resource on the web. 
 
 
 ---
@@ -37,12 +308,8 @@ class: contentpage
 
 1. DROID        
     1.1 PRONOM     
-2. Text Wikification
-3. Collection Wikification     
-3.1 Linking    
-3.2 Leveraging    
 
-
+ 
 
 ---
 class: contentpage
@@ -86,10 +353,10 @@ class: contentpage
 ### **1. DROID**
 
 
-Just to unpack what is happening here, DROID is processing each file and checking that the "signatures" of the file (which we saw earlier) are correct and match the extension. This is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx", a feature we can test ourselves.
+Just to unpack what is happening here, DROID is processing each file and checking that the "magic numbers" of the file (which we saw earlier) are correct and match the extension. This is to catch any instances where someone has taken an "image.jpg" and renamed as "image.dpx", a feature we can test ourselves.
 
 
-What is especially interesting though, and the focus of this session, is the PUID column, which is printing the PRONOM identifier.
+What is especially interesting though, and the focus of this next section, is the PUID column, which is printing the PRONOM identifier.
 
 ---
 class: contentpage
@@ -160,434 +427,6 @@ https://www.dpconline.org/docs/technology-watch-reports/2551-thorntonwikidatadpc
 
 
 
----
-class: contentpage
-### **2. Text Wikification**
-
-
-The first section covered connecting technical attributes externally, but now we can also revisit the content extraction outputs from the last session and look at a process called Wikification.
-
-
-This plays into a broader field called Named Entity Recognition, which essentially boils down to extracting "entities" from text. There is an online example of this concept here: https://demos.explosion.ai/displacy-ent
-"Paul grew up in Australia" becomes
-
-.left[<img src="../img/ner.png" width="300">]
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-
-This gets us so far, in that we now know that Paul is a person - but which person? This is important in making your collection searchable, because researchers and users are likely to be looking for a specific "Paul".
-
-We need an ID (person/76276), or a URI (https://viaf.org/viaf/51677529/) to apply to the Named Entity, and given the availability and ubiquity of Wikipedia, it can be used to fulfil this function.
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-Machine-learning are also a game changer in this space, while there were absolutely techniques for doing this stretching back decades, ML performs better and can jump through multiple processes at once.
-
-An example prompt to feed to an LLM:
-
-```txt
-Take the following text and determine all spaCY entities and types, 
-then add valid wikipedia links, using Markdown link syntax. For 
-example if the input was "Annie Ernaux wrote the book The Years", 
-return "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) 
-wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". 
-Do not return a wikipedia link if the wikipedia page does not really exist. 
-Here is the source text: "David Lean directed the film Lawrence of Arabia.",
-```
-
-Note we are switching from a LLaVA model to Llama3.1, as we do not need all of the media processing functions, this is text only.
-
-
-
-
----
-class: contentpage
-### **2. Text Wikification**
-
-This is still an emerging field for archives, with the promise of revolutionising the granularity of search. 
-
-A few considerations to be aware of:
-
-- Whether the Wikipedia link actually exists. Tests on low-size models showed a willingness to invent "likely" Wikipedia addresses which just did not exist (e.g. "https://en.wikipedia.org/wiki/Lawrence_of_Arabia_(David_Lean_film)").
-- Whether the Wikipedia link is being properly disambiguated based on context, e.g. "It is a short drive from Sydney to Newcastle" returning https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales, not https://en.wikipedia.org/wiki/Newcastle_upon_Tyne or https://en.wikipedia.org/wiki/Newcastle_(film)
-
-
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-We can write a simple function to process the Whisper text extraction of our film scan and see what we get out!
-
-
-```python
-import ollama
-import pathlib
-
-def text_wikification(source_text):
-    request = ollama.chat(
-        model='llama3.1:8b',
-        messages=[
-            {
-            'role': 'user',
-            'content':  'Take the following text and determine all spaCY entities and types, then add valid wikipedia links, \
-                using Markdown link syntax. For example if the input was "Annie Ernaux wrote the book The Years", return \
-                "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". \
-                Do not return a wikipedia link if the wikipedia page does not really exist. Return the annotated text only, no other information. \
-                Here is the source text: "'+source_text
-            }
-        ]
-    )
-
-    return request['message']['content']
-```
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-
-```python
-with open(pathlib.Path.cwd() / 'whisper_test'/ 'audio.txt') as text_in:
-    text_in = text_in.read()
-    processed_text = text_wikification(text_in)
-
-print('SOURCE_TEXT', '\n', text_in, '\n')
-print('PROCESSED_TEXT', '\n', processed_text, '\n')
-
-```
-
-
-Quality of results will vary depending on the model and prompt used. For example, I have seen very very good results from the Gemini Pro Google models, which are not currently available through Ollama.
-
-A more time-consuming possible method would be to use a system like GLiNER (https://github.com/urchade/GLiNER) to first identify all entities, and then use a system like Llama to perform context aware Wikipedia linking one at a time?
-
-
-
-
----
-class: tangentpage
-### **Tangent: What is Markdown?**
-
-In the previous examples we were producing text formatted as "Markdown", thought it worth cycling back and explaining markdown to anyone who this may be a new concept.
-
-Markdown is simply a method of annotating a text file so that it can contain formatting (bold, italics, links, tables and images) without requiring a proprietary and closed application to render (eg Word).
-
-This is good as it means that your documents remain application agnostic, and you don't have to be concerned about access in the future.
-
-Here we had used the markdown "link" syntax to attach a Wikipedia link to an "entity". This is not exactly what it was designed for, but works perfectly fine for our purposes.
-
----
-class: tangentpage
-### **Tangent: What is Markdown?**
-
-
-These slides are all written as Markdown! 
-
-https://github.com/paulduchesne/summer-school-2024/blob/main/slides/wednesday_04.html
-
-If you want more information on how to use Markdown, this is a good guide: 
-
-https://www.markdownguide.org/
-
-
-
-
----
-class: contentpage
-### **3. Collection Wikification**
-
-We can also use similar techniques on collection data, to link our database entities (for instance, films and directors) to Wikidata.
-
-The advantage of this data is that it is already structured, so we don't need to use LLMs or machine-learning at all.
-
-
----
-class: contentpage
-### **3. Collection Wikification**
-
-I've attached a small CSV in the repository called `database.csv` which is meant to simulate what an exported database record would look like for a selection of Australian feature films.
-
-The tool we were going to use for this process is OpenRefine, and open source data manipulation tool which started out as Google Refine, and which features a very handy Wikidata "reconciliation service".
-
-First step is to download OpenRefine!
-
-https://openrefine.org/download
-
-
----
-class: contentpage
-### **3. Collection Wikification**
-
-
-What we are doing here is "linking" data, linking being is the process of saying that one entity (here a film, or a person) is the same as an entity on a different system. We want to do this using the IDs, because different films (or people!) can have the same name, or the same films (or people!) can have different names.
-
-We also want to process this linking "at scale". In these examples we are each looking at forty films, but an actual film archive could hold many thousands of films, far too many to manually match.
-
-Some of these films are notable enough to already exist on Wikidata, others will not for various reasons.
-
-
----
-class: tangentpage
-### **Tangent: A Tour of Wikidata**
-
-A film example which is already present in Wikidata is Morning Of The Earth. The English Wikipedia page for the film is at https://en.wikipedia.org/wiki/Morning_of_the_Earth. 
-
-In the top right-hand corner, we can select tools -> Wikidata item, which will take us to the relevant Wikidata page.
-
-A few interesting things to note about Wikidata
-
-- There is a single page for all languages, so data statements are not different across different language versions (as can happen on Wikipedia).
-- The "Q-number" in the address and at the top of the page (eg Q6912929) is the universal means of identifying a "thing" on Wikidata, and what we will be seeking to link to.
-- Data is expressed using the "semantic triple" model or 'subject-verb-object'.
-- The Wikidata page itself is made up of two sections:
-  - Statements, which are data points expressed about the entity.
-  - Identifiers, which link to other resources/platforms/databases (we already saw this with the NARA/PRONOM example).
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-
-
-OpenRefine can be opened either by running ./refine from within the application directory, or double-clicking the application icon (depending on operating system). Once it has booted, we can load our `database.csv`.
-
-Note that you can also load your own data off the web, Google account, or make a direct database connection if we were running a real database.
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-OpenRefine will display only the first ten items by default, we would probably like to expand that (show 50 rows).
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-
-
-Now we can start linking, or "reconciling" in OpenRefine terminology. We are going to do this by matching the name of the film AND the name of the director as a way of determining if our film is the same one as on Wikidata. There are of course famous examples where directors have made multiple films with the same name, but in most cases a match on both these data points is a "good" match.
-
-We can use the inbuilt Wikidata reconciliation service to match film by selecting the column dropdown, then work_label -> Reconcile -> Start reconciling.... The only service which should be available by default is Wikidata, although there are many others.
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-
-
-The reconciliation service should be smart enough to detect automatically that we are trying to match "films" (Q11424). We can also add other columns to aid the matching process, in our example by adding the "property" for "director" (P57) against the "director_label" column. Then select Start reconciling and the matching process will proceed. This should take less than a minute for such a small dataset, but can take longer if you have more source data.
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-
-
-Once this has finished we should see the results being in one of three different states, either an automated "high confidence" automatic match (blue, link to the Wikidata page), a selection of possible matches, and no match.
-
-We can go through and process the "possible matches", although this obviously depends on our time and how many we have to assess.
-
-With both "possible matches" and "no matches" you will notice a "Create new item" option, which allows us to create new items direct in Wikidata. This is a handy function, but we will probably not use it today as creating items in Wikidata without any additional data is not very helpful.
-
-Note we also have the ability to override matches with the "Choose new match" if we believe OpenRefine has made a mistake.
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-
-
-Once we have matched the film works, we can use a wonderful function called Add columns from reconciled values, under Edit column. This gives us a list of all the common data points available from Wikidata against our matched items. For now, we are just going to select "director" and ok which will add the column to our dataset.
-
-Hopefully we should see something pretty cool, we now have the reconciled Wikidata items for our directors as well! Worth doing a quick check that the names match, and there would of course be issues if we had a film with multiple directors, or we had made a mistake in the film matching process.
-
-This can be exported out of OpenRefine as a CSV although first we need to convert the OpenRefine Wikidata links into the IDs, as text. We do this with the Add column with URLs of matched entities under Reconcile. Once we have done this, we may have to use Edit cells and Replace to edit the full link down to just the Wikidata ID. We should end up with a dataset containing six columns, each internal ID, Wikidata ID and label for film and director.
-
-We have now successfully linked our collection to Wikidata!
-
----
-class: contentpage
-### **3. Collection Wikification: Linking**
-
-Now we can look at using the connections to pull data on an "as needs" basis. I wanted to present three possible ways of using the links we have created between our collection and Wikidata, although there are many more possibilities.
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-*OpenRefine*
-
-Within OpenRefine we can use the same mechanism we used previously to attach the director column to our existing data. 
-
-Load the data export, and the Wikidata links can be "reactivated" using "Reconcile" -> "Use values as identifiers...". 
-
-We can now add in additional columns directly against our database values. 
-
-Selecting the wikidata_work_id column and Edit column -> Add columns from reconciled values..., then for instance "P345" under "Add property" will add IMDB IDs. For wikidata_director_id we can use "P19" which will return the place of birth for directors.
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-*Wikidata Query Service*
-
-This approach requires that we add our identifiers back into Wikidata using a custom property. 
-
-This is slightly more technically challenging as it requires we request a specific property for our institution (as we have done here https://www.wikidata.org/wiki/Property:P11948 for the NFSA) and also that we write these identifiers back to Wikidata, which we can actually do from inside OpenRefine as well. 
-
-Once this is done we can use Wikidata's inbuilt query service https://query.wikidata.org/. 
-
-We do need to learn a bit of SPARQL to use this interface. Replicating the previous example within OpenRefine can be done using this query:
-
-```sparql
-select ?film ?director ?place_of_birth where {
-  ?film wdt:P11948 ?nfsa_id .
-  ?film wdt:P57 ?director .
-  ?director wdt:P19 ?place_of_birth .   
-}
-
-```
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-
-This has just returned a table of identifiers, we can also add in the English labels:
-```sparql
-select ?film ?filmLabel ?director ?directorLabel ?place_of_birth ?place_of_birthLabel where {
-  ?film wdt:P11948 ?nfsa_id .
-  ?film wdt:P57 ?director .
-  ?director wdt:P19 ?place_of_birth . 
-  service wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-```
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-
-Better yet, the Wikidata has inbuilt visualisation tools so that we can explore merged data visually on their platform:
-```sparql
-#defaultView:Map
-select ?film ?filmLabel ?director ?directorLabel ?place_of_birth ?place_of_birthLabel ?geo where {
-  ?film wdt:P11948 ?nfsa_id .
-  ?film wdt:P57 ?director .
-  ?director wdt:P19 ?place_of_birth . 
-  ?place_of_birth wdt:P625 ?geo .
-  service wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-
-```
-
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-*Custom coding*
-
-
-We can also build on the linking with some custom code using Python. 
-Here is some Python to insert the box office takings for these films from Wikidata.
-
-```python
-
-import json
-import pandas
-import pathlib
-import requests
-
-df = pandas.read_csv(pathlib.Path.cwd() / 'database_wikidata.csv').fillna('')
-wikidata_ids = ' '.join(['wd:'+x for x in df.work_wikidata.unique() if x])
-
-query = '''
-    select ?wikidata_work_id ?box_office   
-    where {
-        values ?wikidata_work_id {'''+wikidata_ids+'''}
-        optional { ?wikidata_work_id wdt:P2142 ?box_office . }
-    } '''
-
-response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
-print(json.dumps(response.json(), indent=4))
-
-```
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-*Custom coding*
-
-
-
-Here we are pulling in images from Wikicommons via Wikidata, we can also access the image licensing data (important!), although that would be a more complex query:
-
-```python
-
-import json
-import pandas
-import pathlib
-import requests
-
-df = pandas.read_csv(pathlib.Path.cwd() / 'database_wikidata.csv').fillna('')
-wikidata_ids = ' '.join(['wd:'+x for x in df.director_wikidata.unique() if x])
-
-query = '''
-    select ?wikidata_director_id ?wikidata_director_image   
-    where {
-        values ?wikidata_director_id {'''+wikidata_ids+'''}
-        ?wikidata_director_id wdt:P18 ?wikidata_director_image . 
-    } '''
-
-response = requests.get('https://query.wikidata.org/sparql', params={'format': 'json', 'query': query})
-
-for image in response.json()['results']['bindings']:
-    director_id = pathlib.Path(image['wikidata_director_id']['value']).stem
-    image_url = image['wikidata_director_image']['value']
-
-    print(director_id, image_url)
-   
-      
-```
-
-
-
----
-class: contentpage
-### **3. Collection Wikification: Leveraging**
-
-*Federation*
-
-
-Another reason I find these concepts exciting as a means of connecting together data from different archival collections, and identifying where digitisation work has already happened, or material is unique.
-https://github.com/paulduchesne/pike-cooper
-
 
 ---
 class: center, middle, titlepage
@@ -596,8 +435,9 @@ class: center, middle, titlepage
 
 
 
-    </textarea>
-    <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
-    <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
-  </body>
-</html>
+
+      </textarea>
+      <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+      <script type="text/javascript">var slideshow = remark.create({ratio: "16:9"});</script>
+    </body>
+  </html>
