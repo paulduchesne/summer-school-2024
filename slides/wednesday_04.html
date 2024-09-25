@@ -308,7 +308,7 @@ class: contentpage
 
 1. DROID        
     1.1 PRONOM     
-2. Text Wikification
+
  
 
 ---
@@ -422,124 +422,6 @@ https://www.dpconline.org/docs/technology-watch-reports/2551-thorntonwikidatadpc
 
 
 
-
-
-
-
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-The first section covered connecting technical attributes externally, but now we can also revisit the content extraction outputs from the last session and look at a process called Wikification.
-
-
-This plays into a broader field called Named Entity Recognition, which essentially boils down to extracting "entities" from text. There is an online example of this concept here: https://demos.explosion.ai/displacy-ent
-"Paul grew up in Australia" becomes
-
-.left[<img src="../img/ner.png" width="300">]
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-
-This gets us so far, in that we now know that Paul is a person - but which person? This is important in making your collection searchable, because researchers and users are likely to be looking for a specific "Paul".
-
-We need an ID (person/76276), or a URI (https://viaf.org/viaf/51677529/) to apply to the Named Entity, and given the availability and ubiquity of Wikipedia, it can be used to fulfil this function.
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-Machine-learning are also a game changer in this space, while there were absolutely techniques for doing this stretching back decades, ML performs better and can jump through multiple processes at once.
-
-An example prompt to feed to an LLM:
-
-```txt
-Take the following text and determine all spaCY entities and types, 
-then add valid wikipedia links, using Markdown link syntax. For 
-example if the input was "Annie Ernaux wrote the book The Years", 
-return "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) 
-wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". 
-Do not return a wikipedia link if the wikipedia page does not really exist. 
-Here is the source text: "David Lean directed the film Lawrence of Arabia.",
-```
-
-Note we are switching from a LLaVA model to Llama3.1, as we do not need all of the media processing functions, this is text only.
-
-
-
-
----
-class: contentpage
-### **2. Text Wikification**
-
-This is still an emerging field for archives, with the promise of revolutionising the granularity of search. 
-
-A few considerations to be aware of:
-
-- Whether the Wikipedia link actually exists. Tests on low-size models showed a willingness to invent "likely" Wikipedia addresses which just did not exist (e.g. "https://en.wikipedia.org/wiki/Lawrence_of_Arabia_(David_Lean_film)").
-- Whether the Wikipedia link is being properly disambiguated based on context, e.g. "It is a short drive from Sydney to Newcastle" returning https://en.wikipedia.org/wiki/Newcastle,_New_South_Wales, not https://en.wikipedia.org/wiki/Newcastle_upon_Tyne or https://en.wikipedia.org/wiki/Newcastle_(film)
-
-
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-We can write a simple function to process the Whisper text extraction of our film scan and see what we get out!
-
-
-```python
-import ollama
-import pathlib
-
-def text_wikification(source_text):
-    request = ollama.chat(
-        model='llama3.1:8b',
-        messages=[
-            {
-            'role': 'user',
-            'content':  'Take the following text and determine all spaCY entities and types, then add valid wikipedia links, \
-                using Markdown link syntax. For example if the input was "Annie Ernaux wrote the book The Years", return \
-                "[Annie Ernaux](https://en.wikipedia.org/wiki/Annie_Ernaux) wrote the book [The Years](https://en.wikipedia.org/wiki/The_Years_(Ernaux_book))". \
-                Do not return a wikipedia link if the wikipedia page does not really exist. Return the annotated text only, no other information. \
-                Here is the source text: "'+source_text
-            }
-        ]
-    )
-
-    return request['message']['content']
-```
-
----
-class: contentpage
-### **2. Text Wikification**
-
-
-
-
-```python
-with open(pathlib.Path.cwd() / 'whisper_test'/ 'audio.txt') as text_in:
-    text_in = text_in.read()
-    processed_text = text_wikification(text_in)
-
-print('SOURCE_TEXT', '\n', text_in, '\n')
-print('PROCESSED_TEXT', '\n', processed_text, '\n')
-
-```
-
-
-Quality of results will vary depending on the model and prompt used. For example, I have seen very very good results from the Gemini Pro Google models, which are not currently available through Ollama.
-
-A more time-consuming possible method would be to use a system like GLiNER (https://github.com/urchade/GLiNER) to first identify all entities, and then use a system like Llama to perform context aware Wikipedia linking one at a time?
 
 
 
