@@ -21,35 +21,40 @@ class: center, middle, titlepage
 class: contentpage
 ### **Agenda**
 
-1. Intro to Hashing/Checksums
-2. CLI checksum creation  
-2.1 Whole file hashing  
-2.2 FFmpeg file hashing  
-2.3 FFmpeg stream hashing   
-2.4 FFmpeg framehash  
-2.5 FFmpeg FrameMD5   
-2.6 FFV1 slice checksums  
-3. Python hashlib.   
-4. Perceptual hashing, visual similarity matching.   
-5. BagIt for Python. 
-6. OAIS
-7. PREMIS
-8. TAR wrapping with CLI 'tar' or Python 'tarfile'. 
+
+1. Intro to Checksums
+2. Python hashlib
+3. Bagit
+4. Tarwrapping
+5. OAIS
+6. PREMIS
+7. Perceptual hashing
+
+---
+class: contentpage
+
+### **0. Requirements**
+
+Check if PIP is installed, if not:
+
+macOS/Linux
+
+```sh
+python3 -m install pip
+```
+
+Windows
+
+```sh
+python -m ensurepip 
+```
+
 
 ---
 class: contentpage
 ### **1. Intro to Checksums**
 
 Checksums are "fixed width" (i.e. always the same length) digital fingerprints.
-
-They can be generated from source text or files!
-
-MD5 for the string "Paul Duchesne"!
-
-```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
-```
 
 MD5 for a DPX file!
 
@@ -82,6 +87,7 @@ Windows
 CertUtil -hashfile media/film_scan/0088600.dpx MD5
 ```
 
+<tspan style="color: orange"><b>PRACTICAL:</b></tspan> Hash a file in the command line.
 
 ---
 class: contentpage
@@ -91,22 +97,24 @@ class: contentpage
 An important concept of checksums is that they are predictable, with the same input they will produce the same output every time.
 
 ```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
+```
+
+
+```sh
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
 ```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
 ```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
-```
-```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
 
@@ -117,24 +125,30 @@ class: contentpage
 
 However, any slight change in the input will, using the most popular checksumming variants, produce a completely different output. This is to say we have no indication of how much it has changed, just that it has changed.
 
-```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
-```
 
 ```sh
-echo -n "paulduchesne" | md5sum
-9a464f6d1e4bf783d7c5c48143c92d87
-```
-```sh
-echo -n "Paul Duchesne" | md5sum
-0396b497d1949e210d09692607734e97
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
 ```
 
+
 ```sh
-echo -n "paulduchesne" | md5sum
-9a464f6d1e4bf783d7c5c48143c92d87
+md5sum media/film_scan/0088601.dpx 
+ff329821d9330b9688148da8abc4147e
 ```
+
+
+```sh
+md5sum media/film_scan/0088600.dpx 
+e0c39a37430fbacb9b7fb634580a1858
+```
+
+
+```sh
+md5sum media/film_scan/0088601.dpx 
+ff329821d9330b9688148da8abc4147e
+```
+
 
 ---
 class: contentpage
@@ -143,28 +157,6 @@ class: contentpage
 
 Checksums are not reversible, you cannot recreate the source from the checksum, but you can verify if the source is unchanged.
 
-These characteristics mean this concept is used extensively in net and digital security.
-
-
----
-class: contentpage
-
-### **1. Intro to Checksums**
-
-
-Example process: a user to a system (eg a website, database) creates a password, the system only stores the checksum.
-
-```sh
-echo -n "my_cool_password" | md5sum
-a873aee995ffc1fe2634e63560d3aabb
-```
-
-
-When the user wants to log in again, they will re-enter their password, which should generate the same checksum... result: they can log in!
-
-If a hacker steals the checksums (the only element the system has retained) they do not automatically know what the source password was, so they can't log in.
-
-If the checksum algorithm (so far we have been using MD5) is not complex enough, the hacker may start trying to find a password which matches the checksum (e.g. a list of common passwords) or even "brute force" (eg "a", "aa", "aaa", "aaaa" etc etc etc) until they get a password which matches the checksum.
 
 
 
@@ -214,207 +206,19 @@ class: contentpage
 
 A downside of using MD5 is that it can be quite slow to hash files, which can add up if you are generating checksums across an entire system.
 
----
-class: contentpage
-### **2. CLI checksum creation**
+Other algorithms like xxhash are much quicker, but will not work so well with existing tools, or might be more likely to allow "collisions".
 
-You can create checksums easily using the Command Line Interface:  
-
-- 2.1 Whole file hashing with CLI tools  
-
-- 2.2 FFmpeg file hashing (not truly whole file)  
-
-- 2.3 FFmpeg stream hashing  
-
-- 2.4 FFmpeg FrameHash  
-
-- 2.5 FFmpeg FrameMD5  
-
-- 2.6 FFmpeg FFV1 SliceCRC 
-
----
-class: contentpage
-### **2.1 Whole file hashing**
-
-- SHA: sha1sum, sha224sum, sha256sum, sha384sum, sha512sum (Linux) / shasum  (MacOS / Linux)
-```sh
-sha256 file.ext  /  shasum -a 256 file.ext
-```
-- BLAKE2: b2sum  (Linux) 
-```sh
-b2sum file.ext
-```
-- CRC-32: cksum  (MacOS / Linux)
-```sh
-cksum -o 3 file.ext
-```
-- MD5: md5 (MacOS / Linux)  /  md5sum (Linux)
-```sh
-md5 file.ext  /  md5sum file.ext
-```
-- MULTIPLE CHECKSUMS: certutil (Windows Command Prompt) / Get-FileHash (Windows Powershell)
-```sh
-certutil -hashfile file.ext SHA256  /  Get-FileHash -Path file.ext -Algorithm MD5
-```  
----
-class: contentpage
-### **2.2 FFmpeg file hashing**
-
-You can also use FFmpeg to generate a single file checksum. 
-
-```sh
-ffmpeg -i file.mov -f hash out.sha256
-SHA256=ce61d513ad70393e2ec0efc297b536cb4a90000898ea60e3fef98580e5b723f3
-```
-This command will create a SHA256 file checksum for the image and audio streams, and output it to a separate file called `out.sha256`. No algorithm is requested here, and FFmpeg defaults to SHA256.  
-  
-FFmpeg supports many checksum algorithms:  
-- MD5, murmur3, RIPEMD128, RIPEMD160, RIPEMD320, SHA160, SHA224, SHA256
-- SHA512/224, SHA512/256, SHA384, SHA512, CRC32 and adler32
-  
-<font color="orange">Practise:</font> Make checksums using FFmpeg hash algorithms using the `-f hash` flag. To avoid creating a file you can change the `out.sha256` to a `-`, and it will print to the CLI:  
-
-```sh
-ffmpeg -i file.mov -f hash -hash MD5 -
-ffmpeg -i file.mov -f hash -hash CRC32 out.crc32
-```
----
-class: contentpage
-### **2.3 FFmpeg stream hashing**
-
-Many archives retain checksums for a file at stream level, separate checksums for video and audio streams.  
-
-FFmpeg can generate a single stream checksum by using `stream copy` to read, not decode the stream:  
-```sh
-ffmpeg -i file.ext -map 0:v -c copy -f md5 -
-```
-
-This command will decode the first audio stream to generate an checksum and print to the CLI:  
-```sh
-ffmpeg -i file.ext -map 0:a:0 -f hash -hash sha512 -
-```
-
-FFmpeg has the `streamhash` muxer that will export a checksum for each stream, example below.  
-The map flag tells FFmpeg to generate checksums for every stream:  
-```sh
-ffmpeg -i file.ext -map 0 -c copy -f streamhash -hash md5 -
-0,a,MD5=acec0c1c506a2c4d6973e7d48a88e31d=N/A speed=N/A    
-1,a,MD5=e97dea762ad0cebef700ef1ab969cdc0
-2,v,MD5=e6413a0e4067a9817c2e35dd8870629a
-3,d,MD5=a5c7909533674e7b81a0e10b0a9eff4c
-```
----
-class: contentpage
-### **2.4 FFmpeg framehash**
-
-Framehash from FFmpeg will print a list of all stream checksums to the CLI, or to a file  
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 18.34.47.png" width="800">]
-
-Framehash computes a cryptographic hash (default SHA256) for each audio and video packet. Audio is converted to signed 16-bit raw audio, and video is converted to raw video before the hash is computed. Other hash algoritms are supported, and is used for packet-by-packet equality checks  
-```sh
-ffmpeg -i file.ext -map 0 -f framehash -
-```
-As with FFmpeg stream hashing, if you add `-c copy` to the command it causes the framehash to generate checksums of the data as it's stored, and does not decode it. Not suitable for long-term fixity checking!  
-
-???
-Changing the pixel format will result in different has values event if the visual content is identical.
----
-class: contentpage
-### **2.5 FFmpeg framemd5**
-
-FrameMD5 from FFmpeg provides frame level equality checks for your video and audio streams. To be used for immediate file assessment following lossless transcoding, and not recommended for long-term fixity checks!   
-
-If you're making a lossless transcode then you would create a FrameMD5 of the source file, and another of the transcode. This command will create a FrameMD5 manifest for the first video stream and the first two audio streams of each file:  
-```sh
-ffmpeg -i file.mov -f framemd5 mov.framemd5
-ffmpeg -i file.mkv -f framemd5 mkv.framemd5
-```
-You can compare them to ensure they are identical, using diff (Unix) or fc (Windows).  
-
-```sh
-diff mov.framemd5 mkv.framemd5
-fc mov.framemd5 mkv.framemd5
-```
-If there is a difference between the two documents then the CLI will print out those differences  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 20.36.16.png" width="800">]
-
----
-class: contentpage
-### **2.5 FFmpeg framemd5**
-
-Software `Meld` allow comparison of FrameMD5s, highlighting where differences occur between the documents  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.42.10.png" width="1030">]
-
-FFmpeg also provide a FrameCRC tool which is similar to FrameMD5.  
-
----
-class: contentpage
-### **2.5 FFmpeg framemd5**
-
-The BFI had problems with our lossless FrameMD5 verification for V210 movs being transcoded from FFV1 Matroska files. We had to call on some help from Dave Rice and the problem and solution is detailed in my blog entry [The Case of the Failing FrameMD5](https://digitensions.home.blog/2021/06/08/python-ffv1-to-v210-transcoding-script-using-ffmpeg/)
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/Screenshot 2024-09-17 at 19.48.33.png" width="1030">]
-
----
-class: contentpage
-### **2.6 FFV1 slice checksums**
-
-The FFV1 codec can include `slices` within every frame of a video. It's optional to select `slicecrcs` are active, and to choose how many slices you want per frame. Video files start from 24 slices, and RAWcooked encoded videos range from 64 to 200+ slices per frame.  
-
-```sh
-ffmpeg -i input.mov -map 0 -dn -c:v ffv1 -level 3 -g 1 -slices 24 -slicecrc 1 
- -c:a copy output.mkv
-```
-For every slice there is an embedded CRC checksum, so for one minute of video footage at 25 frames per second you have 36,000 CRC embedded into the codec.  
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/wednesday/images/checksum_map.png" width="800">]
-
-???
-Dave Rice makes a lovely comparison between stream/whole file checksums in AV files being like a country wide fire alarm for the services, that somewhere in Germany there's a fire. With FFV1 Codec, this is more granular, instead of it being a country wide alarm it shows you which state the fire is in, and which region of that state... Making that fire much easier to find/fix!
-Really valuable fixity checking over time, possibly run at the point files are migrated between long-term storage.
-Remember if you find any breaks you can try to fix them in MediaConch!! Amazing tools for our long-term video tape storage.
----
-class: contentpage
-### **2.6 FFV1 slice checksums**
-
-The max slice count is visible in the file metadata, and confirmation that the error detection type is per slice.  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.25.41.png" width="450">]
-To perform a fixity check of the file you just need to decode the video with FFmpeg again, and to display any FFV1 CRC mismatches in the terminal window use a command like the example below
-
-```sh
-ffmpeg -report -i file.mkv -f null -
-```
-Failures in the FFV1 codec will show as SliceCRC mismatches along with time stamps for accurate pinpointing of the problem  
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/tuesday/images/Screenshot 2024-08-27 at 21.35.58.png" width="1000">]
+https://www.dpconline.org/docs/technology-watch-reports/2399-twgn-checksums-addis/file
 
 
 ---
 class: contentpage
 
-### **3. Python hashlib**
+### **2. Python hashlib**
 
 As we saw before, we can generate hashes directly from the command line, but there are reasons we might want to do this in Python. For example, as part of a more complex media processing script, or if we want to hash a large directory of files and find where there are matches in a database.
 
 We could use subprocess, but Python already comes with a handy inbuilt library called `hashlib`.
-
-Example of hashing a string
-
-```python
-import hashlib
-source = "Paul Duchesne"
-result = hashlib.md5(source.encode()).hexdigest()
-print(result)
-```
-
-Some notes on the methods we are using here! `encode()` converts from a string to binary data, which is required to hash. `hexdigest()` turns this back into a string - the hash we can store and use.
-
----
-class: contentpage
-
-### **3. Python hashlib**
 
 Example of hashing a file.
 
@@ -427,60 +231,17 @@ filepath = pathlib.Path.cwd() / 'media' / 'film_scan' / '0088600.dpx'
 with open(filepath, 'rb') as file:  
     file_content = file.read()  
     result = hashlib.md5(file_content).hexdigest()  
-    print(filepath, result)
+    print(filepath.name, result)
 ```
 
----
-class: contentpage
 
-### **3. Python hashlib**
-
-Example of hashing two files, and checking if they match.
-
-Note, we have condensed our code slightly, but it is doing exactly the same thing.
-
-
-```python
-import hashlib
-import pathlib
-
-filepath1 = pathlib.Path.cwd() / 'media' / 'film_scan' / '0088600.dpx'
-with open(filepath1, 'rb') as file1:    
-    result1 = hashlib.md5(file1.read()).hexdigest()  
-    print(filepath1, result1)
-
-filepath2 = pathlib.Path.cwd() / 'media' / 'film_scan' / '0088601.dpx'
-with open(filepath2, 'rb') as file2:    
-    result2 = hashlib.md5(file2.read()).hexdigest()  
-    print(filepath2, result2)
-
-print(result1 == result2)
-```
-Okay, but say we want to hash the files in an entire directory! We don't want to have to create an individual statement for each file.
----
-class: contentpage
-
-### **3. Python hashlib**
-
-Example of hashing multiple files in a "for loop", 
-
-```python
-import hashlib
-import pathlib
-
-for filepath in ['0088600.dpx', '0088601.dpx']:
-    with open(pathlib.Path.cwd() / 'media' / 'film_scan' / filepath, 'rb') as file:  
-        result = hashlib.md5(file.read()).hexdigest()  
-        print(filepath, result)
-```
-
-Okay, better, but we don't want to have to write out all the file names!
+<tspan style="color: orange"><b>PRACTICAL:</b></tspan> Hash a file using Python.
 
 
 ---
 class: contentpage
 
-### **3. Python hashlib**
+### **2. Python hashlib**
 
 Example of processing a whole directory.
 
@@ -492,30 +253,45 @@ dpx_frames = pathlib.Path.cwd() / 'media' / 'film_scan'
 for filepath in dpx_frames.iterdir():
     with open(filepath, 'rb') as file:  
         result = hashlib.md5(file.read()).hexdigest()  
-        print(filepath, result)
+        print(filepath.name, result)
 
 
 ```
 
-Note that if we want to not print the whole filename, we can use `filepath.name`
+<tspan style="color: orange"><b>PRACTICAL:</b></tspan> Hash a whole directory using Python.
+
+
+
+
+
+
 
 ---
 class: contentpage
 
-### **4. Bagit for Python**
+### **3. Bagit**
 
 
 BagIt is an open-source project developed by the Library of Congress to provide structures and tools, typically used to verify that collections of files have remained unchanged.
 
 You could absolutely write your own Python scripts to create, store and validate checksums, BagIt is just a convenience method for fundamental digital archiving processes. 
 
-If you want to create a "bag" as a one-off, we can just use the Python script provided by LOC:
+You can run BagIt from the command line, 
 
 ```sh
 bagit.py /directory/to/bag
 ```
 
-If we want to do something more complex, we will want to write Python code which uses their Python code ourselves, which can be imported as a library.
+but there is also an excellent Python library.
+
+```python
+import bagit
+```
+
+As we don't have the 'bagit' library installed, we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
+
+
+
 
 ---
 class: tangentpage
@@ -525,11 +301,7 @@ class: tangentpage
 Now, unlike the other libraries we have looked at today, BagIt is not pre-installed with Python (start a petition!), so we have to install it ourselves.
 
 
-```python
-import bagit
-```
-
-As we don't have the 'bagit' library installed, we will get a `ModuleNotFoundError: No module named 'bagit'` error in Python.
+For this you will need `pip` which is the Python management systems for libraries.
 
 We can check out libraries using `pip freeze` to verify that this is true!
 
@@ -558,50 +330,18 @@ Just be aware that we are now running other people's code on our machines, there
 
 From a security perspective, worth considering installing libraries which either have a lot of "stars" on GitHub, or are from people or organisations we trust (like Library of Congress).
 
----
-class: tangentpage
-
-### **Tangent 2: managing requirements.**
-
-Now that we have started installing our own libraries, we have drifted away from the default experience of a fresh Python install.
-
-We might have a project which requires twenty external libraries, and we want other people to know about these and to be able to install them all themselves easily.
-
-The normal way to do this is to keep track of these libraries in a `requirements.txt` file in our project.
-```
-bagit==1.8.1
-```
 
 
-This way we can install all the required packages in one go, and with specific versions.
-```
-pip install -r requirements.txt
-```
 
 
----
-class: tangentpage
-
-### **Tangent 3: virtual environments.**
-
-Installing those libraries is in pursuit of creating the same environment, so that code which runs should behave the same consistently.
-
-But we can have multiple projects which require different versions of the same library, for example Project 1 needs `library 2.5` but Project 2 needs `library 3.4`.
-
-Virtual environments let us manage the python libraries per project, which is pretty cool.
 
 
-```sh
-virtualenv venv -p 3.10
-source venv/bin/activate
-pip install -r requirements.txt
-python app.py
-```
 
 ---
 class: contentpage
 
-### **4. BagIt for Python**
+### **3. Bagit**
+
 
 Walkthrough of BagIt for Python!
 
@@ -618,20 +358,31 @@ bagit.make_bag(pathlib.Path.cwd() / 'bag_test', checksums=['md5'])
 ---
 class: contentpage
 
-### **4. BagIt for Python**
+### **3. Bagit**
 
 
-Tour of what "bag" looks like.
-
-
-
-+++ Danger of "recursive bags" if process is run multiple times. +++
+<tspan style="color: orange"><b>PRACTICAL:</b></tspan> Tour of what a "bag" looks like.
 
 
 ---
 class: contentpage
 
-### **4. BagIt for Python**
+### **3. Bagit**
+
+
+
+
+Danger of "recursive bags" if process is run multiple times. 
+
+
+<tspan style="color: orange"><b>QUESTION:</b></tspan> How would we use an "if" and "exists" to not create recursive bags?.
+
+
+
+---
+class: contentpage
+
+### **3. Bagit**
 
 
 We can also load our bag and validate it is correct, meaning intact from when we bagged it.
@@ -650,7 +401,7 @@ Adjust something to make this fail!
 ---
 class: contentpage
 
-### **5. TAR wrapping with CLI 'tar'**
+### **4. Tarwrapping**
 
 Great, so we now have our "bag", but what do we do with it?
 
@@ -670,7 +421,7 @@ tar cfv archive.tar bag_test/
 ---
 class: contentpage
 
-### **5. TAR wrapping with CLI 'tar'**
+### **4. Tarwrapping**
 
 Resons for TAR wrapping directories:
 - It is much easier to move files once they are packaged (and quicker).
@@ -684,7 +435,8 @@ Downsides, which you should plan for:
 ---
 class: contentpage
 
-### **5. TAR wrapping with Python 'tarfile'**
+
+### **4. Tarwrapping**
 
 
 
@@ -700,13 +452,15 @@ with tarfile.open(pathlib.Path.cwd() / 'archive.tar', "w") as tar_file:
         tar_file.add(file)
 ```
 
+<tspan style="color: orange"><b>PRACTICAL:</b></tspan> Tar the media file (only if you have enough space)!.
+
 
 
 
 ---
 class: contentpage
 
-### **6. OAIS**
+### **5. OAIS**
 
 
 Now is probably a good moment to raise the concept of OAIS, or Open Archival Information System.
@@ -727,7 +481,7 @@ Because this is a conceptual or reference model there is some flexibility to int
 ---
 class: contentpage
 
-### **7. PREMIS**
+### **6. PREMIS**
 
 PREMIS is another concept originating from Library of Congress, which defines an expected model for expressing information around preservation activity. This includes defining the entities of those involved in preservation activity: Objects, Events, Agents and Rights.
 
@@ -742,7 +496,7 @@ https://www.loc.gov/standards/premis/v3/index.html
 ---
 class: contentpage
 
-### **8. Perceptual hashing, similarity matching**
+### **7. Perceptual hashing, similarity matching**
 
 Before we completely finish up with checksums and hashing, a "fun" variant is "perceptual hashing".
 
@@ -750,7 +504,7 @@ Before we completely finish up with checksums and hashing, a "fun" variant is "p
 ---
 class: contentpage
 
-### **8. Perceptual hashing, similarity matching**
+### **7. Perceptual hashing, similarity matching**
 
 
 
@@ -761,69 +515,20 @@ While checksum hashing for file validation is ubiquitous, hashing for content si
 
 There are some Python libraries for image perceptual hashing specifically, such as `imagehash`.
 
+
+
 ---
 class: contentpage
 
-### **8. Perceptual hashing, similarity matching**
+### **7. Perceptual hashing, similarity matching**
 
-Before we phash our film scan, we will need to convert to JPG, as the library does not work with DPX.
-
-Lets use FFmpeg!
+Now we can run through our JPGs, find a random file, and then return the closest and least close files from the scan.
 
 ```python
 import imagehash, pathlib, random, subprocess, tqdm
 from PIL import Image
 
-frames = pathlib.Path.cwd() / 'media' / 'film_scan'
-for dpx_frame in frames.rglob('*'):
-    jpg_frame = dpx_frame.parents[1] / 'jpg' / f'{dpx_frame.stem}.jpg'
-    jpg_frame.parents[0].mkdir(exist_ok=True)
-    if not jpg_frame.exists():
-        subprocess.call(['ffmpeg', '-v', 'quiet', '-i', str(dpx_frame), str(jpg_frame)])
-
-```
-
-
----
-class: tangentpage
-### **Tangent: F-Strings**
-
-In the previous example you may have noticed that I was embedding variables into strings like this `f'{dpx_frame}.jpg'`.
-
-f-string are a relatively new addition to make embedding variables into string easier, around since Python 3.6.
-
-Older methods would have been:
-
-```python
-apple_colour = "green"
-print('I like', apple_colour, 'apples a lot.')
-```
-
-
-```python
-apple_colour = "green"
-print('I like %s apples a lot.' % apple_colour)
-```
-
-But the new amazing recommended way, which I think does improve readability, is 
-
-```python
-apple_colour = "green"
-print(f'I like {apple_colour} apples a lot.')
-```
-
-Note that that "f" at the start indicates that this is an "f-string" and any time curly brackets are used inside, they are embedding a variable.
-
-
----
-class: contentpage
-
-### **8. Perceptual hashing, similarity matching**
-
-Now we can run through our JPGs, find a random file, and then return the closest and least close files from the scan.
-
-```python
-frames = pathlib.Path.cwd() / 'jpg'
+frames = pathlib.Path.cwd() / 'media' / 'jpg'
 jpeg_files = [x for x in frames.rglob('*') if x.suffix == '.jpg']
 random_jpg = random.choice(jpeg_files)
 random_jpg_phash = imagehash.average_hash(Image.open(str(random_jpg)))
@@ -845,7 +550,7 @@ print('most distant file', result[-1])
 ---
 class: contentpage
 
-### **8. Perceptual hashing, similarity matching**
+### **7. Perceptual hashing, similarity matching**
 
 Where would this be useful for an archive?
 
