@@ -158,8 +158,24 @@ Some interesting code repositories worth investigating:
 class: contentpage
 ### **4. Python linting/checking**
 
+When you write you first code there are tools you can install that will analyse your code. There are lots of different linters for different outcomes:
 
+- Type checkers verify proper use of type hints - `MyPy, Pyright, Pyre, Pytype`
+- Error linters point out syntax errors or other issues that will cause exceptions or crashes - `Pylint, Pyflakes, Flake8`
+- Style linters point out issues that don't cause bugs but highlight deviation from PEP-8 style guide - `Pylint, Flake8`
+- Packaging linters spot issues relating to packaging your code for distribution on PyPi - `Pyroma`
+- Security linters point out possible security vulnerabilities in your code - `Bandit, Dodgy`
+- Code formatters change the style of your code correcting whitespaces - `Black`
+- Dead code linters remove commented-out code, bad practise used instead of proper version control - `Vulture, Eradicate`
+- Docstring linters / formatters point out style issues with doc string (notes) not aligned to PEP-257 - `pydocstringformatter, docformatter`
+- Complexity Analyzers point out code that is too complex that it will impact readability - `mccabe, Radon`
+[Python Linter Comparison](https://inventwithpython.com/blog/2022/11/19/python-linter-comparison-2022-pylint-vs-pyflakes-vs-flake8-vs-autopep8-vs-bandit-vs-prospector-vs-pylama-vs-pyroma-vs-black-vs-mypy-vs-radon-vs-mccabe/)
 
+```sh
+pip install pylint
+pylint my_python_code.py
+```
+Pylint is an error and style linter so will report breaking syntax as well as offering hints for better code styling.
 
 ---
 class: contentpage
