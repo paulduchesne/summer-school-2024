@@ -8,8 +8,6 @@
     <textarea id="source">
 
 
-
-
 class: center, middle, titlepage
 ### THU02: *FFmpeg automation and optimisation*
 ---
@@ -44,81 +42,8 @@ With great power come great responsibility!
 class: contentpage
 ### **1.1 PyPi packages: ffmpeg-python**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/pypi_ffmpeg.png" width="840">]
-
----
-class: contentpage
-### **1.1 PyPi packages: ffmpeg-python**
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-20 at 17.54.56.png" width="700">]
-
-It's worth checking how active a project is by viewing source code. The [ffmpeg-python GitHub](https://github.com/kkroening/ffmpeg-python/) is very active with recent Issues raised, many asking for help converting FFmpeg commands into python.
-
----
-class: tangentpage
-### **Tangent: Python Virtualenv**
-
-For these FFmpeg and Python code tests it might be best to set up a separate Python virtual environment. If you haven't already then install virtualenv:
-```sh
-pip install virtualenv
-```
-Create a folder somewhere easy to locate named in a way that's easy to remember what the environment project represents:
-```sh
-mkdir ENV
-python -m venv ENV/
-```
-Once your environment is live your command prompt will be prefixed with the Virtualenv folder name, eg (ENV). Now you can make your Python PyPi installations and run those installations in the REPL. Openn it with `python3` and type `quit()` to exit:
-```sh
-pip install ffmpeg-python
-python3
-quit()
-```
-REPL stands for Read Evaluate Print Loop, and it is useful for testing short pieces of code or package installations
-
----
-class: contentpage
-### **1.1 PyPi packages: ffmpeg-python**
-
-Configure your Python environment for safe pip installation, and load up a Python REPL  
-```sh
-pip install ffmpeg-python
-python3
-```
-<font color="orange">Practise:</font> Use the software to run a horizontal flip of a File
-```python3
-import ffmpeg
-stream = ffmpeg.input('input.mp4')
-stream = ffmpeg.hflip(stream)
-stream = ffmpeg.output(stream, 'output.mp4')
-ffmpeg.run(stream)
-```
-
-Or put together the command:
-```python3
-(
-    ffmpeg
-    .input('input.mp4')
-    .hflip()
-    .output('output.mp4')
-    .run()
-)
-```
----
-class: contentpage
-### **1.1 PyPi packages: ffmpeg-python**
-
-Using the example from the official [FFmpeg Python Github](https://github.com/kkroening/ffmpeg-python) for this package you can see it's possible to build some sophisticated commands:
-
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 22.18.12.png" width="800">]
-
-The equivalent FFmpeg CLI command for this:
-
-```sh
-ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_frame=20[v0];\
-    [0]trim=start_frame=30:end_frame=40[v1];[v0][v1]concat=n=2[v2];[1]hflip[v3];\
-    [v2][v3]overlay=eof_action=repeat[v4];[v4]drawbox=50:50:120:120:red:t=5[v5]"\
-    -map [v5] output.mp4
-```
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/pypi_ffmpeg.png" width="800">]
+[pypi.org](https://pypi.org)
 ---
 class: contentpage
 ### **1.1 PyPi packages: ffmpeg-python**
@@ -152,15 +77,57 @@ ffmpeg -i input.mp4 -i overlay.png -filter_complex "[0]trim=start_frame=10:end_f
 class: contentpage
 ### **1.1 PyPi packages: ffmpeg-python**
 
+Set up time! Move your `media` folder into your summer-school-2024 folder if possible. We're going to try using the Python shell, open it by just typing `python3`. Then navigate into your summer-school-2024 folder and we are going to `git pull` updates from the repository:
+
+```sh
+cd summer-school-2024/thursday_scripts (Mac/Linux)
+cd summer-school-2024\thursday_scripts (Windows)
+
+pip install ffmpeg-python
+python3
+```
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-25 at 19.45.09.png" width="500">]
+
+---
+
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
+<font color="orange">Practise:</font> Use the software to run a horizontal flip of a the film_scan MP4 file you created yesterday. You may need to adjust your path to the video file:
+```python3
+import ffmpeg
+stream = ffmpeg.input('film_scan.mp4')
+stream = ffmpeg.hflip(stream)
+stream = ffmpeg.output(stream, 'film_scan_flip.mp4')
+ffmpeg.run(stream)
+```
+
+You can also format your queries like this:
+```python3
+(
+    ffmpeg
+    .input('film_scan.mp4')
+    .hflip()
+    .output('film_scan_flip.mp4')
+    .run()
+)
+
+(ffmpeg.input('film_scan.mp4').hflip().output('film_scan_flip.mp4').run())
+```
+
+---
+class: contentpage
+### **1.1 PyPi packages: ffmpeg-python**
+
 There's also great reporting using this package to retrieve file metadata:
 ```python3
-result = ffmpeg.probe('input.mov')
+result = ffmpeg.probe('film_scan.mp4')
 print(result)
 ```
-You are returned with a formatted Python dictionary containing all your metadata. To get this data for, say the duration of the file:
+You are returned with a formatted Python dictionary containing all your metadata. To return just the duration:
 
 ```python3
-duration = result.get('format', {}).get('duration', None)
+duration = result.get('format').get('duration')
 print(duration)
 ```
 
@@ -169,31 +136,7 @@ print(duration)
 - format_name
 - start_time
 - size
-- bit_rate
-- probe_score
-- tags
 
----
-class: contentpage
-### **1.2 Subprocess module**
-
-Python's subprocess module allows you to spawn new processes and connect with the stdin, stdout and strerr pipes. Where possible it's suggested you shuold use the `run()` function. The accepted arguments include:    
-
-```python3
-subprocess.run(args, *, stdin=None, input=None, stdout=None, stderr=None,\
-               capture_output=False, shell=False, cwd=None, timeout=None, check=False,\
-               encoding=None, errors=None, text=None, env=None, universal_newlines=None,\
-               **other_popen_kwargs)
-```
-
-When you run this code `subprocess` will carry out the `args` as your command. If this is a list, you will need to include `shell=False`. But if you supply a string of your ffmpeg command you can set `shell=True`
-
-```python3
-result = subprocess.run('ffmpeg -i input.mov output.mp4', shell=True)
-result = subprocess.run(['ffmpeg', '-i', 'input.mov', 'output.mp4'], shell=False)
-```
-
-<font color="red">Warning!</font> It is not recommended to use `shell=True`, as code can be vulnerable to [shell injection threats](https://docs.python.org/3/library/subprocess.html#security-considerations). If the command includes user inputs then users may inject commands to run that could compromise a system. 
 
 ---
 class: contentpage
@@ -201,10 +144,10 @@ class: contentpage
 
 `subprocess.run()` can also be used to capture results of FFprobe metadata queries
 ```python3
+import subprocess
 response = subprocess.run(
   [
-    'ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
-    'stream=bit_rate', '-of', 'default=noprint_wrappers=1', 'input.mov'
+    'ffprobe', 'film_scan.mkv'
   ],
   shell=False,
   capture_output=True,
@@ -213,7 +156,6 @@ response = subprocess.run(
 ```
 The FFrobe command is supplied as a list of strings, follow by subprocess argument `shell=False`, `capture_output=True` to ensure the response is captured and `text=True` ensures it's formatted as text and not bytes. It returns a 'CompletedProcess' class that allows the data to be viewed with these commands:
 
-<font color="orange">Practise:</font> In the REPL `import subprocess` then try an FFprobe command and expore the responses
 ```python3
 response.args
 response.stdout
@@ -229,52 +171,29 @@ Subprocess works for any open-source tool you call from the command line, like M
 ```python
 duration = subprocess.run(
   [
-    'mediainfo', '-i', '--Output=Video;%Format%', 'input.mkv'
+    'mediainfo', '-i', '--Output=Video;%Format%', 'film_scan.mkv'
   ],
   shell=False,
   capture_output=True,
   text=True
 )
 ```
-When you isolate specific metadata like width and height, you can start using it in the code to calculate display aspect ratios:
-
-```python3
-width = subprocess.run(['mediainfo', '-i', '--Output=Video;%Width%', 'input.mkv'], shell=False, capture_output=True, text=True)
-height = subprocess.run(['mediainfo', '-i', '--Output=Video;%Height%', 'input.mkv'], shell=False, capture_output=True, text=True)
-
-if "1.777" in str(int(width.stdout) / int(height.stdout)):
-    aspect = '16x9'
-```
-
----
-class: contentpage
-### **1.3 Metadata triggers for FFmpeg commands**
-
-Using `ffmpeg-python` package we can retrieve colour information for a lossless video transcode and map into the FFmpeg command:
-
-```python3
-import ffmpeg
-
-metadata = ffmpeg.probe('input.mkv')
-cspace = metadata['streams'][0].get('color_space', '')
-ctransfer = metadata['streams'][0].get('color_transfer', '')
-cprimaries = metadata['streams'][0].get('color_primaries', '')
-pformat = metadata['streams'][0].get('pix_fmt', '')
-
-command = [
-  'ffmpeg', '-i', 'input.mkv', '-c:v', 'v210', '-pix_fmt', pformat,
-  '-color_primaries', cprimaries, '-color_trc', ctransfer,
-  '-colorspace', cspace, '-c:a', 'copy', '-map', '0', 'output.mov'
-]
-
-encode = subprocess.run(command, shell=False, capture_output=True, text=True)
-if encode.returncode != 0:
-    # Problem encoding file
-    print(encode.stderr)
+Or MediaConch!
+```python
+duration = subprocess.run(
+  [
+    'mediaconch', '-p', 'policy.xml', 'film_scan.mkv'
+  ],
+  shell=False,
+  capture_output=True,
+  text=True
+)
 ```
 ---
 class: contentpage
 ### **1.3 Metadata triggers for FFmpeg commands**
+
+Let's look at the command_builder.py script to see how metadata can be used in code!
 
 .left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-18 at 20.18.58.png" width="710">]
 
@@ -282,46 +201,29 @@ class: contentpage
 class: contentpage
 ### **1.3 Metadata triggers for FFmpeg commands**
 
-<font color="orange">Practise:</font> Open the Python REPL in your repository folder `thursday_scripts`. Import command_builder.py and run functions below. You will need a input file path and output folder or file path to test the encoding command.
+From your repository folder `thursday_scripts` import command_builder.py and run functions below. You will need a input file path and output folder or file path to test the encoding command.
+
 ```python3
-python3
 import command_builder as cb
 
 # Experiment with width, height, DAR, PAR possibilities to see the commands that are returned
-command = cb.create('input.mov', 'output.mov', '1920', '1080', '16x9', '16x9')
+command = cb.create(
+  '../media/film_scan.mp4',
+  '../media/',
+  1920,
+  1080,
+  '16x9',
+  '16x9')
+
 print(command)
 ```
-Use the `command` variable and paste into the next function:
+If you have a successful `command` variable then copy and paste into the next function:
 ```python3
 success = cb.run(command)
 print(success)
 ```
 
 Hang on to this `success` variable for our next practise
----
-class: contentpage
-### **1.3 Metadata triggers for FFmpeg commands**
-
-MediaInfo 0.0.9 returns a limited dictionary of metadata from this Mediainfo wrapper:
-```python3
-pip install MediaInfo
-
-from MediaInfo install MediaInfo
-
-info = MediaInfo(filename = 'input.mov')
-info = MediaInfo(filename = 'input.mov', cmd = '/opt/homebrew/bin/ffprobe')
-print(info.getInfo())
-```
-
-Example output for an MP4 file:
-```python3
-{'container': 'MPEG-4', 'fileSize': '57831125', 'duration': '628.139', 'bitrate': '736539',
-'haveVideo': 1, 'haveAudio': 1, 'videoCodec': 'AVC', 'videoCodecProfile': 'High',
-'videoDuration': '628.120', 'videoBitrate': '604037', 'videoWidth': 1920, 'videoHeight': 1080,
-'videoAspectRatio': '1.778', 'videoFrameRate': '25.000', 'videoFrameCount': '15703',
-'audioCodec': 'AAC', 'audioCodecProfile': 'LC', 'audioDuration': '628.139',
-'audioBitrate': '126420', 'audioChannel': '2', 'audioSamplingRate': '48000'}
-```
 
 ---
 class: contentpage
@@ -365,26 +267,7 @@ success = cb.validate_transcode(outpath)
 print(success)
 ```
 ---
-class: contentpage
-### **1.4 Validating your files**
 
-There's also a MediaConch PyPi package with a very simple wrapper as an alternative to subprocess:
-```python3
-pip install mediaconch
-
-from mediaconch import *
-MC = MediaConch()
-
-# Add the policy and file
-MC.add_policy('basic_mp4_policy.xml')
-file_id = MC.add_file('input.mp4')
-
-# Set the format for the output
-MC.set_format(Format.text)
-print(MC.get_report(file_id))
-```
-Untested as yet!
----
 class: contentpage
 ### **1.5 Capturing and using filter data**
 
@@ -455,7 +338,7 @@ The seconds argument needs to be supplied as an integer for use with `range()` b
 class: contentpage
 ### **1.5 Capturing and using filter data**
 
-<font color="orange">Practise:</font> Return to your REPL and using your `success` variable call `cb.get_black_space` to create your  `time_list`. Then pass `time_list` into `cb.seconds_clash` and see if you receive a True or False
+<font color="orange">Practise:</font> Return to your shell and using your `success` variable call `cb.get_black_space` to create your  `time_list`. Then pass `time_list` into `cb.seconds_clash` and see if you receive a True or False
 ```python
 import command_builder as cb
 
@@ -468,16 +351,7 @@ print(f"Does this clash? {clash}")
 
 NOTE: Check your `success` output is in the `stdout` argument returned from `subprocess.CompletedProcess`, sometimes I find it in `stderr` even though the `returncode` is 0
 ---
-class: contentpage
-### **1.5 Capturing and using filter data**
 
-In case you are interested in making animated GIFs from your videos, here's the command I used:
-```sh
-ffmpeg -ss 2 -t 12 -i 'input.mov'
--vf "fps=10,scale=1000:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" 
--loop 0 trimmed_animated.gif
-```
----
 class: contentpage
 ### ** 2. FFmpeg encoding optimisation**
 
@@ -522,35 +396,37 @@ Data converter sites like [unitconverters.net](https://www.unitconverters.net/da
 class: contentpage
 ### ** 2.1 Hardware configuration**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 19.54.09.png" width="1000">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 19.54.09.png" width="900">]
 
-```
-Threads per core  x  Cores per socket  x  Sockets
---------------------------------------------------
-       2          x        20          x    2     = 80 CPU     
-```
+- HTOP interactive system monitor show updated list of active processes bottom, CPU usage in top half
+- LSCPU displays information about the CPU architecture of a Linux system, allowing for calculation of CPU:
+    Threads per core 2 x Cores per socket 20 x Sockets 2 = 80 Virtual CPU  
+- IFTOP is a network analysing tool that reports bandwidth speeds across networks  
+- Windows users can use Windows Process Explorer offers similar services, along with NTop and Sniffnet 
 ---
 class: contentpage
 ### ** 2.2 Processing**
 
-.centre[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-20 at 12.32.45.png" width="1040">]
-
-
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-20 at 12.32.45.png" width="1000">]
+- Serial: Running one task at a time against your CPU
+- GNU Parallel: Cues tasks for available CPU and maintains parallel processing
+- Python multiprocessing: Each task has sub-processes with own memory allocation spread across CPUs
+- FFmpeg Multithreading: Scheduling algorithm shares encoding across threads, not true parallelisation
 ---
 class: contentpage
 ### ** 2.2 Processing**
 
 .centre[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-20 at 13.00.49.png" width="700">]
 
-RAWcooked parallel encoding to FFV1 using multithreading
+HTOP RAWcooked parallel encoding to FFV1 using multithreading. 80 virtual CPUs work against FFmpeg encodings. It shows FFmpeg multithreading combined with GNU parallel processing. This ensures we get the most from our CPU threads at all times.
 
 ---
 class: contentpage
 ### **2.3 GNU Parallel**
 
-.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 21.23.59.png" width="380">]
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-17 at 21.23.59.png" width="340">]
 
-GNU parallel can be installed with Homebrew for Mac, Unix or Windows Subsystem for Linux can use `apt-get`:
+GNU parallel separates tasks across CPU cores maintaining maximum CPU and I/O activity at all times. It can be installed with Homebrew for Mac, Unix or Windows Subsystem for Linux can using `apt-get`:
 ```sh
 brew install parallel
 sudo apt-get install parallel
@@ -569,11 +445,6 @@ This is a command used in RAWcooked encoding workflows at the BFI. As we launch 
 ```sh
 grep ^N "${RPATH}list.txt" | parallel --jobs 3 \
   "rawcooked -y --all --no-accept-gaps ${RPATH}{} -o ${MPATH}{}.mkv &>> ${MPATH}{}.mkv.txt"
-```
-
-<font color="orange">Practise:</font> Change directory into one with files in. Pipe list of `.mkv` files from `ls` and create mediainfo logs for each named after the file:
-```sh
-ls | grep -E '.mkv$' | parallel 'mediainfo -i {} >> {}_mediainfo.log'
 ```
 Use a `find` search to only select files modified more than 30 minutes ago and make MP4 encoded copies, and capture logs for the Parallel runs which include execution time:
 ```sh
@@ -610,7 +481,7 @@ class: contentpage
 
 ```sh
 cd /SUMMER_SCHOOL_2024/thursday_scripts
-python3 ffmpeg_multiprocess.py '/Users/joanna/test_files/'
+python3 ffmpeg_multiprocess.py '../media/'
 ```
 
 If you have means, open `htop` and view the CPU activity as the script processes all your files in rapid succession.
@@ -638,32 +509,6 @@ You will need to customise your FFmpeg installation so the codecs can be called 
 FFV1 codec does not currently have GPU accelerated encoding support, but it is being planned!
 
 [FFmpeg Intro to Hardware Acceleration](https://trac.ffmpeg.org/wiki/HWAccelIntro)
-
----
-class: contentpage
-### **2.5 GPU acceleration**
-
-To use NVIDIA GPU acceleration for audiovisual encoding/transcoding:  
-
-- You need an FFmpeg build with NVENC support and compatible NVIDIA drivers.
-  Example command for H.264 encoding with NVIDIA GPU supported codec:
-  ```sh
-  ffmpeg -i input.mp4 -c:v h264_nvenc -preset slow -crf 23 -c:a copy output.mp4
-  ```
-
-To use AMD GPU acceleration:
-
-- You need an FFmpeg build with AMF support. Example command for H.264 encoding with AMF GPU supported codec:
-  ```sh
-  ffmpeg -i input.mp4 -c:v h264_amf -quality balanced -c:a copy output.mp4
-  ```
-
-For Intel GPU acceleration:  
-
-- You need an FFmpeg build with QSV support. Example command for H.264 encoding with Intel QSV supported codec:
-  ```sh
-  ffmpeg -i input.mp4 -c:v h264_qsv -preset slow -c:a copy output.mp4
-  ```
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
