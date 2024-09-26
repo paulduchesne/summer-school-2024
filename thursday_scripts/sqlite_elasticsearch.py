@@ -40,16 +40,30 @@ def create_database_content(target_path) -> None:
         print(f"Supplied path is not recognised: {target_path}")
         return None
 
-    for root, _, files in os.path.walk(target_path):
+    for root, _, files in os.walk(target_path):
         for file in files:
             date_stamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             fpath = os.path.join(root, file)
             fname = file
-            status = random.choice(['Complete', 'In Progress', 'Transcoding']) 
+            status = random.choice(['Not processed', 'Complete', 'In Progress', 'Transcoding']) 
             with sqlite3.connect(DBASE) as users:
                 cursor = users.cursor()
                 cursor.execute("INSERT INTO DOWNLOADS (fpath,fname,status,date_stamp) VALUES (?,?,?,?)", (fpath, fname, status, date_stamp))
                 users.commit()
+
+
+def fetch_all() -> list:
+    '''
+    Retrieve all items in a database to view
+    '''
+    all = []
+    connect = sqlite3.connect(DBASE)
+    cursor = connect.cursor()
+    cursor.execute('SELECT * FROM DOWNLOADS')
+    for c in cursor:
+        print(c)
+        all.append(c)
+    return all
 
 
 def fetch_database_content(field, arg) -> list:
@@ -120,12 +134,12 @@ def populate_elasticsearch(target_path) -> None:
         print(f"Supplied path is not recognised: {target_path}")
         return None
 
-    for root, _, files in os.path.walk(target_path):
+    for root, _, files in os.walk(target_path):
         for file in files:
             date_stamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             fpath = os.path.join(root, file)
             fname = file
-            status = random.choice(['Complete', 'In Progress', 'Transcoding']) 
+            status = random.choice(['Not processed', 'Complete', 'In Progress', 'Transcoding']) 
 
             ES.index(index='file_metadata', document={
                 "filepath": fpath,
