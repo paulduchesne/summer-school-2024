@@ -250,7 +250,7 @@ def validate_transcode(fpath) -> str:
     # Check the transcode completed, not truncated    
     cmd = ['mediainfo', '--Output=General;%Duration%', fpath]
     check = subprocess.run(cmd, shell=False, capture_output=True, text=True)
-    if len(check.stderr) == 0:
+    if len(check.stderr) == 0 and len(check.stdout) == 0:
         return f"Error! File duration is absent. File possibly truncated."
 
     # Check the transcode passes the MediaConch policy    
@@ -258,6 +258,7 @@ def validate_transcode(fpath) -> str:
     pass_fail = subprocess.run(cmd, shell=False, capture_output=True, text=True)
     if pass_fail.stdout.startswith(f'pass! {fpath}'):
         return f"File passed FFrobe check, file is whole and MediaConch policy:\n{pass_fail.stdout}"
+    elif pass_fail.stderr.startswith(f'pass! {fpath}'):
+        return f"File passed FFrobe check, file is whole and MediaConch policy:\n{pass_fail.stderr}"
     else:
-        return f"File passed FFprobe check, but failed Mediaconch policy:\n{pass_fail.stdout}"
-    
+        return f"File passed FFprobe check, but failed Mediaconch policy:\n{pass_fail.stdout} {pass_fail.stderr}"
