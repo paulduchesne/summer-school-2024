@@ -27,13 +27,12 @@ class: contentpage
 3. Expanding workflows with APIs   
  3.1 RESTful API basics  
  3.2 Requests library  
- 3.3 Authentication and rate limiting  
- 3.4 Cloud storage and AWS S3  
+ 3.3 Rate limiting  
 
-4. Elasticsearch and MySQL connections  
- 4.1 Elasticsearch Indexing, searching documents     
- 4.2 Connecting to MySQL databases  
- 4.3 Search and retrieval with sqlite3 
+4. Elasticsearch and SQLite databases  
+ 4.1 Elasticsearch    
+ 4.2 SQLite database  
+
 
 ---
 class: contentpage
@@ -181,7 +180,7 @@ Advantages when using them in your code:
 class: contentpage
 ### **2.1 Setting environmental variables in Windows**
 
-Create a temporary environmental variable for current session only.  
+Create a temporary environmental variable for current session only - make the variable name unique!  
 In Command Prompt then Powershell:  
 ```sh
 set MY_VARIABLE=my_value
@@ -211,12 +210,12 @@ Permanent for a specific user creating the variable. Depending on the shell bein
 echo 'export MY_VARIABLE="my_value"' >> ~/.bashrc
 source ~/.bashrc
 ```
-Or to add them system-wide for all users/automations to easily access add them:
+You can add a system-wide environment variable so all users/automations to easily access add them:
 ```sh
 sudo echo 'MY_VARIABLE="my_value"' >> /etc/environment
 sudo nano /etc/environment
 ```
-To make the variable available you need to run this command then log in the server again:
+To make the variable available you need to run this command then log in the server again plus log out and in again:
 ```sh
 source /etc/environment
 ```
@@ -227,44 +226,338 @@ class: contentpage
 
 You have seen may examples of this already, particulary in the example bash scripts
 ```sh
-$VARIALBLE
-"${PATH_VARIABLE}/sub_folder/"
+variable="$ENV_VARIABLE"
+echo $ENV_VARIABLE
 ```
-<font color="orange">Practise:</font> In a Python REPL try using the `os` module to create, get and delete variables:
+To access them in Python code:
 ```python3
 import os
-# Retrieve environmental variable
-variable = os.environ.get('VARIABLE_NAME')
-
-# Set an environmental variable in the current process only
-os.environ['NEW_VARIABLE'] = 'my new data'
 
 # Safely check if the environmental variable exists
-if 'VARIABLE_NAME' in os.environ:
-    return True
+if 'ENV_VARIABLE' in os.environ:
+    # Retrieve environmental variable
+    variable = os.environ.get('ENV_VARIABLE')
 else:
     return False
+```
 
-# To delete an environmental variable in current process only
-if 'NEW_VARIABLE' in os.environ:
-    del os.environ['NEW_VARIABLE']
+---
+class: contentpage
+### **3. Expanding workflows with APIs**
+
+
+.center[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-22 at 12.39.31.png" width="840">]
+
+
+---
+class: contentpage
+### **3.1 RESTful API basics**
+
+RESTful API (REpresentational State Transfer) allow two systems to exchange information over the internet, using HTTP methods GET, PUT, POST, DELETE.
+
+Key elements of RESTful APIs include:
+- Client or software on user computer initiates the communication
+- Server offers the API as a means of accessing its data or service
+- The client retrieves a resource from the API
+- Each REST message sent and received is self-descriptive 
+
+Different HTTP response codes are returned depending on the success of you call:
+- 200 reports that a request has been successful
+- 201 can sometimes be used to report a successful create (POST) 
+- 400 Bad Request is returned when something is wrong with the call or the endpoint
+- 404 Not Found is returned when an API URL is incorrect or the API is off-line
+- 401 is returned when an unauthorised request is placed
+- 500 is returned when the API system has a problem, like the API cannot connect to the database
+---
+class: contentpage
+### **3.1 RESTful API basics**
+
+- An endpoint URL for the API
+```sh
+URL = "http://127.0.0.1:5000/api/v1/resources/books"
+```
+- The HTTP method for Create (POST), Read (GET), Update (PUT), Delete (DELETE) - A 'CRUD' action
+```sh
+POST
+```
+- HTTP headers such as authentication tokens or content type confirmation
+```sh
+"content-type": "application/json"
+"accept": "application/json"
+"apikey": os.environ['API_KEY']
+```
+- Body data usually supplied in XML or JSON encoded strings
+```sh
+{
+  "title": "Titus Groan",
+  "author": "Mervyn Peake",
+  "first_sentence": "Gormenghast, that is, the main massing of the original stone, taken by itself would have displayed a certain ponderous architectural quality were it possible to have ignored the circumfusion of those mean dwellings that swarmed like an epidemic around its outer walls",
+  "year_published": "1968"
+}
 ```
 ---
 class: contentpage
-### **2.2 Accessing environmental variables in code**
+### **3.2 Requests library**
 
-Python's `python-dotenv` module is often used to store sensitive information. This data is stored in a '.env' file which can be excluded from version control. They can also be useful if you need to keep environmental variable separate between different stagings on one server, when running development, testing and production environments.
+.left[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-23 at 22.18.23.png" width="600">]
+
+---
+class: contentpage
+### **3.2 Requests library**
+
+Requests is the standard method for sending HTTP requests in Python. The library simplifies the process of sending and receiving, leaving developers with more time to process the data received!
+
+Let try launching the requests library using a Flask API linked to a database of sci-fi book authors. Open a new terminal/command prompt, cd into the `thurdsay_script` folder, then into the `api` folder.
+
+```sh
+pip install Flask
+
+python3 api/launch_api.py
+```
+
+Flask is a micro web framework written in Python that is well-suited for building REST APIs due to its flexibility and simplicity. This API has no authentication requirements and requires the wifi to be on.
+
+Load up your web browser and see if this address is showing you a basic database:  
+
+`http://127.0.0.1:5000/api/v1/resources/books/all`
+---
+class: contentpage
+### **3.2 Requests library**
+
+<font color="orange">Practise:</font> Return to your Python shell and call `pip install requests`. Test a simple GET request and look at the different responses available:
+```python
+pip install requests
+import requests
+
+# Set the URL for retrieving all contents
+url = "http://127.0.0.1:5000/api/v1/resources/books/all"
+
+# Create the HTTP GET request
+response = requests.get(url)
+
+# Assess the reponse data
+print(f"Method used: {response.request.method}")
+print(f"Response status code: {response.status_code}"")
+print(f"Content-Type: {response.headers.get('Content-Type')})
+print(f"Response date: {response.headers.get('Date')})
+print(f"Response: {response.json()}")
+```
+
+---
+class: contentpage
+### **3.2 Requests library**
+
+<font color="orange">Practise:</font> Try more focused GET requests by picking an author and searching for the author's name, publishing date or title of the book:
+```python3
+import requests
+
+URL = "http://127.0.0.1:5000/api/v1/resources/books"
+
+query = {
+  "author": "Jo Walton"
+}
+
+book = requests.get(URL, params=query, verify=False)
+print(book.text)
+print(book.json())
+```
+
+---
+class: contentpage
+### **3.2 Requests library**
+
+To make a POST request using a book sample from the repository path `thursday_scripts/api/new_books.json`. The payload dictionary need wrapping in `json.dumps()` method, and ensure you include the headers needed to inform the API how the POST data is formatted:
+
+```python
+import json
+import requests
+
+URL = "http://127.0.0.1:5000/api/v1/resources/books"
+HEADERS = {'Content-Type': 'application/json'}
+
+# Populate a JSON dictionary with sample data from the new_books.json and pick a unique ID 
+# to avoid replicating another user's POST
+
+payload =  {
+  "id": 49,
+  "title": "Titus Groan",
+  "author": "Mervyn Peake",
+  "first_sentence": "Gormenghast, that is, the main massing of the original stone...",
+  "year_published": "1968"
+}
+
+response = requests.post(URL, headers=HEADERS, data=json.dumps(payload))
+print(response.json())
+```
+---
+class: contentpage
+### **3.2 Requests library**
+
+You can refresh the website to see if the new book is there:  
+
+`http://127.0.0.1:5000/api/v1/resources/books/all`
+
+
+It's possible to delete the book again using the DELETE request. Import JSON again to format the delete query. Select the title and unique ID of your book just written and build a query dictionary to identify the record for deletion.
+```python
+import json
+import requests
+
+URL = "http://127.0.0.1:5000/api/v1/resources/books"
+HEADERS = {'Content-Type': 'application/json'}
+
+query = {
+  "title": "Titus Groan",
+  "id": 49
+}
+
+response = requests.delete(URL, headers=HEADERS, data=json.dumps(query))
+print(response.json())
+```
+---
+class: contentpage
+### **3.3 Rate limiting and Retrying**
+ 
+API rate limiting is a technique used to control the number of requests that a client can make to an API within a specified period.
+- Rate limiting protects against Denial-of-Service (DoS) attacks and offenses like spamming API endpoints
+- By limiting requests, servers can efficiently manage resources so no one client can dominate access
+- It can save money when APIs are based in cloud environments and charged based on usage
+- There may be legal or contractual obligations to limit data throughput or access
+
+If you encounter problems you can manage the way your code calls the API by using Python tools like `ratelimit` to control how often your requests are made to an API:
 
 ```python3
-from dotenv import load_dotenv
-import os
+from ratelimit import limits
+import requests
 
-# Load environmental variables from a .env file
-load_dotenv()
+FIFTEEN_MINUTES = 900
 
-# Access the variables
-secret_key = os.getenv('SECRET_KEY')
+@limits(calls=15, period=FIFTEEN_MINUTES)
+def call_api(url):
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise Exception('API response: {}'.format(response.status_code))
+    return response
 ```
+---
+class: contentpage
+### **3.3 Rate limiting and Retrying**
+
+Sometimes APIs can have communications problems, like connection timeouts or an internal error like failed database connection (500 error code). When this happens it's useful to have some means of catching it and retrying your call again.  Tenacity is my favourite Python package, which is a library for retrying code after experiencing a failure of these kinds.  
+
+```sh
+pip install tenacity
+```
+Tenacity uses function `decorators` to tell functions to retry. By default @retry will work after any raised exception.
+```python3
+from tenacity import *
+
+@retry
+def func(filename):
+    try:
+        response = requests.get(url)
+    except requests.exceptions.Timeout as error:
+        raise error
+```
+It's really easy to customise the `@retry` decorator to limit the amount of retries and to set a wait duration
+```python
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
+```
+
+---
+class: contentpage
+### **4. Elasticsearch indexes and SQLite databases** 
+
+The BFI National Archive have a few resources built upon Elasticsearch and SQLite. We use them to store temporary request information between departments.
+
+.centre[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-23 at 21.50.54.png" width="800">]
+
+Our SQLite interaction gathers user requests to preserve television programming from curatorial teams. A web interface is provided for them to select a TV channel and data, this is stored into our SQLite database and queried by Python daily, moving files automatically from their back up location into our ingest pathway.
+
+---
+class: contentpage
+### **4. Elasticsearch indexes and SQLite databases** 
+
+.centre[<img src="https://raw.githubusercontent.com/digitensions/summer-school-2024-local/main/thursday/images/Screenshot 2024-09-23 at 21.52.42.png" width="1000">]
+
+Our Elasticsearch index integrates between BFI DPI Browser, which allows colleagues to review ingested file and request to download/transcode them from our Black Pearl tape library. The Elasticsearch index receives this data from the UI frontend, and is queried by my Python scripts to see if new downlaod requests have been placed.
+
+When a file has been processed the `Current status` is updated from `Requested` to `Download complete`, and the Python scripts ignore it.
+
+Storage capacity:
+- An SQLite database can hold is equivalent to 281TB, so many trillions of rows of data (18446744073709551616)
+- Elasticsearch in comparison can hold 2GB of data, and you cannot query more than 10,000 rows at once
+---
+class: contentpage
+### **4.1 Elasticsearch Indexing, searching documents**   
+
+About Elasticsearch:
+- Searching in Elasticsearch is very accurate and incredibly fast
+- It’s highly scalable across servers and it's easy to replicate data between indexes
+- Elasticsearch is very popular for log searching and analysis
+- Basic units of information within elasticsearch and are stored in JSON format.
+
+Elasticsearch, which requires installation of Elasticsearch software, and also pip installation of `elasticsearch`.
+```sh
+pip install elasticsearch
+```
+An Elasticsearch index can be viewed from your computer using `http://localhost:9200`, or other port number. From here you can view the contents of your index.
+```python
+from elasticsearch import Elasticsearch
+
+# Set up Elasticsearch
+ES = Elasticsearch(['http://localhost:9200'])
+if not ES.ping():
+    print("Something's broken with your path: 'http://localhost:9200'")
+    sys.exit()
+```
+---
+class: contentpage
+### **4.1 Elasticsearch Indexing, searching documents**   
+
+So to help demonstrate how both Elasticsearch and SQLite work, I have build a script which creates an example of each, allows us to populate it with data, search and then udpate specific fields in both. You can launch it from the Python shell again:
+
+```python
+import elasticsearch
+
+python3
+
+import sqlite_elasticsearch as se
+
+se.create_index()
+```
+
+Visit `http://localhost:9200` to see the elasticsearch that's launced. Then you can populate your elasticsearch index with a folder full of files, such as the film_scan folder with the DPX in:
+```python
+se.populate_elasticsearch('../media/film_scans/')
+se.search_status('Complete')
+se.search_status('In Progress')
+se.update_status('')
+```
+---
+class: contentpage
+### **4.2 Connecting to SQLite databases**
+
+SQLite is one of the most used database engines in the world, operational on mobile phones and computers worldwide. It's a lightweight database whose source code is open source, and you can easily create an SQLite database using Python's sqlite3 library.  
+
+The database is stored into a `.db` file in a location of your choice. For this script it will appear inside your `thursday_scripts` folder.
+
+Return to the Python shell, and import the `sqlite_elasticsearch` script to test Sqlite functionality:
+```python3
+import sqlite_elasticsearch as se
+
+se.create_database_content('../media/film_scan/')
+all_entries = se.fetch_all()
+complete_entries = se.fetch_database_content('status', 'Complete')
+filename = se.fetch_database_content('fname', '0086400.dpx')
+```
+The script also includes a function that will change a status, then you can call it again to see it's changed:
+```python3
+se.change_status('0084600.dpx', 'Transcoding', 'Complete')
+filename = se.fetch_database_content('fname', '0086400.dpx')
+```
+
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
