@@ -202,7 +202,13 @@ def get_blackspace_list(data) -> list:
     Retrieve FFmpeg log with blackdetect and check if
     second variable falls in blocks of blackdetected
     '''
-    data_list = data.splitlines()
+    ffmpeg_data = data.stderr
+    if len(ffmpeg_data) == 0:
+        ffmpeg_data = data.stdout
+    if len(ffmpeg_data) == 0:
+        return 'No FFmpeg logs found'
+
+    data_list = ffmpeg_data.splitlines()
     time_range = []
     for line in data_list:
         if 'black_start' in line:
